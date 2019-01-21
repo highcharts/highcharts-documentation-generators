@@ -3,5 +3,17 @@
     "version": "0.0.1",
     "author": "Highsoft AS",
     "private": true,
-    "main": "index.js"
+    "main": "index.js",
+    "bin": {
+        "highcharts-api-docs": "./api-docs/bin/generator.js"
+    },
+    "dependencies": {
+        "handlebars": "*",
+        "colors": "*",
+        "mkdirp": "*",
+        "marked": "*",
+        "express": "*",
+        "async": "*",
+        "yargs": "^10.0.3"
+    }
 }
