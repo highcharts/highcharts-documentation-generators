@@ -1,0 +1,23 @@
+body {
+    background-color: #EEE;
+}
+
+header {
+    background-color: #47475C;
+}
+
+header h1 a {
+    background-color: #47475C;
+    background-image: url(highcharts.svg);
+    background-repeat: no-repeat;
+    background-size: 192px 64px;
+    display: block;
+    height: 0;
+    overflow: hidden;
+    padding: 64px 0 0 192px;
+    width: 0;
+}
+
+section {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}

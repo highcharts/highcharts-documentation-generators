@@ -1,14 +1,17 @@
 {{#with comment}}
+
     {{#if shortText}}
         <p class="Summary">
             {{#markdown}}{{{shortText}}}{{/markdown}}
         </p>
     {{/if}}
+
     {{#if text}}
         <p class="Text">
             {{#markdown}}{{{text}}}{{/markdown}}
         </p>
     {{/if}}
+
     {{#if tags}}
         <dl class="Tags">
             {{#each tags}}
@@ -17,4 +20,5 @@
             {{/each}}
         </dl>
     {{/if}}
+
 {{/with}}

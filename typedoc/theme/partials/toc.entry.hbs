@@ -1,5 +1,7 @@
 <li class="{{#if isInPath}}Current {{/if}}{{{cssClasses}}}">
+
     <a href="{{relativeURL url}}">{{{wbr title}}}</a>
+
     {{#if children}}
         <ul>
             {{#each children}}
@@ -7,4 +9,5 @@
             {{/each}}
         </ul>
     {{/if}}
+
 </li>
