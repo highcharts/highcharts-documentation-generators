@@ -1,0 +1,7 @@
+{
+    "name": "highcharts-documentation-generators",
+    "version": "0.0.1",
+    "author": "Highsoft AS",
+    "private": true,
+    "main": "index.js"
+}
