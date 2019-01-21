@@ -1,0 +1,19 @@
+{
+    "name": "highcharts-api-docs",
+    "version": "0.2.4",
+    "author": "Highsoft AS",
+    "private": true,
+    "main": "lib/index.js",
+    "bin": {
+        "highcharts-api-docs": "./bin/generator.js"
+    },
+    "dependencies": {
+        "handlebars": "*",
+        "colors": "*",
+        "mkdirp": "*",
+        "marked": "*",
+        "express": "*",
+        "async": "*",
+        "yargs": "^10.0.3"
+    }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "highcharts-docstrap",
+  "version": "1.3.0",
+  "author": "Highsoft AS",
+  "license": "MIT",
+  "decription": "A template for JSDoc3 based on Bootstrap and Bootswatch",
+  "private": true,
+  "main": "./template/publish.js",
+  "devDependencies": {
+    "async": "~2.0.1",
+    "grunt": "^1.0.3",
+    "grunt-contrib-copy": "~1.0.0",
+    "grunt-contrib-less": "^2.0.0",
+    "grunt-contrib-uglify": "~2.0.0",
+    "grunt-shell": "~1.3.1",
+    "jsdoc": "^3.5.5",
+    "lodash": "^4.17.11",
+    "request": "^2.88.0"
+  },
+  "keywords": [
+    "bootstrap",
+    "bootswatch",
+    "docstrap",
+    "documentation",
+    "jsdoc",
+    "jsdoc3",
+    "theme"
+  ],
+  "bugs": {
+    "url": "https://github.com/highcharts/highcharts-docstrap/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/highcharts/highcharts-docstrap.git"
+  },
+  "dependencies": {
+    "moment": "^2.14.1",
+    "sanitize-html": "^1.13.0"
+  }
+}
