@@ -4,17 +4,20 @@ body {
 
 header {
     background-color: #47475C;
+    height: 50px;
+    padding: 0 15px;
 }
 
 header h1 a {
     background-color: #47475C;
-    background-image: url(highcharts.svg);
+    background-image: url(highcharts-logo.svg);
+    background-position: 0 0;
     background-repeat: no-repeat;
-    background-size: 192px 64px;
+    background-size: 178px 50px;
     display: block;
     height: 0;
     overflow: hidden;
-    padding: 64px 0 0 192px;
+    padding: 50px 0 0 178px;
     width: 0;
 }
 
