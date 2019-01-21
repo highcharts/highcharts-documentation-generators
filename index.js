@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Highsoft AS
+ * Copyright (C) Highsoft AS
  */
 
 import ApiDocs from './api-docs/lib/index.js';

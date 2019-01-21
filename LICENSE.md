@@ -1,7 +1,7 @@
 # API Docs
 The `./api-docs` folder is licensed as following:
 
-Copyright (C) 2017-2019 Highsoft AS.
+Copyright (C) 2017-2019 Highsoft AS
 
 All Rights Reserved.
 
