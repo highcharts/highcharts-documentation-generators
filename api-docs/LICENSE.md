@@ -1,4 +1,4 @@
-Copyright (C) 2017, Highsoft AS
+Copyright (C) 2017-2019 Highsoft AS
 
 All Rights Reserved.
 

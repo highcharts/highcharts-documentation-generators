@@ -2,18 +2,43 @@
     "name": "highcharts-documentation-generators",
     "version": "0.0.1",
     "author": "Highsoft AS",
+    "license": "UNLICENSED",
     "private": true,
     "main": "index.js",
     "bin": {
         "highcharts-api-docs": "./api-docs/bin/generator.js"
     },
+    "bugs": {
+        "url": "https://github.com/highcharts/highcharts-documentation-generators/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/highcharts/highcharts-documentation-generators.git"
+    },
+    "keywords": [
+        "Highcharts",
+        "documentation"
+    ],
     "dependencies": {
-        "handlebars": "*",
-        "colors": "*",
-        "mkdirp": "*",
-        "marked": "*",
-        "express": "*",
         "async": "*",
+        "colors": "*",
+        "express": "*",
+        "handlebars": "*",
+        "marked": "*",
+        "mkdirp": "*",
+        "moment": "^2.14.1",
+        "sanitize-html": "^1.13.0",
         "yargs": "^10.0.3"
+    },
+    "devDependencies": {
+        "async": "~2.0.1",
+        "grunt": "^1.0.3",
+        "grunt-contrib-copy": "~1.0.0",
+        "grunt-contrib-less": "^2.0.0",
+        "grunt-contrib-uglify": "~2.0.0",
+        "grunt-shell": "~1.3.1",
+        "jsdoc": "^3.5.5",
+        "lodash": "^4.17.11",
+        "request": "^2.88.0"
     }
 }

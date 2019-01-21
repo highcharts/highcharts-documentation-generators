@@ -1,0 +1,250 @@
+@import 'site.simplex.css';
+
+
+body {
+	font-size: 16px;
+}
+
+.row {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+a {
+	color: #8085e8;
+	font-weight: bold;
+}
+
+h1.page-title {
+	color: #6699A1;
+	margin-left: 40px;
+}
+
+h2 {
+	margin-left: 40px;
+}
+
+h3.subsection-title {
+	margin: 40px;
+}
+
+h4 {
+	font-size: 20px;
+	font-weight: bold;
+}
+h4.name {
+	font-family: "Courier New", Courier, monospace;
+}
+h4 span.type-signature {
+	font-size: 0.8em;
+	font-weight: normal;
+	opacity: 0.7;
+}
+
+.container {
+	width: auto !important;
+	padding: 0;
+}
+
+
+#toc {
+	position: fixed;
+	padding: 0;
+	top: 110px;
+	left: 0;
+	max-height: calc(100% - 92px);
+}
+#toc a.list-group-item {
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.toc-h1, .toc-h2, .toc-h3 {
+	color: #8085e8;
+}
+.toc-h4 {
+	font-family: "Courier New", Courier, monospace;
+	display: inline-block;
+}
+.toc-h4 .params {
+	font-weight: normal;
+	font-size: 0.8em;
+	opacity: 0.6;
+	padding-left: 0.5em;
+}
+
+#main {
+	border-left: 1px solid silver;
+	margin-top: 110px;
+}
+
+.main-column {
+	box-sizing: border-box;
+	padding-left: 5px;
+	padding-right: 0;
+}
+div.container-overview {
+	margin: 0 40px;
+}
+dl.subsection-list {
+	margin: 0 40px;
+}
+div.hc-member {
+	padding: 0 40px;
+	border-top: 1px solid silver;
+	transition: background-color 250ms;
+}
+div.container-overview div.hc-member {
+	padding: 0;
+}
+
+div.hc-member:last-child {
+	border-bottom: 1px solid silver;
+}
+div.hc-member.active {
+	background-color: #eefdec;
+}
+
+.readme-section {
+	margin: 100px 40px;
+}
+.readme-section h2 {
+	margin-left: 0;
+}
+
+h5 {
+	color: #666;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+dt {
+	font-size: 13px;
+}
+div.hc-member dt h4.name {
+	padding-top: 40px;
+}
+div.hc-member dd {
+	padding-bottom: 40px;
+}
+.pseudo-anchor {
+	position: relative;
+	top: -3em; /* A little air above the active element */
+}
+
+p {
+	margin: 0 0 2em;
+}
+table.params {
+	border-top: 2px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+table.params thead tr {
+	background-color: rgba(0, 0, 0, 0.025);
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+	background: none;
+}
+td p {
+	margin: 0 0 9px;
+}
+th {
+	font-size: 0.8em;
+	font-style: italic;
+}
+
+code {
+	font-family: "Courier New", Courier, monospace;
+	color: #6699A1;
+}
+.navbar-header {
+	float: none;
+	background: #47475C;
+	padding-bottom: 10px;
+}
+.navbar-default {
+	background-color: #3A3A4F;
+}
+.nav > li > a {
+	font-weight: normal;
+	font-size: 14px;
+	padding: 10px 20px;
+}
+
+img.branding-logo {
+	max-height: 65px;
+	margin: -18px 5px 0 15px;
+}
+.navbar-nav > li > a {
+	line-height: 38px;
+}
+.navbar-default .navbar-brand {
+	color: #eeeaea;
+}
+.navbar-default .navbar-nav > li > a {
+	color: #eeeaea;
+}
+.navbar-form {
+	margin-top: 12px;
+}
+.list-group-item:first-child {
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+}
+.list-group-item:last-child {
+	margin-bottom: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+	background-color: #eefdec;
+	border-color: #6699A1;
+	color: black;
+}
+.list-group-item.readonly, .list-group-item.static {
+	font-style: italic;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+	color: #8085e8;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+	color: #8085e8;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+	color: #8085e8;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+  	border-color: #8085e8;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+	background-color: #8085e8;
+}
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+	background-color: #8085e8;;
+}
+
+.jsdoc-message {
+	color: silver;
+}
+.jsdoc-message a {
+	color: silver;
+}
+
+@media (min-width: 992px) {
+	footer {
+		float: right;
+		width: 66.66666667%;
+	}
+}
