@@ -1,0 +1,8 @@
+<a name="{{{anchor}}}"></a>
+<article class="{{{cssClasses}}}">
+    {{#if name}}
+        <h3>{{#each flags}}<span class="Flag{{{this}}}">{{{this}}}</span> {{/each}}{{{wbr name}}}</h3>
+    {{/if}}
+    {{> members.comment}}
+    {{> members.aside}}
+</article>

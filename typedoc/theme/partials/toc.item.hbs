@@ -1,0 +1,10 @@
+<li class="{{#if isInPath}}Current {{/if}}{{{cssClasses}}}">
+    <a href="{{relativeURL url}}">{{{wbr title}}}</a>
+    {{#if children}}
+        <ul>
+            {{#each children}}
+                {{> toc.item}}
+            {{/each}}
+        </ul>
+    {{/if}}
+</li>

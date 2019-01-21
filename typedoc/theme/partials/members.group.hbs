@@ -1,0 +1,8 @@
+<section class="Members {{cssClasses}}">
+    <h2>{{{wbr title}}}</h2>
+    {{#each children}}
+        {{#unless hasOwnDocument}}
+            {{> members.entry}}
+        {{/unless}}
+    {{/each}}
+</section>

@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="API documentation for Highcharts, Highstock, Highmap, and Gantt">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{relativeURL "assets/style.css"}}">
+    <title>{{#ifCond model.name '==' project.name}}{{{project.name}}}{{else}}{{{model.name}}} | {{{project.name}}}{{/ifCond}}</title>
+</head><body>
+
+{{> layout.header}}
+
+{{> layout.panel }}
+
+{{> layout.content}}
+
+{{> layout.footer }}
+
+</body></html>

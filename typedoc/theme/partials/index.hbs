@@ -1,0 +1,23 @@
+{{#if groups}}
+    <section class="Index">
+        <h2>Index</h2>
+        {{#each groups}}
+            <article class="Index {{cssClasses}}">
+                <h3>{{title}}</h3>
+                <ul>
+                    {{#each children}}
+                        <li class="{{cssClasses}}">
+                            <a href="{{relativeURL url}}">
+                                {{#if name}}
+                                    {{{wbr name}}}
+                                {{else}}
+                                    {{{wbr kindString}}}
+                                {{/if}}
+                            </a>
+                        </li>
+                    {{/each}}
+                </ul>
+            </article>
+        {{/each}}
+    </section>
+{{/if}}
