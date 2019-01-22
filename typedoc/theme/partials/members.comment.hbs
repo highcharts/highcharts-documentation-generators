@@ -1,22 +1,29 @@
 {{#with comment}}
 
     {{#if shortText}}
-        <p class="Summary">
+        <div class="Summary">
             {{#markdown}}{{{shortText}}}{{/markdown}}
-        </p>
+        </div>
     {{/if}}
 
     {{#if text}}
-        <p class="Text">
+        <div class="Text">
             {{#markdown}}{{{text}}}{{/markdown}}
-        </p>
+        </div>
     {{/if}}
 
     {{#if tags}}
         {{#each tags}}
-            <p class="{{{CamelCase tagName}}}">
-                {{#markdown}}{{{text}}}{{/markdown}}
-            </p>
+            {{#ifValue tagName "example"}}
+                <pre class="Example">
+                    {{{text}}}
+                </pre>
+            {{/ifValue}}
+            {{#ifNotValue tagName "example"}}
+                <div class="{{CamelCase tagName}}">
+                    {{#markdown}}{{{text}}}{{/markdown}}
+                </div>
+            {{/ifNotValue}}
         {{/each}}
     {{/if}}
 
