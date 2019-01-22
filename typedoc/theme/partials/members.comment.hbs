@@ -13,12 +13,11 @@
     {{/if}}
 
     {{#if tags}}
-        <dl class="Tags">
-            {{#each tags}}
-                <dt>{{tagName}}</dt>
-                <dd>{{#markdown}}{{{text}}}{{/markdown}}</dd>
-            {{/each}}
-        </dl>
+        {{#each tags}}
+            <p class="{{{CamelCase tagName}}}">
+                {{#markdown}}{{{text}}}{{/markdown}}
+            </p>
+        {{/each}}
     {{/if}}
 
 {{/with}}
