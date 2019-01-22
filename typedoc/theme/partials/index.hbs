@@ -2,16 +2,16 @@
     <section class="Index">
         <h2>Index</h2>
         {{#each groups}}
-            <article class="Index {{cssClasses}}">
+            <article class="Index {{CamelCase cssClasses}}">
                 <h3>{{title}}</h3>
                 <ul>
                     {{#each children}}
-                        <li class="{{cssClasses}}">
+                        <li class="{{CamelCase cssClasses}}">
                             <a href="{{relativeURL url}}">
                                 {{#if name}}
-                                    {{{wbr name}}}
+                                    {{wbr name}}
                                 {{else}}
-                                    {{{wbr kindString}}}
+                                    {{wbr kindString}}
                                 {{/if}}
                             </a>
                         </li>

@@ -1,9 +1,9 @@
-<article class="{{{CamelCase cssClasses}}}">
+<article class="{{CamelCase cssClasses}}">
 
-    <a name="{{{anchor}}}"></a>
+    <a name="{{anchor}}"></a>
 
     {{#if name}}
-        <h3>{{#each flags}}<span class="Flag{{{CamelCase this}}}">{{{this}}}</span> {{/each}}{{{wbr name}}}</h3>
+        <h3>{{#each flags}}<span class="Flag{{CamelCase this}}">{{this}}</span> {{/each}}{{wbr name}}</h3>
     {{/if}}
 
     {{> members.comment}}

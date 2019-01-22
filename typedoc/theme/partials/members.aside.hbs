@@ -1,15 +1,15 @@
 <aside>
 
     {{#if implementationOf}}
-        <p class="Implements">Implements {{{implementationOf}}}</p>
+        <p class="Implements">Implements {{implementationOf}}</p>
     {{/if}}
 
     {{#if inheritedFrom}}
-        <p class="Inherits">Inherits {{{inheritedFrom}}}</p>
+        <p class="Inherits">Inherits {{inheritedFrom}}</p>
     {{/if}}
 
     {{#if overwrites}}
-        <p>Overrides {{{overwrites}}}</p>
+        <p>Overrides {{overwrites}}</p>
     {{/if}}
 
     {{#if sources}}
@@ -17,8 +17,8 @@
             {{#each sources}}
                 <li>
                     Defined in
-                    {{#if url}}<a href="{{{url}}}">{{/if}}
-                    {{{fileName}}}:{{{line}}}
+                    {{#if url}}<a href="{{url}}">{{/if}}
+                    {{fileName}}:{{line}}
                     {{#if url}}</a>{{/if}}
                 </li>
             {{/each}}
