@@ -1,0 +1,17 @@
+<a href="{{url}}">{{name}} / {{originalName}}</a>
+
+{{>debug}}
+
+{{typeHierarchy}}
+
+{{#if children}}
+    <ul>
+        {{#with children}}
+            {{#each this}}
+                <li>
+                    {{>sidepanel.item}}
+                </li>
+            {{/each}}
+        {{/with}}
+    </ul>
+{{/if}}
