@@ -1,13 +1,9 @@
 {
+    "private": true,
     "name": "highcharts-documentation-generators",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
-    "private": true,
-    "main": "index.js",
-    "bin": {
-        "highcharts-api-docs": "./api-docs/bin/generator.js"
-    },
     "bugs": {
         "url": "https://github.com/highcharts/highcharts-documentation-generators/issues"
     },
@@ -15,10 +11,6 @@
         "type": "git",
         "url": "https://github.com/highcharts/highcharts-documentation-generators.git"
     },
-    "keywords": [
-        "Highcharts",
-        "documentation"
-    ],
     "dependencies": {
         "async": "*",
         "colors": "*",
@@ -40,5 +32,16 @@
         "jsdoc": "~3.5.5",
         "lodash": "~4.17.11",
         "request": "~2.88.0"
-    }
+    },
+    "files":[
+        "api-docs",
+        "docstrap",
+        "index.js",
+        "LICENSE.md",
+        "README.md"
+    ],
+    "bin": {
+        "highcharts-api-docs": "./api-docs/bin/generator.js"
+    },
+    "main": "index.js"
 }
