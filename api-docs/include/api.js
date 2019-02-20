@@ -68,9 +68,9 @@ hapi.ajax = function(p) {
     if (props.dataType === 'json') {
       var json;
       try {
-        json = JSON.parse(r.responseText);
+        json = JSON.parse(/[\[\{].*[\]\}]/.exec(r.responseText)[0]);
       } catch (e) {
-        props.error(e.stack, r.responseText);
+        props.error(e, r.responseText);
         return;
       }
       props.success(json);
@@ -91,6 +91,7 @@ hapi.ajax = function(p) {
 
   var clearSearch,
     contentNode,
+    sidebar,
     splashNode;
 
   function tx(text, asHTML) {
@@ -451,6 +452,7 @@ hapi.ajax = function(p) {
 
     on(title, 'click', function (e) {
       e.preventDefault();
+      sidebar.setAttribute('expanded', false);
       loadNode();
       toggle();
       updateHistory(def, product);
@@ -539,20 +541,23 @@ hapi.ajax = function(p) {
           typeHTMLClass = (
             'type type-' + type.toLowerCase().replace(/[\.\<\>]+/g, '-')
           );
-          if (type.indexOf('.') !== -1 &&
-            type.indexOf('Array.') !== 0
-          ) {
+          typeHTMLPath = (
+            (/(?:\<|\, )(Highcharts\..+?)[\,\>]/.exec(type) || [])[1] || type
+          );
+          if (typeHTMLPath.indexOf('Highcharts.') === 0) {
               typeHTML = cr('a', typeHTMLClass, type);
-              typeHTMLPath = (
-                '/class-reference/' +
-                type.replace(/[^0-9A-Z\.]+/gi, '_')
-              );
-              if (!/\>|Attributes|Object$/.test(type)) {
+              if (
+                /(?:Array|Dictionary|Function|Options|String|Type|Values)$/
+                .test(typeHTMLPath)
+              ) {
                 typeHTMLPath = typeHTMLPath.replace(
                   'Highcharts.', 'Highcharts#.'
                 );
               }
-              typeHTML.setAttribute('href', typeHTMLPath);
+              typeHTMLPath = typeHTMLPath
+                .replace(/\<.*\>/g, '<T>')
+                .replace(/[^\w\.\#]+|\.\</gi, '_');
+              typeHTML.setAttribute('href', '/class-reference/' + typeHTMLPath);
           } else {
               typeHTML = cr('span', typeHTMLClass, type);
           }
@@ -680,7 +685,7 @@ hapi.ajax = function(p) {
     /**
      * TODO: Update the versions on api.highcharts.com and fix the version
      * selector. Then remove the following code.
-     */
+     *
     var elSelect = document.querySelector('#version-selector');
     var elLink = elSelect.children[0];
     var removeElements = [{
@@ -695,6 +700,7 @@ hapi.ajax = function(p) {
         x.parent.removeChild(x.el);
       }
     });
+     */
   };
 
   hapi.createBody = function(target, state, hasChildren, callback) {
@@ -717,12 +723,20 @@ hapi.ajax = function(p) {
         var optionList = document.getElementById('option-list'),
           option = cr('div', 'option option-header ' + toClassName(state)),
           title = cr('h1', 'title'),
+          deprecated,
           description = data.description && cr(
             'p',
             'description',
             autolinks(data.description + (data.productdesc ? data.productdesc.value : '')),
             true
           );
+
+        if (data.deprecated) {
+          deprecated = cr('p', 'deprecated', 'Deprecated');
+          option.setAttribute(
+            'class', option.getAttribute('class') + ' deprecated'
+          );
+        }
 
         state.split('.').forEach(function(titlePart, i) {
           ap(title,
@@ -738,6 +752,7 @@ hapi.ajax = function(p) {
           ap(optionList,
             ap(option,
               title,
+              deprecated,
               description,
               getSampleList(data)
             )
@@ -790,10 +805,10 @@ hapi.ajax = function(p) {
   };
 
   hapi.initializeSidebar = function(sidebarQ, linkQ) {
-    var sidebar = document.querySelector(sidebarQ),
-      link = document.querySelector(linkQ),
+    var link = document.querySelector(linkQ),
       expanded = false;
 
+    sidebar = document.querySelector(sidebarQ);
     sidebar.setAttribute('expanded', expanded);
 
     on(link, 'click', function(e) {
@@ -842,7 +857,7 @@ hapi.ajax = function(p) {
         next = active.parentNode.nextSibling,
         first = sideResults.firstChild;
 
-      if (key === space) {
+      if (key === space && active === searchBar) {
         key = (e.shiftKey ? pageUp : pageDown);
       }
 
@@ -850,8 +865,6 @@ hapi.ajax = function(p) {
         case escape:
           e.preventDefault();
           clearSearch();
-          query = '';
-          searchBar.value = query;
           break;
         case pageUp:
         case arrowUp:
@@ -874,18 +887,6 @@ hapi.ajax = function(p) {
       }
     }
 
-    var mqTimeout;
-    function measureQuery() {
-      window.clearTimeout(mqTimeout)
-      mqTimeout = window.setTimeout(function () {
-        let sm = cr('img');
-        sm.setAttribute('src', 'favicon-16x16.png?search=' + encodeURIComponent(searchBar.value));
-        sm.style.height = '1px !important';
-        sm.style.width = '1px !important';
-        ap(document.body, sm);
-      }, 500);
-    }
-
     function searchSide(e) {
       if (members.length === 0) {
         hapi.ajax({
@@ -897,7 +898,6 @@ hapi.ajax = function(p) {
         });
         return;
       }
-      //measureQuery();
       query = searchBar.value;
       if (query.length >= minLength) {
         showSideResults();
@@ -908,42 +908,34 @@ hapi.ajax = function(p) {
       }
     }
 
-    function searchText(e, offset) {
+    function searchText(e, page) {
       if (e.keyCode !== 13 &&
-        typeof offset === 'undefined'
+        typeof page === 'undefined'
       ) {
         return;
       }
-      offset = (offset || 0);
-      if (offset <= 0) {
-        clearTextResults();
+      page = (page || 1);
+      if (page < 2) {
+        clearSearch();
       }
       hapi.ajax({
         dataType: 'json',
-        headers: {
-          'Ocp-Apim-Subscription-Key': 'fa4d42448a074ba2bf392f3f2fb0fcf7'
-        },
         url: (
-          'https://api.cognitive.microsoft.com' +
-          '/bingcustomsearch/v7.0/search' +
-          '?q=' + encodeURIComponent(query) +
-          '&count=' + maxElements +
-          '&customconfig=1554546297' +
-          '&mkt=en-US' +
-          '&offset=' + offset +
-          '&safesearch=Strict' +
-          '&textDecorations=true' +
-          '&textFormat=HTML'
+          'https://api.highcharts.com/search/search.php' +
+          '?query=' + encodeURIComponent(query) +
+          '&type=and' +
+          '&start=' + page +
+          '&results=' + maxElements +
+          '&search=1'
         ),
         success: function(json) {
-          if (!json.queryContext ||
-            json.queryContext.originalQuery !== query
+          if (!json ||
+            json.query !== query ||
+            json.total_results === 0
           ) {
             return;
           }
-          showTextResults(
-            (json.webPages || { totalEstimatedMatches: 0, value: [] }), query
-          );
+          showTextResults(json, query);
         }
       });
     }
@@ -995,37 +987,36 @@ hapi.ajax = function(p) {
       }
       loadSideSuggestionsTimeout = window.setTimeout(hapi.ajax, 500, {
         dataType: 'json',
-        headers: {
-          'Ocp-Apim-Subscription-Key': '6fb649994719477cb3985abe16439175'
-        },
         url: (
-          'https://api.cognitive.microsoft.com' +
-          '/bingcustomsearch/v7.0/suggestions/search' +
+          'https://api.highcharts.com/search/include/js_suggest/suggest.php' +
           '?q=' + encodeURIComponent(query) +
-          '&customconfig=1554546297'
+          '&type=query'
         ),
         success: function(json) {
-          if (json.suggestionGroups &&
-            json.suggestionGroups.length > 0
+          if (json &&
+            json.length > 0
           ) {
-            showSideSuggestions(json.suggestionGroups[0].searchSuggestions);
+            showSideSuggestions(json);
           }
-        }
+        },
+        error: function() {}
       });
     }
 
     function showSideSuggestions(suggestions) {
       var a,
         suggestion;
+
       for (var i = 0, ie = suggestions.length; i < ie; ++i) {
-        suggestion = suggestions[i];
-        a = cr('a', null, suggestion.displayText);
+        suggestion = suggestions[i][0];
+        a = cr('a', null, suggestion);
         a.setAttribute('href', '#');
         on(a, 'click', function (e) {
           e.preventDefault();
-          clearTextResults();
+          sidebar.setAttribute('expanded', false);
           query = this.innerText;
-          searchText(e, 0);
+          clearSearch();
+          searchText(e, 1);
         });
         ap(sideResults, ap(cr('li', 'match'), a));
         if (sideResults.childElementCount >= maxElements) {
@@ -1050,34 +1041,37 @@ hapi.ajax = function(p) {
       stopSideSuggestions();
       var a,
         div,
-        entries = json.value,
+        entries = (json.qry_results || []),
         entry,
         name,
-        url,
-        snippet;
+        next = (json.next || 2),
+        pages = (json.pages || 0),
+        snippet,
+        total = (json.total_results || 0),
+        url;
       for (var i = 0, ie = entries.length; i < ie && i < maxElements; ++i) {
         entry = entries[i];
-        name = (entry.name || '');
+        name = (entry.title || '');
         url = (entry.url || '/');
-        snippet = (entry.snippet || '');
-        if (name.indexOf('|') > 0) {
+        snippet = (entry.fulltxt || '');
+        if (name.indexOf('|') > -1) {
           name = name.substr(0, name.indexOf('|'));
         }
-        if (snippet.indexOf('Welcome') === 0) {
+        if (name.indexOf('Highcharts') === 0) {
+          name = name.substr(11);
+        }
+        if (name.indexOf(':') === -1) {
+          name = 'Option: ' + name;
+        }
+        if (snippet.indexOf('Welcome') === 0 ||
+          snippet.indexOf('<b>') === -1
+        ) {
           snippet = '';
         }
         a = cr('a', null, name, true);
         a.setAttribute('href', url);
         a.setAttribute('title', 'Go to ' + url.substr(url.indexOf('//') + 2));
-        a.setAttribute('data-crawl',
-          entry.dateLastCrawled.substr(0, entry.dateLastCrawled.indexOf('T'))
-        );
         div = cr('div', 'match');
-        if (url.lastIndexOf('/') === (url.length - 1) ||
-          url.indexOf('.json') >= 0
-        ) {
-          div.setAttribute('style', 'display: none;');
-        }
         ap(textResults,
           ap(div,
             ap(
@@ -1104,10 +1098,8 @@ hapi.ajax = function(p) {
         textResults.style.display = 'block';
         scrollTo(textResults, textResults.firstChild, 200);
       }
-      var foundText = 'Found ' + pluralize(
-        json.totalEstimatedMatches, ' result', ' results'
-      );
-      if (json.totalEstimatedMatches > textResults.childNodes.length) {
+      var foundText = 'Found ' + pluralize(total, ' result', ' results');
+      if (next <= pages) {
         var divOptions = cr('div', 'options')
         var aClose = cr('span', 'close', 'Close results');
         on(aClose, 'click', function (e) {
@@ -1119,7 +1111,7 @@ hapi.ajax = function(p) {
         on(aMore, 'click', function (e) {
           e.preventDefault();
           textResults.removeChild(divOptions);
-          searchText(e, textResults.childNodes.length);
+          searchText(e, next);
         });
         ap(
           textResults,
@@ -1139,6 +1131,7 @@ hapi.ajax = function(p) {
     }
 
     clearSearch = function () {
+      searchBar.value = '';
       clearSideResults();
       clearTextResults();
     }
