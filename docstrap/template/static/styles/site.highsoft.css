@@ -223,7 +223,7 @@ img.branding-logo {
 .nav .open > a,
 .nav .open > a:hover,
 .nav .open > a:focus {
-  	border-color: #8085e8;
+	border-color: #8085e8;
 }
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
@@ -240,6 +240,18 @@ img.branding-logo {
 }
 .jsdoc-message a {
 	color: silver;
+}
+
+@media (min-height: 400px) {
+	.dropdown-menu {
+		max-height: 292px;
+	}
+}
+
+@media (min-width: 769px) {
+	.dropdown-menu {
+		max-height: calc(100vh - 108px);
+	}
 }
 
 @media (min-width: 992px) {

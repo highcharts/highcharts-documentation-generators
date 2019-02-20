@@ -1,6 +1,6 @@
 {
   "name": "highcharts-docstrap",
-  "version": "1.3.0",
+  "version": "1.3.2",
   "author": "Highsoft AS",
   "license": "MIT",
   "decription": "A template for JSDoc3 based on Bootstrap and Bootswatch",
