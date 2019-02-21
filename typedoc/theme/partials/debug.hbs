@@ -2,7 +2,10 @@
 {{#each this}}
     &nbsp;&nbsp;&nbsp;&nbsp;{{@key}}: {{#isPrimitive this}}
         {{#isString this}}"{{this}}",{{/isString}}
-        {{#isNotString this}}{{this}},{{/isNotString}}
+        {{#isNotString this}}
+            {{#isFunction this}}&lt;function&gt;,{{/isFunction}}
+            {{#isNotFunction this}}{{this}},{{/isNotFunction}}
+        {{/isNotString}}
     {{/isPrimitive}}{{#isNotPrimitive this}}{{#isArray this}}
         [<br />
         {{#each this}}

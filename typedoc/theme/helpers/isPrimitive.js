@@ -18,6 +18,13 @@ module.exports = {
                 options.inverse(this)
         );
     },
+    isFunction: function (value, options) {
+        return (
+            typeof value === 'function' ?
+                options.fn(this) :
+                options.inverse(this)
+        );
+    },
     isNotArray: function (value, options) {
         return (
             typeof value !== 'object' ||
@@ -30,6 +37,13 @@ module.exports = {
     isNotBoolean: function (value, options) {
         return (
             typeof value !== 'boolean' && !(value instanceof Boolean) ?
+                options.fn(this) :
+                options.inverse(this)
+        );
+    },
+    isNotFunction: function (value, options) {
+        return (
+            typeof value !== 'function' ?
                 options.fn(this) :
                 options.inverse(this)
         );
