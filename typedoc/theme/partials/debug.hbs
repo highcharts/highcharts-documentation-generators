@@ -1,1 +1,20 @@
-{ {{#each this}}{{@key}}, {{/each}} }
+{<br />
+{{#each this}}
+    &nbsp;&nbsp;&nbsp;&nbsp;{{@key}}: {{#isPrimitive this}}
+        {{#isString this}}"{{this}}",{{/isString}}
+        {{#isNotString this}}{{this}},{{/isNotString}}
+    {{/isPrimitive}}{{#isNotPrimitive this}}{{#isArray this}}
+        [<br />
+        {{#each this}}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;{{getType this}}&gt; {{this}},<br />
+        {{/each}}
+        &nbsp;&nbsp;&nbsp;&nbsp;],
+    {{/isArray}}{{#isObject this}}
+        {<br />
+        {{#each this}}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{@key}}: &lt;{{getType this}}&gt; {{this}},<br />
+        {{/each}}
+        &nbsp;&nbsp;&nbsp;&nbsp;},
+    {{/isObject}}{{/isNotPrimitive}}<br />
+{{/each}}
+}<br />
