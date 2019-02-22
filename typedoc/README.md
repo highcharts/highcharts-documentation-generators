@@ -36,7 +36,7 @@ properties, thagt might be undefined in some constellations.
     Full file path of the output file
   - **model**: `ReflectionObject`  
     Reflection of the current source code member
-  - ***template***: `function`  
+  - ~**template**~: `function`  
     *Unknown template function*
   - **templateName**: `string`  
     File name of the template, e.g. *index.hbs* or *reflection.hbs*
@@ -51,7 +51,7 @@ properties, thagt might be undefined in some constellations.
   - **toc**: `TocObject`  
     Output structure with reflection references
 - **DirectoryObject**
-  - ***categories***: `Array<any>`  
+  - ~**categories**~: `Array<any>`  
     *Unknown categories array*
   - **directories**: `Dictionary<DirectoryObject>`  
     List of containing directories
@@ -66,7 +66,7 @@ properties, thagt might be undefined in some constellations.
   - **parent?**: `DirectoryObject`  
     Parent directory
 - **FileObject**
-  - ***categories?***: `Array<any>`  
+  - ~**categories?**~: `Array<any>`  
     *Unknown categories array*
   - **fileName**: `string`  
     Relative path to the source file
@@ -113,7 +113,7 @@ properties, thagt might be undefined in some constellations.
   - **url**: `string`  
     Relative file path
 - **ReflectionObject**
-  - ***categories***: `Array<any>`  
+  - ~**categories**~: `Array<any>`  
     *Unknown purpose*
   - **children**: `Array<ReflectionObject>`  
     Logical children of the reflection object
@@ -160,7 +160,7 @@ properties, thagt might be undefined in some constellations.
     True, if declarations are included for reflection
   - **name?**: `string`  
     Project name as given to TypeDoc
-  - ***logger***: `Function`  
+  - ~**logger**~: `Function`  
     *Unknown logger function*
   - **readme?**: `string`  
     Modified readme path as given to TypeDoc
