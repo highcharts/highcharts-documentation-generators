@@ -1,7 +1,11 @@
-{{#with model}}
+{{#with project}}
     <nav id="#sidepanel">
-        {{>sidepanel.item}}
+        {{#if children}}
+            <ul>
+                {{#each children}}
+                    {{>sidepanel.item}}
+                {{/each}}
+            </ul>
+        {{/if}}
     </nav>
 {{/with}}
-{{#with navigation}}{{>debug}}{{/with}}
-{{navigation.title}}

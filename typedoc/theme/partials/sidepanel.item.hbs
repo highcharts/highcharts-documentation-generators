@@ -1,17 +1,10 @@
-<a href="{{url}}">{{name}} / {{originalName}}</a>
-
-{{>debug}}
-
-{{typeHierarchy}}
-
-{{#if children}}
-    <ul>
-        {{#with children}}
-            {{#each this}}
-                <li>
-                    {{>sidepanel.item}}
-                </li>
+<li class="{{CamelCase cssClasses}}{{#ifValue id @root.model.id}} Active{{/ifValue}}">
+    <a href="{{relativeURL url}}">{{{wbr name}}}</a> ({{kind}}, {{kindString}})
+    {{#if children}}
+        <ul>
+            {{#each children}}
+                {{>sidepanel.item}}
             {{/each}}
-        {{/with}}
-    </ul>
-{{/if}}
+        </ul>
+    {{/if}}
+</li>

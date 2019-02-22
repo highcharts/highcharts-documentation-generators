@@ -1,21 +1,20 @@
 Highcharts Documentation Generator for TypeScript
 =================================================
 
-This is the development documentation to ease modification of the TypeDoc theme
-system, that lacks substantial information.
+This is the development documentation to ease modification of the undocumented
+TypeDoc theme system.
 
 
 
 TypeDoc Rendering Pipeline
 --------------------------
 
-All files are by default piped trough the `./layouts/default.hbs` template. The
+All files are by default piped through the `./layouts/default.hbs` template. The
 provided `contents` string is a result of the additional template file as listed
 below:
 
 | Output Path                          | Additional Template Input            |
 |--------------------------------------|--------------------------------------|
-| assets/                              | assets/                              |
 | interfaces/*.html                    | templates/reflection.hbs             |
 | modules/*.html                       | templates/reflection.hbs             |
 | globals.html                         | templates/reflection.hbs             |
@@ -27,9 +26,9 @@ TypeDoc Rendering Context
 -------------------------
 
 The context in all templates is quite similar and differs only minimal in some
-properties, thagt might be undefined in some constellations.
+properties, depending on the reflection scope.
 
-- **BaseObject**
+- **@RootObject**
   - **contents**: `string|undefined`  
     Generated template content in the layout templates
   - **filename**: `string`  
@@ -83,26 +82,26 @@ properties, thagt might be undefined in some constellations.
   - **url**: `string`  
     Repository URL of the reflected source file
 - **GroupObject**
-  - **allChildrenAreExternal**: `boolean`
+  - **allChildrenAreExternal**: `boolean`  
     True, if all reflection objects are external
-  - **allChildrenAreInherited**: `boolean`
+  - **allChildrenAreInherited**: `boolean`  
     True, if all reflection objects are inherited
-  - **allChildrenArePrivate**: `boolean`
+  - **allChildrenArePrivate**: `boolean`  
     True, if all reflection objects are private
-  - **allChildrenAreProtectedOrPrivate**: `boolean`
+  - **allChildrenAreProtectedOrPrivate**: `boolean`  
     True, if all reflection objects are not public
-  - **allChildrenHaveOwnDocument**: `boolean`
+  - **allChildrenHaveOwnDocument**: `boolean`  
     True, if each reflection object has its own output file
-  - **children**: `Array<ReflectionObject>`
+  - **children**: `Array<ReflectionObject>`  
     Related reflection objects
   - **cssClasses?**: `string`  
     String of CSS classes for styling purposes
-  - **kind**: `number`
-    Kind ID of group
-  - **someChildrenAreExposed**: `boolean`
+  - **kind**: `number`  
+    Kind ID of the group
+  - **someChildrenAreExposed**: `boolean`  
     True, if some members are exported
-  - **title**: `string`
-    Describtive kind name of group
+  - **title**: `string`  
+    Describtive kind name of the group
 - **NavigationObject**
   - **children**: `Array<NavigationObject>`  
     Logical children of the reflection object
