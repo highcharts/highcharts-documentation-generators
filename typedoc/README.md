@@ -84,15 +84,25 @@ properties, thagt might be undefined in some constellations.
     Repository URL of the reflected source file
 - **GroupObject**
   - **allChildrenAreExternal**: `boolean`
+    True, if all reflection objects are external
   - **allChildrenAreInherited**: `boolean`
+    True, if all reflection objects are inherited
   - **allChildrenArePrivate**: `boolean`
+    True, if all reflection objects are private
   - **allChildrenAreProtectedOrPrivate**: `boolean`
+    True, if all reflection objects are not public
   - **allChildrenHaveOwnDocument**: `boolean`
+    True, if each reflection object has its own output file
   - **children**: `Array<ReflectionObject>`
-  - **cssClasses?**: `string`
+    Related reflection objects
+  - **cssClasses?**: `string`  
+    String of CSS classes for styling purposes
   - **kind**: `number`
+    Kind ID of group
   - **someChildrenAreExposed**: `boolean`
+    True, if some members are exported
   - **title**: `string`
+    Describtive kind name of group
 - **NavigationObject**
   - **children**: `Array<NavigationObject>`  
     Logical children of the reflection object
