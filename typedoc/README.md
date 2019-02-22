@@ -81,26 +81,31 @@ properties, thagt might be undefined in some constellations.
   - **symbolMapping?**: Object not verfified
   - **url?**: `string`
 - **SettingsObject**
-  - **ignoreCompilerErrors**: `boolean`
-  - **includeDeclarations**: `boolean`
-  - **name**: `string`
-  - **logger**: `Function`
-  - **readme**: `string`
+  - **ignoreCompilerErrors?**: `boolean`  
+    True, if TypeDoc continues with errors during reflection
+  - **includeDeclarations?**: `boolean`  
+    True, if declarations are included for reflection
+  - **name?**: `string`  
+    Project name as given to TypeDoc
+  - **logger**: `Function`  
+    Unknown logger function
+  - **readme?**: `string`  
+    Readme path as given to TypeDoc
   - **theme**: `string`  
-    Theme directory as given to TypeDoc
+    Theme path as given to TypeDoc
 - **TocObject**
-  - **children?**: `Array<TocObject>`
+  - **children?**: `Array<TocObject>`  
     Output files, that are logical children to the reflection object
-  - **cssClasses**: `string`
+  - **cssClasses**: `string`  
     String of CSS classes for styling purposes
-  - **isLabel?**: `boolean`
+  - **isLabel?**: `boolean`  
     Indicates object without a reflection
-  - **parent?**: `TocObject`
+  - **parent?**: `TocObject`  
     Output file, that is the logical parent to the reflection object
-  - **reflection?**: `ReflectionObject`
+  - **reflection?**: `ReflectionObject`  
     Reflection of the source code member
-  - **title**: `string`
+  - **title**: `string`  
     Name of the source code member
-  - **url**: `string`
+  - **url**: `string`  
     Relative path to the output file
 
