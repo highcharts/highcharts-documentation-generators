@@ -71,6 +71,51 @@ header nav+nav a {
     padding: 0 15px;
 }
 
-section {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+#sidepanel {
+    background: #FFF;
+    box-sizing: border-box;
+    display: none;
+    font-family: 'Source Sans Pro', sans-serif;
+    overflow: auto;
+    padding: 20px 0 0 20px;
+}
+#sidepanel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#sidepanel li {
+    padding-left: 20px;
+}
+#sidepanel li.Collapsed {
+    padding-left: 0;
+}
+#sidepanel li.Collapsed:before {
+    content: '▶︎';
+}
+#sidepanel li.Collapsed ul {
+    display: none;
+    padding-left: 20px;
+}
+#sidepanel li.Collapsed:hover>ul,
+#sidepanel li.Active>ul {
+    display: block;
+}
+#sidepanel li.Collapsed:hover:before,
+#sidepanel li.Active:before {
+    content: '▼';
+}
+
+@media screen and (min-width: 768px) {
+
+    #sidepanel {
+        border-left: 1px solid #CCC;
+        bottom: 0;
+        display: block;
+        left: 0;
+        position: fixed;
+        width: 30%;
+        top: 108px;
+    }
+
 }

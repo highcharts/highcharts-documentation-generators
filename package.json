@@ -12,28 +12,22 @@
         "url": "https://github.com/highcharts/highcharts-documentation-generators.git"
     },
     "dependencies": {
-        "async": "*",
-        "colors": "*",
-        "express": "*",
-        "handlebars": "*",
-        "marked": "*",
-        "mkdirp": "*",
-        "moment": "^2.14.1",
-        "sanitize-html": "^1.13.0",
-        "yargs": "^10.0.3"
+        "async": "^2.6.2",
+        "colors": "^1.3.3",
+        "express": "^4.16.4",
+        "handlebars": "^4.1.0",
+        "marked": "^0.6.1",
+        "mkdirp": "^0.5.1",
+        "moment": "^2.24.0",
+        "sanitize-html": "^1.20.0",
+        "yargs": "^13.2.1"
     },
     "devDependencies": {
-        "async": "~2.0.1",
-        "grunt": "~1.0.3",
-        "grunt-contrib-copy": "~1.0.0",
-        "grunt-contrib-less": "~2.0.0",
-        "grunt-contrib-uglify": "~2.0.0",
-        "grunt-shell": "~1.3.1",
-        "jsdoc": "~3.5.5",
-        "lodash": "~4.17.11",
-        "request": "~2.88.0"
+        "@types/node": "^10.12.27",
+        "typedoc": "^0.14.2",
+        "typescript": "^3.3.3"
     },
-    "files":[
+    "files": [
         "api-docs",
         "docstrap",
         "index.js",
@@ -41,7 +35,12 @@
         "README.md"
     ],
     "bin": {
-        "highcharts-api-docs": "./api-docs/bin/generator.js"
+        "highcharts-api-docs": "./api-docs/bin/generator.js",
+        "highcharts-typedoc": "./typedoc/scripts/highcharts-typedoc"
     },
-    "main": "index.js"
+    "main": "index.js",
+    "scripts": {
+        "build": "npm run build-1",
+        "build-1": "tsc --build typedoc"
+    }
 }

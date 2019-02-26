@@ -2,7 +2,7 @@ Highcharts Documentation Generator for TypeScript
 =================================================
 
 This is the development documentation to ease modification of the undocumented
-TypeDoc theme system.
+TypeDoc theme system as of version 0.14.2.
 
 
 
