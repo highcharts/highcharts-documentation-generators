@@ -30,6 +30,9 @@
     "files": [
         "api-docs",
         "docstrap",
+        "jsdoc",
+        "typedoc/bin/highcharts-typedoc",
+        "typedoc/scripts/cli.js",
         "index.js",
         "LICENSE.md",
         "README.md"
