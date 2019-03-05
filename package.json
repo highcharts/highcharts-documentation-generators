@@ -36,7 +36,7 @@
     ],
     "bin": {
         "highcharts-api-docs": "./api-docs/bin/generator.js",
-        "highcharts-typedoc": "./typedoc/scripts/cli.js"
+        "highcharts-typedoc": "./typedoc/bin/highcharts-typedoc"
     },
     "main": "index.js",
     "scripts": {
