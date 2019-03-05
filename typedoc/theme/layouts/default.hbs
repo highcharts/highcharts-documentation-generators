@@ -34,6 +34,19 @@
     <title>{{#ifCond model.name '==' project.name}}{{{project.name}}}{{else}}{{{model.name}}} | {{{project.name}}}{{/ifCond}}</title>
 </head><body>
 
+{{>sidepanel}}
+
+CONTENTS START<br />
+
+{{{contents}}}
+
+CONTENTS END<br />
+
+{{!--
+<div style="background:#F0F;">
+    {{this}}
+</div>
+
 {{> layout.header}}
 
 {{> layout.panel }}
@@ -41,5 +54,6 @@
 {{> layout.content }}
 
 {{> layout.footer }}
+--}}
 
 </body></html>
