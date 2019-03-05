@@ -1,11 +1,13 @@
 {{#with project}}
-    <nav id="#sidepanel">
-        {{#if children}}
-            <ul>
-                {{#each children}}
-                    {{>sidepanel.item}}
-                {{/each}}
-            </ul>
-        {{/if}}
-    </nav>
+    <section id="sidepanel">
+        <nav>
+            {{#if children}}
+                <ul>
+                    {{#each children}}
+                        {{>sidepanel.item}}
+                    {{/each}}
+                </ul>
+            {{/if}}
+        </nav>
+    </section>
 {{/with}}

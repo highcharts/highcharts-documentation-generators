@@ -1,10 +1,14 @@
-<li class="{{CamelCase cssClasses}}{{#ifValue id @root.model.id}} Active{{/ifValue}}">
+{{#if children}}
+    <li class="{{CamelCase cssClasses}} Collapsed {{#ifValue id @root.model.id}}Active{{/ifValue}}">
     <a href="{{relativeURL url}}">{{{wbr name}}}</a> ({{kind}}, {{kindString}})
-    {{#if children}}
         <ul>
             {{#each children}}
                 {{>sidepanel.item}}
             {{/each}}
         </ul>
-    {{/if}}
-</li>
+    </li>
+{{else}}
+    <li class="{{CamelCase cssClasses}} {{#ifValue id @root.model.id}}Active{{/ifValue}}">
+        <a href="{{relativeURL url}}">{{{wbr name}}}</a> ({{kind}}, {{kindString}})
+    </li>
+{{/if}}
