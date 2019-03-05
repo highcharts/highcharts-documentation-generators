@@ -35,3 +35,5 @@ export function main (
         .getTree(inputFilePath)
         .then(treeNode => NavigationGenerator.generate(treeNode, outputPath));
 }
+
+export default main;

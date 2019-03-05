@@ -34,4 +34,4 @@ function main(inputFilePath = Config.INPUT_FILE_PATH, outputPath = Config.OUTPUT
         .getTree(inputFilePath)
         .then(treeNode => NavigationGenerator.generate(treeNode, outputPath));
 }
-exports.main = main;
+exports.default = main;
