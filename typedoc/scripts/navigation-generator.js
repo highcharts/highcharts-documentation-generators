@@ -10,10 +10,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Config = __importStar(require("./config"));
-const FS = __importStar(require("fs"));
-const Library = __importStar(require("./library"));
-const Path = __importStar(require("path"));
+var Config = __importStar(require("./config"));
+var FS = __importStar(require("fs"));
+var Library = __importStar(require("./library"));
+var Path = __importStar(require("path"));
 /* *
  *
  *  Functions
@@ -21,7 +21,7 @@ const Path = __importStar(require("path"));
  * */
 function generate(treeNode, outputPath) {
     Config.DEBUG_MODE && Library.info(__filename, ':generate', arguments);
-    return new Promise((resolve) => {
+    return new Promise(function (resolve) {
         generateNavigation(treeNode, Path.join(outputPath, 'nav'));
         resolve(treeNode);
     });
@@ -31,7 +31,7 @@ function generateNavigation(treeNode, outputPathPrefix) {
     Config.DEBUG_MODE && Library.info(__filename, ':generateNavigation', arguments);
     writeNavigation(treeNode, (outputPathPrefix + '.' + treeNode.name));
     if (treeNode.children) {
-        treeNode.children.forEach(childNode => {
+        treeNode.children.forEach(function (childNode) {
             if (childNode.children) {
                 generateNavigation(childNode, outputPathPrefix);
             }
@@ -40,7 +40,7 @@ function generateNavigation(treeNode, outputPathPrefix) {
 }
 function writeNavigation(treeNode, outputFilePath) {
     Config.DEBUG_MODE && Library.info(__filename, ':writeNavigation', arguments);
-    const navigationNode = {
+    var navigationNode = {
         description: treeNode.comment,
         children: [],
     };

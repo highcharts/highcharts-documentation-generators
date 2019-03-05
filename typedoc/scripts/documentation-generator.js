@@ -10,8 +10,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Config = __importStar(require("./config"));
-const Library = __importStar(require("./library"));
+var Config = __importStar(require("./config"));
+var Library = __importStar(require("./library"));
 /* *
  *
  *  Functions
@@ -19,10 +19,10 @@ const Library = __importStar(require("./library"));
  * */
 function generate() {
     Config.DEBUG_MODE && Library.info(__filename, ':generator', arguments);
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         Library
             .exec('typedoc --help')
-            .then(() => resolve())
+            .then(function () { return resolve(); })
             .catch(reject);
     });
 }

@@ -10,10 +10,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Config = __importStar(require("./config"));
-const Library = __importStar(require("./library"));
-const NavigationGenerator = __importStar(require("./navigation-generator"));
-const TreeParser = __importStar(require("./tree-parser"));
+var Config = __importStar(require("./config"));
+var Library = __importStar(require("./library"));
+var NavigationGenerator = __importStar(require("./navigation-generator"));
+var TreeParser = __importStar(require("./tree-parser"));
 /* *
  *
  *  Functions
@@ -28,10 +28,13 @@ const TreeParser = __importStar(require("./tree-parser"));
  * @param outputPath
  *        Path to output directory by TypeDoc
  */
-function main(inputFilePath = Config.INPUT_FILE_PATH, outputPath = Config.OUTPUT_PATH) {
+function main(inputFilePath, outputPath) {
+    if (inputFilePath === void 0) { inputFilePath = Config.INPUT_FILE_PATH; }
+    if (outputPath === void 0) { outputPath = Config.OUTPUT_PATH; }
     Config.DEBUG_MODE && Library.info(__filename, ':main', arguments);
     return TreeParser
         .getTree(inputFilePath)
-        .then(treeNode => NavigationGenerator.generate(treeNode, outputPath));
+        .then(function (treeNode) { return NavigationGenerator.generate(treeNode, outputPath); });
 }
+exports.main = main;
 exports.default = main;

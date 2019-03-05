@@ -10,8 +10,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ChildProcess = __importStar(require("child_process"));
-const Process = __importStar(require("process"));
+var ChildProcess = __importStar(require("child_process"));
+var Process = __importStar(require("process"));
 /**
  * Executes a command
  *
@@ -19,10 +19,10 @@ const Process = __importStar(require("process"));
  *        Command to execute
  */
 function exec(command) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         info('Command start:', command);
         ChildProcess
-            .exec(command, (error, stdout) => {
+            .exec(command, function (error, stdout) {
             if (error) {
                 info(error);
                 reject(error);
@@ -42,7 +42,11 @@ exports.exec = exec;
  * @param infos
  *        One or more items with information
  */
-function info(...infos) {
+function info() {
+    var infos = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        infos[_i] = arguments[_i];
+    }
     Process.stdout.write('\n[' + (new Date()).toString().substr(0, 8) + '] ' +
         infos.join(' ') + '\n');
 }

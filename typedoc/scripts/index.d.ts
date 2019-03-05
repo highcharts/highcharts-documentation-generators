@@ -8,4 +8,5 @@ import * as TreeParser from './tree-parser';
  * @param outputPath
  *        Path to output directory by TypeDoc
  */
-export default function main(inputFilePath?: string, outputPath?: string): Promise<TreeParser.TreeNode>;
+export declare function main(inputFilePath?: string, outputPath?: string): Promise<TreeParser.TreeNode>;
+export default main;
