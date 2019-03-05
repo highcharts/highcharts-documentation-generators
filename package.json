@@ -35,8 +35,8 @@
         "README.md"
     ],
     "bin": {
-        "highcharts-api-docs": "./api-docs/bin/generator.js",
-        "highcharts-typedoc": "./typedoc/bin/highcharts-typedoc"
+        "highcharts-api-docs": "api-docs/bin/generator.js",
+        "highcharts-typedoc": "typedoc/bin/highcharts-typedoc"
     },
     "main": "index.js",
     "scripts": {
