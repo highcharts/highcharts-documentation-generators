@@ -10,7 +10,9 @@ import * as Library from './library';
  *
  * */
 
-export function main () {
+function cli () {
     process.stderr.write('\nnot implemented\n');
     process.exit(-1);
 }
+
+cli();
