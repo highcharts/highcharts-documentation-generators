@@ -9,7 +9,8 @@ Generator for API documentation based on output from the Highcharts JSDoc plugin
 ## Usage
 
 #### Shortcut:
-When running the `highcharts` repo, run `gulp jsdoc --watch`. It will pull in this repo and start a local server with the docs.
+In the `highcharts` repo, run `npx gulp jsdoc-watch`. It will pull in this repo
+and start a local server with the docs.
 
 
 #### Detailed:
@@ -17,7 +18,7 @@ When running the `highcharts` repo, run `gulp jsdoc --watch`. It will pull in th
     npm install
     sudo npm link
 
-Then run `hc-gen-api-docs <input.json> <outputpath/>` in a termnial, or `bin/gen.docs.js`.
+Then run `highcharts-api-docs <input.json> <outputpath/>` in a termnial, or `bin/gen.docs.js`.
 
 ```
 OPTIONS:
