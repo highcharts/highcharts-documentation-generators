@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "highcharts-documentation-generators",
-    "version": "0.2.1",
+    "version": "0.2.3",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
@@ -31,15 +31,12 @@
         "api-docs",
         "docstrap",
         "jsdoc",
-        "typedoc/bin/highcharts-typedoc",
-        "typedoc/scripts/cli.js",
         "index.js",
         "LICENSE.md",
         "README.md"
     ],
     "bin": {
-        "highcharts-api-docs": "api-docs/bin/generator.js",
-        "highcharts-typedoc": "typedoc/bin/highcharts-typedoc"
+        "highcharts-api-docs": "api-docs/bin/generator.js"
     },
     "main": "index.js",
     "scripts": {
