@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-import * as Config from './config';
 import * as Library from './library';
+import * as Path from 'path';
 
 /* *
  *
@@ -11,17 +11,32 @@ import * as Library from './library';
  *
  * */
 
-export function generate (): Promise<void> {
+export function generate (
+    tsConfigPath: string,
+    outputDirectoryPath: string,
+    outputJsonPath: string
+): Promise<void> {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':generator', arguments
+    Library.debug(__filename, ':generator', arguments);
+
+    const tdConfigPath = Path.relative(
+        Library.CWD, Path.join(__dirname, '../typedoc.json')
     );
 
-    return new Promise((resolve, reject) => {
+    const themeDirectoryPath = Path.relative(
+        Library.CWD, Path.join(__dirname, '../theme')
+    );
 
-        Library
-            .exec('typedoc --help')
-            .then(() => resolve())
-            .catch(reject);
-    });
+    return Library
+        .exec([
+            'npx',
+            'typedoc',
+            '--json', '"' + outputJsonPath + '"',
+            '--options', '"' + tdConfigPath + '"',
+            '--out', '"' + outputDirectoryPath + '"',
+            '--readme', '"README.md"',
+            '--theme', '"' + themeDirectoryPath + '"',
+            '--tsconfig', '"' + tsConfigPath + '"'
+        ].join(' '))
+        .then(() => undefined);
 }

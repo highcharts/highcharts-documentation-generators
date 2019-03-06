@@ -2,10 +2,21 @@
  * Copyright (C) Highsoft AS
  */
 
-import * as Config from './config';
+
 import * as Library from './library';
+import * as Path from 'path';
+
+import * as DocumentationGenerator from './documentation-generator';
 import * as NavigationGenerator from './navigation-generator';
 import * as TreeParser from './tree-parser';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+export const THEME_DIRECTORY_PATH = Path.join(__dirname, '../theme');
 
 /* *
  *
@@ -15,25 +26,24 @@ import * as TreeParser from './tree-parser';
 
 /**
  * Starts generator scripts
- * 
- * @param inputFilePath
- *        Path to tree file by TypeDoc
- *
- * @param outputPath 
- *        Path to output directory by TypeDoc
  */
-export function main (
-    inputFilePath: string = Config.INPUT_FILE_PATH,
-    outputPath: string = Config.OUTPUT_PATH
+export function task (
+    tsConfigPath: string,
+    outputDirectoryPath: string,
+    outputJsonPath: string
 ): Promise<TreeParser.TreeNode> {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':main', arguments
-    );
+    Library.debug(__filename, ':main', arguments);
 
-    return TreeParser
-        .getTree(inputFilePath)
-        .then(treeNode => NavigationGenerator.generate(treeNode, outputPath));
+    return Promise
+        .resolve()
+        .then(() => DocumentationGenerator.generate(
+            tsConfigPath, outputDirectoryPath, outputJsonPath
+        ))
+        .then(() => TreeParser.getTree(outputJsonPath))
+        .then(treeNode => NavigationGenerator.generate(
+            treeNode, outputDirectoryPath
+        ));
 }
 
-export default main;
+export default task;

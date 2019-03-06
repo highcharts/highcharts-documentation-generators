@@ -1,12 +1,7 @@
 import * as TreeParser from './tree-parser';
+export declare const THEME_DIRECTORY_PATH: string;
 /**
  * Starts generator scripts
- *
- * @param inputFilePath
- *        Path to tree file by TypeDoc
- *
- * @param outputPath
- *        Path to output directory by TypeDoc
  */
-export declare function main(inputFilePath?: string, outputPath?: string): Promise<TreeParser.TreeNode>;
-export default main;
+export declare function task(tsConfigPath: string, outputDirectoryPath: string, outputJsonPath: string): Promise<TreeParser.TreeNode>;
+export default task;

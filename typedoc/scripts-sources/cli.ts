@@ -11,6 +11,9 @@ import * as Library from './library';
  * */
 
 function cli () {
+
+    Library.debug(__filename, ':cli', arguments);
+
     process.stderr.write('\nnot implemented\n');
     process.exit(-1);
 }

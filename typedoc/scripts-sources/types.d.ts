@@ -5,6 +5,6 @@
 /**
  * Generic dictionary
  */
-declare interface Dictionary<T> {
-    [key: string]: T;
+declare interface Dictionary<TItem> {
+    [key: string]: TItem;
 }

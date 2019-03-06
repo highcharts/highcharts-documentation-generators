@@ -14,24 +14,28 @@ var Library = __importStar(require("./library"));
 var Path = __importStar(require("path"));
 /* *
  *
+ *  Constants
+ *
+ * */
+exports.THEME_DIRECTORY_PATH = Path.join(__dirname, '../theme');
+/* *
+ *
  *  Functions
  *
  * */
-function generate(tsConfigPath, outputDirectoryPath, outputJsonPath) {
-    Library.debug(__filename, ':generator', arguments);
-    var tdConfigPath = Path.relative(Library.CWD, Path.join(__dirname, '../typedoc.json'));
-    var themeDirectoryPath = Path.relative(Library.CWD, Path.join(__dirname, '../theme'));
+function gulpTaskFunction(tsConfigPath, outputDirectoryPath, outputJsonPath) {
+    var tdConfigPath = Path.join(__dirname, '../typedoc.json');
     return Library
         .exec([
-        'npx',
         'typedoc',
         '--json', '"' + outputJsonPath + '"',
         '--options', '"' + tdConfigPath + '"',
         '--out', '"' + outputDirectoryPath + '"',
+        '--plugin', 'none',
         '--readme', '"README.md"',
-        '--theme', '"' + themeDirectoryPath + '"',
+        '--theme', '"' + exports.THEME_DIRECTORY_PATH + '"',
         '--tsconfig', '"' + tsConfigPath + '"'
     ].join(' '))
-        .then(function () { return undefined; });
+        .then(Library.info);
 }
-exports.generate = generate;
+exports.gulpTaskFunction = gulpTaskFunction;
