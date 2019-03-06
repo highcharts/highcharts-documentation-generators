@@ -1,19 +1,23 @@
-# API Docs
-The `./api-docs` folder is licensed as following:
+API Docs
+========
 
-Copyright (C) 2017-2019 Highsoft AS
+The `./api-docs` directory is licensed as following:
+
+Copyright (C) Highsoft AS
 
 All Rights Reserved.
 
-This is the repository for the Highcharts documentation generators.
+This is the directory for the Highmaps, Highcharts, and Highstock documentation generator.
 
-Any commercial use of the code is prohibited.
+Any commercial use of this code is prohibited.
 In case of questions, please contact sales@highsoft.com
 
 
 
-# Docstrap
-The `./docstrap` folder is partly licensed under the MIT license (see
+Docstrap
+========
+
+The `./docstrap` directory is partly licensed under the MIT license (see
 `./docstrap/LICENSE.md`):
 
 Copyright (c) 2012-15 Terry Weiss & Contributors. All rights reserved.
@@ -38,3 +42,35 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+JSDoc
+=====
+
+The `./jsdoc` directory is licensed as following:
+
+Copyright (C) Highsoft AS
+
+All Rights Reserved.
+
+This is the directory of the generators for the documentation root tree.
+
+Any commercial use of this code is prohibited.
+In case of questions, please contact sales@highsoft.com
+
+
+
+TypeDoc
+=======
+
+The `./typedoc` directory is licensed as following:
+
+Copyright (C) Highsoft AS
+
+All Rights Reserved.
+
+This is the documentation generator for TypeScript source code.
+
+Any commercial use of the code is prohibited.
+In case of questions, please contact sales@highsoft.com
