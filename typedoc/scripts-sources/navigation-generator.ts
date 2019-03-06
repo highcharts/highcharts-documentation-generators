@@ -2,9 +2,9 @@
  * Copyright (C) Highsoft AS
  */
 
-import * as Config from './config';
 import * as FS from 'fs';
 import * as Library from './library';
+import * as MkDirP from 'mkdirp';
 import * as Path from 'path';
 import * as TreeParser from './tree-parser';
 
@@ -19,9 +19,7 @@ export function generate (
     outputPath: string
 ): Promise<TreeParser.TreeNode> {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':generate', arguments
-    );
+    Library.debug(__filename, ':generate', arguments);
 
     return new Promise((resolve) => {
 
@@ -36,11 +34,11 @@ function generateNavigation (
     outputPathPrefix: string
 ) {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':generateNavigation', arguments
-    );
+    Library.debug(__filename, ':generateNavigation', arguments);
 
-    writeNavigation(treeNode, (outputPathPrefix + '.' + treeNode.name));
+    writeNavigation(
+        treeNode, Path.join(outputPathPrefix, treeNode.name + '.json')
+    );
 
     if (treeNode.children) {
         treeNode.children.forEach(childNode => {
@@ -55,14 +53,14 @@ function writeNavigation (
     treeNode: TreeParser.TreeNode, outputFilePath: string
 ) {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':writeNavigation', arguments
-    );
+    Library.debug(__filename, ':writeNavigation', arguments);
 
     const navigationNode = {
         description: treeNode.comment,
         children: [],
     };
+
+    MkDirP.sync(Path.dirname(outputFilePath));
 
     FS.writeFileSync(outputFilePath, JSON.stringify(navigationNode));
 }

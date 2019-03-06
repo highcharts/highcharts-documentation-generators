@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "highcharts-documentation-generators",
-    "version": "0.2.3",
+    "version": "0.3.1",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
@@ -15,28 +15,33 @@
         "async": "^2.6.2",
         "colors": "^1.3.3",
         "express": "^4.16.4",
+        "fast-deep-equal": "^2.0.1",
         "handlebars": "^4.1.0",
+        "highcharts-assembler": "github:highcharts/highcharts-assembler",
         "marked": "^0.6.1",
         "mkdirp": "^0.5.1",
         "moment": "^2.24.0",
         "sanitize-html": "^1.20.0",
+        "typedoc": "^0.14.2",
+        "typescript": "^3.3.3",
         "yargs": "^13.2.1"
     },
     "devDependencies": {
-        "@types/node": "^10.12.27",
-        "typedoc": "^0.14.2",
-        "typescript": "^3.3.3"
+        "@types/mkdirp": "^0.5.2",
+        "@types/node": "^10.12.27"
     },
     "files": [
         "api-docs",
         "docstrap",
         "jsdoc",
+        "typedoc",
         "index.js",
         "LICENSE.md",
         "README.md"
     ],
     "bin": {
-        "highcharts-api-docs": "api-docs/bin/generator.js"
+        "highcharts-api-docs": "api-docs/bin/generator.js",
+        "highcharts-typedoc": "typedoc/bin/highcharts-typedoc"
     },
     "main": "index.js",
     "scripts": {

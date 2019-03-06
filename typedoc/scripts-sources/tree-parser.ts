@@ -2,7 +2,6 @@
  * Copyright (C) Highsoft AS
  */
 
-import * as Config from './config';
 import * as Library from './library';
 import * as FS from 'fs';
 
@@ -76,9 +75,7 @@ let cachedTreeLock: boolean;
  */
 export function getTree (typeDocJsonPath: string): Promise<TreeNode> {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':getTree', arguments
-    );
+    Library.debug(__filename, ':getTree', arguments);
 
     while (cachedTreeLock) {};
 
@@ -101,9 +98,7 @@ export function getTree (typeDocJsonPath: string): Promise<TreeNode> {
  */
 function readTree (typeDocJsonPath: string): Promise<TreeNode> {
 
-    Config.DEBUG_MODE && Library.info(
-        __filename, ':readTree', arguments
-    );
+    Library.debug(__filename, ':readTree', arguments);
 
     cachedTreeLock = true;
 

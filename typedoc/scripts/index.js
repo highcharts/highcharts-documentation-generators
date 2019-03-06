@@ -10,10 +10,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Config = __importStar(require("./config"));
 var Library = __importStar(require("./library"));
+var Path = __importStar(require("path"));
+var DocumentationGenerator = __importStar(require("./documentation-generator"));
 var NavigationGenerator = __importStar(require("./navigation-generator"));
 var TreeParser = __importStar(require("./tree-parser"));
+/* *
+ *
+ *  Constants
+ *
+ * */
+exports.THEME_DIRECTORY_PATH = Path.join(__dirname, '../theme');
 /* *
  *
  *  Functions
@@ -21,20 +28,14 @@ var TreeParser = __importStar(require("./tree-parser"));
  * */
 /**
  * Starts generator scripts
- *
- * @param inputFilePath
- *        Path to tree file by TypeDoc
- *
- * @param outputPath
- *        Path to output directory by TypeDoc
  */
-function main(inputFilePath, outputPath) {
-    if (inputFilePath === void 0) { inputFilePath = Config.INPUT_FILE_PATH; }
-    if (outputPath === void 0) { outputPath = Config.OUTPUT_PATH; }
-    Config.DEBUG_MODE && Library.info(__filename, ':main', arguments);
-    return TreeParser
-        .getTree(inputFilePath)
-        .then(function (treeNode) { return NavigationGenerator.generate(treeNode, outputPath); });
+function task(tsConfigPath, outputDirectoryPath, outputJsonPath) {
+    Library.debug(__filename, ':main', arguments);
+    return Promise
+        .resolve()
+        .then(function () { return DocumentationGenerator.generate(tsConfigPath, outputDirectoryPath, outputJsonPath); })
+        .then(function () { return TreeParser.getTree(outputJsonPath); })
+        .then(function (treeNode) { return NavigationGenerator.generate(treeNode, outputDirectoryPath); });
 }
-exports.main = main;
-exports.default = main;
+exports.task = task;
+exports.default = task;

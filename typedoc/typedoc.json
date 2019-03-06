@@ -1,0 +1,9 @@
+{
+    "excludePrivate": true,
+    "ignoreCompilerErrors": false,
+    "includeDeclarations": false,
+    "mode": "file",
+    "module": "UMD",
+    "name": "Highcharts",
+    "target": "ES6"
+}
