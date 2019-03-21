@@ -407,12 +407,16 @@ function getLightDoclet (doclet) {
         name: getName(doclet)
     };
 
-    if (typeof doclet.deprecated !== 'undefined') {
+    if (doclet.deprecated === true) {
         lightDoclet.isDeprecated = true;
     }
 
-    if (typeof doclet.optional !== 'undefined') {
+    if (doclet.optional === true) {
         lightDoclet.isOptional = true;
+    }
+
+    if (doclet.readonly === true) {
+        lightDoclet.isReadOnly = true;
     }
 
     if (typeof doclet.defaultvalue !== 'undefined') {
