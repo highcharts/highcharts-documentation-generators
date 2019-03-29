@@ -657,6 +657,13 @@ exports.defineTags = function (dictionary) {
         }
     });
 
+    dictionary.defineTag('private', {
+        mustNotHaveValue: true,
+        onTagged: function (doclet) {
+            doclet.comment = doclet.comment.replace(/@private\s*$/gm, '');
+        }
+    });
+
     dictionary.defineTag('product', {
         onTagged: function (doclet, tagObj) {
             var adds = tagObj.value.split(' ');
