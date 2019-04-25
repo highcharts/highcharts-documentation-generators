@@ -380,7 +380,7 @@ function _inferVersion(node, version) {
         }
     }
     if (!semver.valid(version)) {
-        version = '1.0.0';
+        return;
     }
     if (!node.doclet.since ||
         semver.compare(node.doclet.since, version) < 0
