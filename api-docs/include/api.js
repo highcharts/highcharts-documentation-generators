@@ -98,10 +98,16 @@ hapi.ajax = function(p) {
     return document.createTextNode(text);
   }
 
-  function cr(name, className, inner, asHTML) {
+  function cr(name, props, inner, asHTML) {
     var el = document.createElement(name);
-    if (className) {
-      el.setAttribute('class', className);
+    if (props) {
+      if (typeof props === 'object') {
+        for (var attr in props) {
+          el.setAttribute(attr, props[attr]);
+        }
+      } else {
+        el.setAttribute('class', props);
+      }
     }
     el[asHTML ? 'innerHTML' : 'innerText'] = inner || '';
     return el;
@@ -467,6 +473,21 @@ hapi.ajax = function(p) {
     }
   }
 
+  function getClassReferenceUrl(type) {
+    var url = (
+      (/(?:\<|\, )(Highcharts\..+?)[\,\>]/.exec(type) || [])[1] || type
+    );
+    if (url.indexOf('Highcharts.') !== 0) {
+      return;
+    }
+    if (/(?:Array|Dictionary|Function|Options|String|Type|Value)$/.test(url)) {
+      url = url.replace('Highcharts.', 'Highcharts#.');
+    }
+    return '/class-reference/' + url
+      .replace(/\<.*\>/g, '<T>')
+      .replace(/[^\w\.\#]+|\.\</gi, '_');
+  }
+
   function getSampleList(def) {
     var samples,
       sampleList;
@@ -541,23 +562,11 @@ hapi.ajax = function(p) {
           typeHTMLClass = (
             'type type-' + type.toLowerCase().replace(/[\.\<\>]+/g, '-')
           );
-          typeHTMLPath = (
-            (/(?:\<|\, )(Highcharts\..+?)[\,\>]/.exec(type) || [])[1] || type
-          );
-          if (typeHTMLPath.indexOf('Highcharts.') === 0) {
-              typeHTML = cr('a', typeHTMLClass, type);
-              if (
-                /(?:Array|Dictionary|Function|Options|String|Type|Values)$/
-                .test(typeHTMLPath)
-              ) {
-                typeHTMLPath = typeHTMLPath.replace(
-                  'Highcharts.', 'Highcharts#.'
-                );
-              }
-              typeHTMLPath = typeHTMLPath
-                .replace(/\<.*\>/g, '<T>')
-                .replace(/[^\w\.\#]+|\.\</gi, '_');
-              typeHTML.setAttribute('href', '/class-reference/' + typeHTMLPath);
+          typeHTMLPath = getClassReferenceUrl(type);
+          if (typeHTMLPath) {
+              def.see = (def.see || []);
+              def.see.push(cr('a', { href: typeHTMLPath }, type));
+              typeHTML = cr('a', { 'class': typeHTMLClass, href: typeHTMLPath }, type);
           } else {
               typeHTML = cr('span', typeHTMLClass, type);
           }
@@ -614,9 +623,13 @@ hapi.ajax = function(p) {
         seeList
       );
       def.see.forEach(function (seeItem) {
-        ap(seeList,
-          ap(cr('li', 'see-item', autolinks(seeItem), true))
-        );
+        if (typeof seeItem === 'object') {
+          ap(seeList,
+            ap(cr('li', 'see-item'), seeItem)
+          );
+        } else {
+          ap(seeList, cr('li', 'see-item', autolinks(seeItem), true));
+        }
       });
     }
 
