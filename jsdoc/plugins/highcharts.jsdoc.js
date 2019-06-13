@@ -554,6 +554,38 @@ function removeOption(path) {
 }
 
 /**
+ * Removes empty children of a node.
+ */
+function removeEmptyNodes (node) {
+
+    if (!node.children) {
+        return;
+    }
+
+    const children = node.children;
+    const isRoot = node.children._meta;
+
+    Object
+        .keys(children)
+        .filter(key => key !== '_meta')
+        .forEach(key => {
+            if ((
+                !isRoot
+            ) && (
+                !children[key].doclet ||
+                Object.keys(children[key].doclet).length === 0
+            ) && (
+                !children[key].children ||
+                Object.keys(children[key].children).length === 0
+            )) {
+                delete children[key];
+            } else {
+                removeEmptyNodes(children[key]);
+            }
+        });
+}
+
+/**
  * Resolve properties where the product can be specified like {highcharts|highmaps}
  * etc. Return an object with value and products.
  */
@@ -591,20 +623,22 @@ function sortNodes (node) {
         node.children = childrenReferences;
     }
 
+    const children = node.children;
+
     childrenReferences = {};
 
     Object
-        .keys(node.children)
+        .keys(children)
         .forEach(key => {
-            childrenReferences[key] = node.children[key];
-            delete node.children[key];
+            childrenReferences[key] = children[key];
+            delete children[key];
         });
     Object
         .keys(childrenReferences)
         .sort()
         .forEach(key => {
-            node.children[key] = childrenReferences[key];
-            sortNodes(node.children[key]);
+            children[key] = childrenReferences[key];
+            sortNodes(children[key]);
         });
 }
 
@@ -868,6 +902,7 @@ Highcharts.chart('container', {
 
         Object.keys(options.plotOptions.children).forEach(addSeriesTypeDescription);
 
+        removeEmptyNodes({ children: options });
         sortNodes({ children: options });
         dumpOptions();
     }
