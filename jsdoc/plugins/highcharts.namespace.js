@@ -862,13 +862,23 @@ function updateNodeFor (doclet, overload) {
         oldDoclet = node.doclet,
         oldMeta = node.meta;
 
-    if (overload &&
-        doclet.params &&
-        !isEqual(oldDoclet, newDoclet)
-    ) {
-        node = getNodeFor(name, doclet.params.length);
-        oldDoclet = node.doclet;
-        oldMeta = node.meta;
+    if (overload) {
+        switch (doclet.kind) {
+            case 'function':
+                if (doclet.params &&
+                    !isEqual(oldDoclet, newDoclet)
+                ) {
+                    node = getNodeFor(name, doclet.params.length);
+                    oldDoclet = node.doclet;
+                    oldMeta = node.meta;
+                }
+                break;
+            case 'interface':
+                node = getNodeFor(name);
+                oldDoclet = node.doclet;
+                oldMeta = node.meta;
+                break;
+        }
     }
 
     if (!oldDoclet) {
@@ -1068,7 +1078,7 @@ function addFunction (doclet) {
  */
 function addInterface (doclet) {
 
-    let node = updateNodeFor(doclet),
+    let node = updateNodeFor(doclet, true),
         types = getTypes(doclet);
 
     if (doclet.comment.indexOf('@implements ') > -1) {
