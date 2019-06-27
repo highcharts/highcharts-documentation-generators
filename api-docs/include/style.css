@@ -194,6 +194,7 @@ a:hover {
 
 #page-title {
   float: right;
+  padding: 5px 15px 0 15px;
 }
 
 #page-title h1 {
@@ -201,7 +202,6 @@ a:hover {
   margin: 0;
   font-weight: 300;
   font-size: 20px;
-  padding: 5px 15px 0 15px;
 }
 
 .header .row-2 {
