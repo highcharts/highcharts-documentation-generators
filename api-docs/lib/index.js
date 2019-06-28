@@ -987,6 +987,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 description: node.doclet.description,
                 productdesc: productFilter(node.doclet, 'productdesc', product),
                 samples: productFilter(node.doclet, 'samples', product),
+                typeList: node.doclet.type,
                 children: node.children.map(function (child) {
                     return {
                         name: child.node.meta.name,

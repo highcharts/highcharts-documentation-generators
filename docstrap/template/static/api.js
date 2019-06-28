@@ -558,6 +558,16 @@ hapi.ajax = function(p) {
       titleLink = cr('a');
       titleLink.href = def.fullname + htmlExtension;
       titleText = ap(titleLink, titleText);
+
+      if (def.typeList) {
+        def.typeList.names.forEach(function(type) {
+          typeHTMLPath = getClassReferenceUrl(type);
+          if (typeHTMLPath) {
+            def.see = (def.see || []);
+            def.see.push(cr('a', { href: typeHTMLPath }, type));
+          }
+        });
+      }
     } else {
       if (def.typeList) {
         types = cr('span', 'type-list', ': ');
@@ -748,7 +758,10 @@ hapi.ajax = function(p) {
             'description',
             autolinks(data.description + (data.productdesc ? data.productdesc.value : '')),
             true
-          );
+          ),
+          see,
+          seeList,
+          typeHTMLPath;
 
         if (data.deprecated) {
           deprecated = cr('p', 'deprecated', 'Deprecated');
@@ -767,16 +780,46 @@ hapi.ajax = function(p) {
         clearSearch();
         addClass(target, 'loaded');
 
+        if (data.typeList) {
+            data.typeList.names.forEach(function(type) {
+            typeHTMLPath = getClassReferenceUrl(type);
+            if (typeHTMLPath) {
+                data.see = (data.see || []);
+                data.see.push(cr('a', { href: typeHTMLPath }, type));
+            }
+            });
+        }
+
+        if (data.see) {
+          see = cr('div', 'see');
+          seeList = cr('ul');
+          ap(see,
+            cr('h4', null, 'See also:'),
+            seeList
+          );
+          data.see.forEach(function (seeItem) {
+            if (typeof seeItem === 'object') {
+              ap(seeList,
+                ap(cr('li', 'see-item'), seeItem)
+              );
+            } else {
+              ap(seeList, cr('li', 'see-item', autolinks(seeItem), true));
+            }
+          });
+        }
+
         ap(target,
           ap(optionList,
             ap(option,
               title,
               deprecated,
               description,
-              getSampleList(data)
+              getSampleList(data),
+              see
             )
           )
         );
+
         data.children.forEach(function(def) {
           createOption(optionList, def, state, origState);
         });
@@ -1229,7 +1272,7 @@ hapi.ajax = function(p) {
 
       function addChild(version) {
         var inode = cr('li', 'version'),
-            link = cr('a', '', version)
+          link = cr('a', '', version)
         ;
 
         link.href = '/' + oname + '/' + version;
