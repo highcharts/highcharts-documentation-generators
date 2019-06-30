@@ -682,6 +682,10 @@ function getParameters (doclet) {
         if (item.type) {
             parameters[item.name].types = item.type.names.slice();
         }
+
+        if (item.variable) {
+            parameters[item.name].variable = true;
+        }
     });
 
     return parameters;
