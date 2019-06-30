@@ -684,7 +684,7 @@ function getParameters (doclet) {
         }
 
         if (item.variable) {
-            parameters[item.name].variable = true;
+            parameters[item.name].isVariable = true;
         }
     });
 
