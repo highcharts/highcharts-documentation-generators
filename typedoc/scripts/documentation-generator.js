@@ -29,7 +29,7 @@ function generate(tsConfigPath, outputDirectoryPath, outputJsonPath) {
         '--options', '"' + tdConfigPath + '"',
         '--out', '"' + outputDirectoryPath + '"',
         '--readme', '"README.md"',
-        '--theme', '"' + themeDirectoryPath + '"',
+        // '--theme', '"' + themeDirectoryPath + '"',
         '--tsconfig', '"' + tsConfigPath + '"'
     ].join(' '))
         .then(function () { return undefined; });
