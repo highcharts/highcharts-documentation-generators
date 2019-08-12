@@ -22,7 +22,7 @@
         "mkdirp": "^0.5.1",
         "moment": "^2.24.0",
         "sanitize-html": "^1.20.1",
-        "typedoc": "^0.14.2",
+        "typedoc": "github:highcharts/typedoc#v0.15.0-modified",
         "typescript": "3.4.5",
         "underscore": "^1.9.1",
         "yargs": "^13.2.4"

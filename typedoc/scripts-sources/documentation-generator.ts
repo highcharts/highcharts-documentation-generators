@@ -35,7 +35,7 @@ export function generate (
             '--options', '"' + tdConfigPath + '"',
             '--out', '"' + outputDirectoryPath + '"',
             '--readme', '"README.md"',
-            '--theme', '"' + themeDirectoryPath + '"',
+            // '--theme', '"' + themeDirectoryPath + '"',
             '--tsconfig', '"' + tsConfigPath + '"'
         ].join(' '))
         .then(() => undefined);

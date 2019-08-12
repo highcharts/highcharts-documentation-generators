@@ -1,9 +1,14 @@
 {
+    "excludeExternals": true,
+    "excludeNotExported": true,
     "excludePrivate": true,
+    "excludeProtected": true,
     "ignoreCompilerErrors": false,
     "includeDeclarations": false,
+    "gitRevision": "master",
     "mode": "file",
     "module": "UMD",
-    "name": "Highcharts",
+    "name": "Highcharts API",
+    "plugin": "none",
     "target": "ES6"
 }
