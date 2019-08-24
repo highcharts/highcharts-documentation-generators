@@ -6,7 +6,7 @@ var htmlExtension = ''; // Use .html for local filesystem access
 var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
-if (location.hash) {
+if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
   var hash = location.hash.replace(/^#/, '');
 
   // Options: https://api.highcharts.com/highcharts#title.text
@@ -1272,7 +1272,7 @@ hapi.ajax = function(p) {
 
       function addChild(version) {
         var inode = cr('li', 'version'),
-          link = cr('a', '', version)
+            link = cr('a', '', version)
         ;
 
         link.href = '/' + oname + '/' + version;
