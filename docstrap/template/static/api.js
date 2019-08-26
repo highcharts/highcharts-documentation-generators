@@ -903,8 +903,6 @@ hapi.ajax = function(p) {
       members = [],
       query = '';
 
-    console.log(searchField, searchButton, sideResults, textResults, minLength, maxElements);
-
     if (location.pathname.lastIndexOf('/') <= 0) {
       searchField.focus();
     }
