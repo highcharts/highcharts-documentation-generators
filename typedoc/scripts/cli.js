@@ -10,7 +10,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Library = __importStar(require("./library"));
+const Library = __importStar(require("./library"));
 /* *
  *
  *  Functions

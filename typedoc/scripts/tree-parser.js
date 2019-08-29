@@ -10,8 +10,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Library = __importStar(require("./library"));
-var FS = __importStar(require("fs"));
+const Library = __importStar(require("./library"));
+const FS = __importStar(require("fs"));
 /* *
  *
  *  Variables
@@ -20,11 +20,11 @@ var FS = __importStar(require("fs"));
 /**
  * Parsed tree
  */
-var cachedTree;
+let cachedTree;
 /**
  * Lock for tree loading
  */
-var cachedTreeLock;
+let cachedTreeLock;
 /**
  * Gets the tree file by TypeDoc from cache or current working directory.
  *
@@ -39,7 +39,7 @@ function getTree(typeDocJsonPath) {
         return Promise.resolve(cachedTree);
     }
     else {
-        return readTree(typeDocJsonPath).then(function (readedTree) {
+        return readTree(typeDocJsonPath).then(readedTree => {
             cachedTree = readedTree;
             return cachedTree;
         });
@@ -55,7 +55,7 @@ exports.getTree = getTree;
 function readTree(typeDocJsonPath) {
     Library.debug(__filename, ':readTree', arguments);
     cachedTreeLock = true;
-    return new Promise(function (resolve, reject) { return FS.readFile(typeDocJsonPath, function (error, data) {
+    return new Promise((resolve, reject) => FS.readFile(typeDocJsonPath, (error, data) => {
         cachedTreeLock = false;
         if (error) {
             reject(error);
@@ -63,5 +63,5 @@ function readTree(typeDocJsonPath) {
         else {
             resolve(JSON.parse(data.toString()));
         }
-    }); });
+    }));
 }

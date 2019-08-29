@@ -10,9 +10,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ChildProcess = __importStar(require("child_process"));
-var Path = __importStar(require("path"));
-var Process = __importStar(require("process"));
+const ChildProcess = __importStar(require("child_process"));
+const Path = __importStar(require("path"));
+const Process = __importStar(require("process"));
 /* *
  *
  *  Constants
@@ -41,13 +41,9 @@ exports.PWD = Path.join(__dirname, '../../');
  * @param infos
  *        One or more items with information
  */
-function debug() {
-    var infos = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        infos[_i] = arguments[_i];
-    }
+function debug(...infos) {
     if (exports.DEBUG_MODE) {
-        info.apply(void 0, infos);
+        info(...infos);
     }
 }
 exports.debug = debug;
@@ -60,11 +56,10 @@ exports.debug = debug;
  * @param consoleOutput
  *        True to have console output
  */
-function exec(command, consoleOuput) {
-    if (consoleOuput === void 0) { consoleOuput = true; }
-    return new Promise(function (resolve, reject) {
+function exec(command, consoleOuput = true) {
+    return new Promise((resolve, reject) => {
         info('Command start:', command);
-        var childProcess = ChildProcess.exec(command, function (error, stdout) {
+        const childProcess = ChildProcess.exec(command, (error, stdout) => {
             if (error) {
                 info(error);
                 reject(error);
@@ -74,8 +69,9 @@ function exec(command, consoleOuput) {
                 resolve(stdout);
             }
         });
-        if (consoleOuput) {
-            childProcess.stdout.on('data', function (data) { return process.stdout.write(data); });
+        const stdout = childProcess.stdout;
+        if (consoleOuput && stdout) {
+            stdout.on('data', data => process.stdout.write(data));
         }
     });
 }
@@ -86,11 +82,7 @@ exports.exec = exec;
  * @param infos
  *        One or more items with information
  */
-function info() {
-    var infos = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        infos[_i] = arguments[_i];
-    }
+function info(...infos) {
     Process.stdout.write('\n[' + (new Date()).toTimeString().substr(0, 8) + '] ' +
         infos.join(' ') + '\n');
 }

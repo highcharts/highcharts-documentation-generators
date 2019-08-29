@@ -10,11 +10,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Library = __importStar(require("./library"));
-var Path = __importStar(require("path"));
-var DocumentationGenerator = __importStar(require("./documentation-generator"));
-var NavigationGenerator = __importStar(require("./navigation-generator"));
-var TreeParser = __importStar(require("./tree-parser"));
+const Library = __importStar(require("./library"));
+const Path = __importStar(require("path"));
+const DocumentationGenerator = __importStar(require("./documentation-generator"));
+const NavigationGenerator = __importStar(require("./navigation-generator"));
+const TreeParser = __importStar(require("./tree-parser"));
 /* *
  *
  *  Constants
@@ -33,9 +33,9 @@ function task(tsConfigPath, outputDirectoryPath, outputJsonPath) {
     Library.debug(__filename, ':main', arguments);
     return Promise
         .resolve()
-        .then(function () { return DocumentationGenerator.generate(tsConfigPath, outputDirectoryPath, outputJsonPath); })
-        .then(function () { return TreeParser.getTree(outputJsonPath); })
-        .then(function (treeNode) { return NavigationGenerator.generate(treeNode, outputDirectoryPath); });
+        .then(() => DocumentationGenerator.generate(tsConfigPath, outputDirectoryPath, outputJsonPath))
+        .then(() => TreeParser.getTree(outputJsonPath))
+        .then(treeNode => NavigationGenerator.generate(treeNode, outputDirectoryPath));
 }
 exports.task = task;
 exports.default = task;
