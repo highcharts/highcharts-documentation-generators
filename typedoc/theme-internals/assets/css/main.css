@@ -2021,6 +2021,7 @@ footer {
 .tsd-panel-group {
   margin: 60px 0; }
   .tsd-panel-group > h1, .tsd-panel-group > h2, .tsd-panel-group > h3 {
+    color: #eeeaea;
     padding-left: 20px;
     padding-right: 20px; }
 
