@@ -72,9 +72,10 @@ export function exec (
                 resolve(stdout);
             }
         });
+        const stdout = childProcess.stdout;
 
-        if (consoleOuput) {
-            childProcess.stdout.on('data', data => process.stdout.write(data));
+        if (consoleOuput && stdout) {
+            stdout.on('data', data => process.stdout.write(data));
         }
     });
 }

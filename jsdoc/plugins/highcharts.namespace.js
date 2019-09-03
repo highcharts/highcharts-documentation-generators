@@ -40,7 +40,7 @@ let allDocletPropertyNames = [],
     apiOptionMembers = [],
     currentFilePath = '',
     globalNamespace = {},
-    privateMembers = [];
+    ignoredMembers = [];
 
 /* *
  *
@@ -183,32 +183,32 @@ function isOverload (doclet) {
 }
 
 /**
- * Returns true, if the doclet is part of a private member tree.
+ * Returns true, if the doclet is part of an ignored member tree.
  *
  * @private
- * @function isPrivate
+ * @function isIgnored
  *
  * @param {JSDoclet} doclet
  *        JSDoc doclet to analyze.
  *
  * @return {boolean}
- *         True, if the doclet is a part of a private member tree.
+ *         True, if the doclet is a part of an ignored member tree.
  */
-function isPrivate (doclet) {
+function isIgnored (doclet) {
 
     let name = getName(doclet),
-        isPrivate = (
+        ignore = (
             doclet.ignore ||
             doclet.name[0] === '_' ||
             name.indexOf('~') > -1
         );
-    
-    if (isPrivate) {
-        privateMembers.push(name);
+
+    if (ignore) {
+        ignoredMembers.push(name);
         return true;
     } else {
         // looking for a parent member that is private
-        return privateMembers.some(member => (
+        return ignoredMembers.some(member => (
             name === member || name.indexOf(member + '.') === 0
         ));
     }
@@ -437,7 +437,7 @@ function getLightDoclet (doclet) {
 
     if (isGlobal(doclet)) {
         lightDoclet.isGlobal = true;
-    } else if (isPrivate(doclet)) {
+    } else if (isIgnored(doclet)) {
         lightDoclet.isPrivate = true;
     }
 
@@ -1264,7 +1264,7 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if (isPrivate(doclet) || isUndocumented(doclet)) {
+    if (isIgnored(doclet) || isUndocumented(doclet)) {
         return;
     }
 
@@ -1378,6 +1378,11 @@ exports.defineTags = function (dictionary) {
         }
     })
     .synonym('optionparent');
+
+    dictionary.defineTag('ignore-declaration', {
+        mustNotHaveValue: true,
+        onTagged: (doclet) => doclet.ignore = true
+    });
 
     dictionary.defineTag('private', {
         mustNotHaveValue: true,

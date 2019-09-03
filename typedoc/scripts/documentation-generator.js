@@ -10,8 +10,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Library = __importStar(require("./library"));
-var Path = __importStar(require("path"));
+const Library = __importStar(require("./library"));
+const Path = __importStar(require("path"));
 /* *
  *
  *  Functions
@@ -19,8 +19,8 @@ var Path = __importStar(require("path"));
  * */
 function generate(tsConfigPath, outputDirectoryPath, outputJsonPath) {
     Library.debug(__filename, ':generator', arguments);
-    var tdConfigPath = Path.relative(Library.CWD, Path.join(__dirname, '../typedoc.json'));
-    var themeDirectoryPath = Path.relative(Library.CWD, Path.join(__dirname, '../theme'));
+    const tdConfigPath = Path.relative(Library.CWD, Path.join(__dirname, '../typedoc.json'));
+    const themeDirectoryPath = Path.relative(Library.CWD, Path.join(__dirname, '../theme'));
     return Library
         .exec([
         'npx',
@@ -32,6 +32,6 @@ function generate(tsConfigPath, outputDirectoryPath, outputJsonPath) {
         // '--theme', '"' + themeDirectoryPath + '"',
         '--tsconfig', '"' + tsConfigPath + '"'
     ].join(' '))
-        .then(function () { return undefined; });
+        .then(() => undefined);
 }
 exports.generate = generate;
