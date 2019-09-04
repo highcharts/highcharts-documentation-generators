@@ -326,9 +326,11 @@ hapi.ajax = function(p) {
         'span',
         'default type-' + (
           defined(def.default, true) &&
-          def.typeList && def.typeList.names ?
-          def.typeList.names[0].toLowerCase().replace(/[\.\<\>]+/g, '-') :
-          'undefined'
+          def.typeList &&
+          def.typeList.names &&
+          def.typeList.names[0] ?
+            def.typeList.names[0].toLowerCase().replace(/[\.\<\>]+/g, '-') :
+            'undefined'
         ),
         getDefault(def),
         true
