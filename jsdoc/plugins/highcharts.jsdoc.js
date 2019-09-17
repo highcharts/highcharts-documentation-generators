@@ -793,7 +793,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('internal', {
         onTagged: function (doclet, tagObj) {
-            doclet.ignored = true;
+            doclet.internal = true;
         }
     });
 
