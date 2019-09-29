@@ -20,6 +20,9 @@ class JSONUtilities {
      *  Static Functions
      *
      * */
+    static parse(str) {
+        return JSON.parse(str);
+    }
     static stringify(obj) {
         const jsonUtilities = new JSONUtilities();
         try {

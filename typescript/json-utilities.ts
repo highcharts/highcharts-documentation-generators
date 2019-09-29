@@ -12,6 +12,10 @@ export class JSONUtilities {
      *
      * */
 
+    public static parse (str: string): object {
+        return JSON.parse(str);
+    }
+
     public static stringify (obj: object): string {
         const jsonUtilities = new JSONUtilities();
         try {

@@ -12,7 +12,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = __importStar(require("path"));
 const typescript = __importStar(require("typescript"));
 class SourceParser {
     /* *
@@ -21,13 +20,19 @@ class SourceParser {
      *
      * */
     constructor(sourceDirectoryPath) {
-        const tsConfig = typescript.readJsonConfigFile(path.join(sourceDirectoryPath, 'tsconfig.json'), typescript.sys.readFile);
+        const tsConfig = typescript.readJsonConfigFile(typescript.sys.resolvePath(sourceDirectoryPath + '/tsconfig.json'), typescript.sys.readFile);
         const commandLine = typescript.parseJsonConfigFileContent(tsConfig, typescript.sys, sourceDirectoryPath);
         this._sourceDirectoryPath = sourceDirectoryPath;
         this._typescript = typescript.createProgram(commandLine.fileNames, commandLine.options);
     }
-    get sourceDirectoryPath() {
-        return this._sourceDirectoryPath;
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    static parse(sourceDirectoryPath) {
+        const sourceParser = new SourceParser(sourceDirectoryPath);
+        return sourceParser.toAST();
     }
     /* *
      *

@@ -5,9 +5,9 @@
  * */
 import * as typescript from 'typescript';
 export declare class SourceParser {
-    constructor(sourceDirectoryPath: string);
+    static parse(sourceDirectoryPath: string): Array<typescript.SourceFile>;
+    private constructor();
     private _sourceDirectoryPath;
     private _typescript;
-    readonly sourceDirectoryPath: string;
-    toAST(): Array<typescript.SourceFile>;
+    private toAST;
 }
