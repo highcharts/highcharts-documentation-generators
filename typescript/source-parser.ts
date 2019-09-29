@@ -1,6 +1,8 @@
-/*
- * Copyright (C) Highsoft AS
- */
+/*!*
+ *
+ *  Copyright (C) Highsoft AS
+ *
+ * */
 
 import * as path from 'path';
 import * as typescript from 'typescript';
@@ -21,7 +23,7 @@ export class SourceParser {
         const commandLine = typescript.parseJsonConfigFileContent(
             tsConfig,
             typescript.sys,
-            __dirname
+            sourceDirectoryPath
         );
 
         this._sourceDirectoryPath = sourceDirectoryPath;
@@ -51,6 +53,11 @@ export class SourceParser {
      * */
 
     public toAST (): Array<typescript.SourceFile> {
-        return this._typescript.getSourceFiles().slice();
+        const sourceDirectoryPath = this._sourceDirectoryPath;
+        return this._typescript
+            .getSourceFiles()
+            .filter(function (sourceFile: typescript.SourceFile): boolean {
+                return sourceFile.fileName.startsWith(sourceDirectoryPath)
+            });
     }
 }
