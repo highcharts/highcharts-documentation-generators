@@ -4,3 +4,4 @@
  *
  * */
 export * from './source-parser';
+export * from './utilities';
