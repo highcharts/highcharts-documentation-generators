@@ -36,6 +36,7 @@
         "docstrap",
         "jsdoc",
         "typedoc",
+        "typescript",
         "index.js",
         "LICENSE.md",
         "README.md"
