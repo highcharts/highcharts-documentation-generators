@@ -11,3 +11,4 @@ export declare class JSONUtilities {
     private dispose;
     private filter;
 }
+export default JSONUtilities;

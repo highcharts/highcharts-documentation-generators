@@ -1,71 +1,49 @@
+"use strict";
 /*!*
  *
  *  Copyright (C) Highsoft AS
  *
  * */
-
-export class JSONUtilities {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    public static parse (str: string): object {
-        return JSON.parse(str);
-    }
-
-    public static stringify (obj: object): string {
-        const jsonUtilities = new JSONUtilities();
-        try {
-            return JSON.stringify(
-                obj,
-                jsonUtilities.filter,
-                '\t'
-            );
-        }
-        finally {
-            jsonUtilities.dispose();
-        }
-    }
-
+Object.defineProperty(exports, "__esModule", { value: true });
+class JSONUtilities {
     /* *
      *
      *  Constructor
      *
      * */
-
-    private constructor () {
+    constructor() {
         this._memberReferences = [];
         this.filter = this.filter.bind(this);
     }
-
     /* *
      *
-     *  Properties
+     *  Static Functions
      *
      * */
-
-    private _memberReferences: Array<unknown>;
-
+    static parse(str) {
+        return JSON.parse(str);
+    }
+    static stringify(obj) {
+        const jsonUtilities = new JSONUtilities();
+        try {
+            return JSON.stringify(obj, jsonUtilities.filter, '\t');
+        }
+        finally {
+            jsonUtilities.dispose();
+        }
+    }
     /* *
      *
      *  Functions
      *
      * */
-
-    private dispose(): void {
-
+    dispose() {
         this._memberReferences.length = 0;
     }
-
-    private filter<T>(key: string, member: T): (T|undefined) {
-
+    filter(key, member) {
         if (!member) {
             return member;
         }
-
         switch (typeof member) {
             default:
                 break;
@@ -76,7 +54,8 @@ export class JSONUtilities {
                 }
                 memberReferences.push(member);
         }
-
         return member;
     }
 }
+exports.JSONUtilities = JSONUtilities;
+exports.default = JSONUtilities;

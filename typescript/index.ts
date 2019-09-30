@@ -1,8 +1,3 @@
-/*!*
- *
- *  Copyright (C) Highsoft AS
- *
- * */
-
-export * from './source-parser';
-export * from './json-utilities';
+export * from './members';
+export * from './Project';
+export * from './JSONUtilities';
