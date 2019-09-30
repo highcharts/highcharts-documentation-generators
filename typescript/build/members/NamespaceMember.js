@@ -24,6 +24,9 @@ class NamespaceMember extends Member_1.default {
      *  Functions
      *
      * */
+    getChildren() {
+        return [];
+    }
     loadNode(node, isTest = false) {
         if (!typescript_1.default.isBlock(node) &&
             !typescript_1.default.isModuleBlock(node) &&
@@ -34,6 +37,28 @@ class NamespaceMember extends Member_1.default {
             this._node = node;
         }
         return true;
+    }
+    toJSON() {
+        const node = this._node;
+        if (typeof node === 'undefined') {
+            return;
+        }
+        if (typescript_1.default.isBlock(node)) {
+            return {
+                children: this.getChildren(),
+                name: node.getSourceFile.name
+            };
+        }
+        if (typescript_1.default.isModuleBlock(node)) {
+            return {
+                children: this.getChildren(),
+                name: node.parent.name
+            };
+        }
+        return {
+            children: this.getChildren(),
+            name: node.moduleName,
+        };
     }
 }
 exports.NamespaceMember = NamespaceMember;

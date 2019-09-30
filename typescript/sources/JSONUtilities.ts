@@ -17,7 +17,9 @@ export class JSONUtilities {
     }
 
     public static stringify (obj: object): string {
+
         const jsonUtilities = new JSONUtilities();
+
         try {
             return JSON.stringify(
                 obj,
@@ -37,7 +39,9 @@ export class JSONUtilities {
      * */
 
     private constructor () {
+
         this._memberReferences = [];
+
         this.filter = this.filter.bind(this);
     }
 
@@ -56,7 +60,6 @@ export class JSONUtilities {
      * */
 
     private dispose(): void {
-
         this._memberReferences.length = 0;
     }
 

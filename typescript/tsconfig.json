@@ -4,10 +4,12 @@
         "esModuleInterop": true,
         "noEmitOnError": true,
         "strict": true,
-        "target": "es6",
-        "module": "commonjs"
+        "strictNullChecks": true,
+        "module": "commonjs",
+        "outDir": "build",
+        "target": "es6"
     },
     "include": [
-        "**/*.ts"
+        "sources/**/*.ts"
     ]
 }
