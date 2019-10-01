@@ -4,7 +4,6 @@
  *
  * */
 export interface JSONNode {
-    getChildren(): Array<JSONNode>;
-    toJSON(): (boolean | number | object | string | null | undefined);
+    children: Array<JSONNode>;
 }
 export default JSONNode;

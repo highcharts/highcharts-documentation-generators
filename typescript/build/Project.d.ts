@@ -3,15 +3,22 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import JSONNode from './JSONNode';
-import ModuleMember from './Members/ModuleMember';
-export declare class Project implements JSONNode {
-    static loadFromArguments(args: Array<string>): Project;
-    static loadFromDirectory(directoryPath: string): Project;
-    private constructor();
+import * as M from './Members/index';
+import TS from 'typescript';
+export declare class Project {
+    private static childrenJSONMapper;
+    constructor(program: TS.Program);
     private _directoryPath;
     private _program;
-    getChildren(): Array<ModuleMember>;
-    toJSON(): object;
+    directoryPath: string;
+    readonly program: TS.Program;
+    getChildren(): Array<M.FileMember>;
+    getChildrenJSON(): Array<M.FileMemberJSON>;
+    toJSON(): ProjectJSON;
+}
+export interface ProjectJSON extends M.MemberJSON {
+    children: Array<M.FileMemberJSON>;
+    kind: 'project';
+    path: string;
 }
 export default Project;

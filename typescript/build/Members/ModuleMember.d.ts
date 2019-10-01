@@ -3,9 +3,13 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+import * as M from './Member';
 import TS from 'typescript';
-import Member from '../Member';
-export declare class ModuleMember extends Member<(TS.ModuleDeclaration | TS.SourceFile)> {
-    toJSON(): (object | undefined);
+export declare class ModuleMember extends M.Member<TS.ModuleDeclaration> {
+    toJSON(): ModuleMemberJSON;
+}
+export interface ModuleMemberJSON extends M.MemberJSON {
+    kind: 'module';
+    name: string;
 }
 export default ModuleMember;

@@ -3,9 +3,12 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+import * as M from './Member';
 import TS from 'typescript';
-import Member from '../Member';
-export declare class BlockMember extends Member<(TS.Block | TS.ModuleBlock)> {
-    toJSON(): (object | undefined);
+export declare class BlockMember extends M.Member<(TS.Block | TS.ModuleBlock)> {
+    toJSON(): BlockMemberJSON;
+}
+export interface BlockMemberJSON extends M.MemberJSON {
+    kind: 'block';
 }
 export default BlockMember;

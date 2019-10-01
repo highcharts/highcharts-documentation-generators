@@ -11,9 +11,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = __importStar(require("./Member"));
-class ModuleMember extends M.Member {
+const typescript_1 = __importDefault(require("typescript"));
+class FileMember extends M.Member {
     /* *
      *
      *  Functions
@@ -23,11 +27,11 @@ class ModuleMember extends M.Member {
         const superJSON = super.toJSON();
         return {
             children: superJSON.children,
-            kind: 'module',
+            kind: 'file',
             kindID: superJSON.kindID,
-            name: this.node.name.text
+            path: typescript_1.default.sys.resolvePath(this.node.fileName)
         };
     }
 }
-exports.ModuleMember = ModuleMember;
-exports.default = ModuleMember;
+exports.FileMember = FileMember;
+exports.default = FileMember;

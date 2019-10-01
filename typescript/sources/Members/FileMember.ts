@@ -7,7 +7,7 @@
 import * as M from './Member';
 import TS from 'typescript';
 
-export class ModuleMember extends M.Member<TS.ModuleDeclaration> {
+export class FileMember extends M.Member<TS.SourceFile> {
 
     /* *
      *
@@ -15,22 +15,22 @@ export class ModuleMember extends M.Member<TS.ModuleDeclaration> {
      *
      * */
 
-    public toJSON(): ModuleMemberJSON {
+    public toJSON(): FileMemberJSON {
 
         const superJSON = super.toJSON();
 
         return {
             children: superJSON.children,
-            kind: 'module',
+            kind: 'file',
             kindID: superJSON.kindID,
-            name: this.node.name.text
+            path: TS.sys.resolvePath(this.node.fileName)
         };
     }
 }
 
-export interface ModuleMemberJSON extends M.MemberJSON {
-    kind: 'module';
-    name: string;
+export interface FileMemberJSON extends M.MemberJSON {
+    kind: 'file';
+    path: string;
 }
 
-export default ModuleMember;
+export default FileMember;

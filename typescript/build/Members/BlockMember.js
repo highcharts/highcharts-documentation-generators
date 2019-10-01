@@ -4,25 +4,27 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Member_1 = __importDefault(require("../Member"));
-class BlockMember extends Member_1.default {
+const M = __importStar(require("./Member"));
+class BlockMember extends M.Member {
     /* *
      *
      *  Functions
      *
      * */
     toJSON() {
-        const node = this.node;
-        if (typeof node === 'undefined') {
-            return;
-        }
+        const superJSON = super.toJSON();
         return {
-            children: this.getChildren(),
-            kind: 'block'
+            children: superJSON.children,
+            kind: 'block',
+            kindID: superJSON.kindID
         };
     }
 }

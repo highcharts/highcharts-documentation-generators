@@ -4,11 +4,10 @@
  *
  * */
 
+import * as M from './Members/index';
 import TS from 'typescript';
-import JSONNode from './JSONNode';
-import ModuleMember from './Members/ModuleMember';
 
-export class Project implements JSONNode {
+export class Project {
 
     /* *
      *
@@ -16,24 +15,10 @@ export class Project implements JSONNode {
      *
      * */
 
-    public static loadFromArguments(args: Array<string>): Project {
-        return new Project(TS.parseCommandLine(args), process.cwd());
-    }
-
-    public static loadFromDirectory(directoryPath: string): Project {
-
-        const tsConfig = TS.readJsonConfigFile(
-            TS.sys.resolvePath(directoryPath),
-            TS.sys.readFile
-        );
-
-        const parsedCommandLine = TS.parseJsonConfigFileContent(
-            tsConfig,
-            TS.sys,
-            directoryPath
-        );
-
-        return new Project(parsedCommandLine, directoryPath);
+    private static childrenJSONMapper(
+        child: M.FileMember
+    ): M.FileMemberJSON {
+        return child.toJSON();
     }
 
     /* *
@@ -42,17 +27,8 @@ export class Project implements JSONNode {
      *
      * */
 
-    private constructor (
-        parsedCommandLine: TS.ParsedCommandLine,
-        directoryPath: string
-    ) {
-
-        this._directoryPath = (directoryPath || process.cwd());
-
-        this._program = TS.createProgram(
-            parsedCommandLine.fileNames,
-            parsedCommandLine.options
-        );
+    public constructor (program: TS.Program) {
+        this._program = program;
     }
 
     /* *
@@ -61,8 +37,21 @@ export class Project implements JSONNode {
      *
      * */
 
-    private _directoryPath: string;
+    private _directoryPath: (string|undefined);
     private _program: TS.Program;
+
+    public get directoryPath(): string {
+        return (this._directoryPath || '');
+    }
+    public set directoryPath(value: string) {
+        if (typeof this._directoryPath === 'undefined') {
+            this._directoryPath = value;
+        }
+    }
+
+    public get program(): TS.Program {
+        return this._program;
+    }
 
     /* *
      *
@@ -70,29 +59,50 @@ export class Project implements JSONNode {
      *
      * */
 
-    public getChildren(): Array<ModuleMember> {
+    public getChildren(): Array<M.FileMember> {
 
-        const directoryPath = this._directoryPath;
-        const memberChildren: Array<ModuleMember> = [];
-        const nodeChildren = this._program.getSourceFiles();
+        const children: Array<M.FileMember> = [];
+        const directoryPath = this.directoryPath;
+        const fileNodes = this.program.getSourceFiles();
 
-        for (let nodeChild of nodeChildren) {
-            if (nodeChild.fileName.startsWith(directoryPath)) {
-                memberChildren.push(new ModuleMember(nodeChild));
+        let child: (M.FileMember|undefined);
+
+        for (let fileNode of fileNodes) {
+
+            if (!fileNode.fileName.startsWith(directoryPath)) {
+                continue;
+            }
+
+            child = new M.FileMember(fileNode);
+
+            if (typeof child !== 'undefined') {
+                children.push(child);
             }
         }
 
-        return memberChildren;
+        return children;
     }
 
-    public toJSON(): object {
+    public getChildrenJSON(): Array<M.FileMemberJSON> {
+        return this
+            .getChildren()
+            .map(Project.childrenJSONMapper);
+    }
 
+    public toJSON(): ProjectJSON {
         return {
-            children: this.getChildren(),
+            children: this.getChildrenJSON(),
             kind: 'project',
-            path: this._directoryPath
-        }
+            kindID: TS.SyntaxKind.Unknown,
+            path: this.directoryPath
+        };
     }
+}
+
+export interface ProjectJSON extends M.MemberJSON {
+    children: Array<M.FileMemberJSON>;
+    kind: 'project';
+    path: string;
 }
 
 export default Project;

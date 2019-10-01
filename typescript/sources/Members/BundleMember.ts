@@ -7,7 +7,7 @@
 import * as M from './Member';
 import TS from 'typescript';
 
-export class BlockMember extends M.Member<(TS.Block|TS.ModuleBlock)> {
+export class BundleMember extends M.Member<TS.Bundle> {
 
     /* *
      *
@@ -15,20 +15,20 @@ export class BlockMember extends M.Member<(TS.Block|TS.ModuleBlock)> {
      *
      * */
 
-    public toJSON(): BlockMemberJSON {
+    public toJSON(): BundleMemberJSON {
 
         const superJSON = super.toJSON();
 
         return {
             children: superJSON.children,
-            kind: 'block',
+            kind: 'bundle',
             kindID: superJSON.kindID
         }
     }
 }
 
-export interface BlockMemberJSON extends M.MemberJSON {
-    kind: 'block';
+export interface BundleMemberJSON extends M.MemberJSON {
+    kind: 'bundle';
 }
 
-export default BlockMember;
+export default BundleMember;
