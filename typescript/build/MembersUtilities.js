@@ -51,8 +51,15 @@ class MembersUtilities {
         if (typescript_1.default.isBlock(node) || typescript_1.default.isModuleBlock(node)) {
             return new M.BlockMember(sourceFile, node);
         }
-        return new M.Member(sourceFile, node, true);
+        return new M.Member(sourceFile, node, false);
     }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor() { }
+    ;
 }
 exports.MembersUtilities = MembersUtilities;
 exports.default = MembersUtilities;

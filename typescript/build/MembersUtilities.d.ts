@@ -10,5 +10,6 @@ export declare class MembersUtilities {
     static loadFromArguments(args: Array<string>): Project;
     static loadFromDirectory(directoryPath: string): Project;
     static loadFromNode(sourceFile: TS.SourceFile, node: TS.Node): M.Member;
+    private constructor();
 }
 export default MembersUtilities;

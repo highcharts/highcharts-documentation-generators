@@ -7,3 +7,5 @@ __export(require("./JSONUtilities"));
 __export(require("./Members/index"));
 __export(require("./MembersUtilities"));
 __export(require("./Project"));
+__export(require("./Types/index"));
+__export(require("./TypesUtilities"));

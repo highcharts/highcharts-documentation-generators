@@ -31,7 +31,7 @@ export class Member<TNode extends TS.Node = TS.Node> {
         node: TNode,
         isNotSupported: boolean = false
     ) {
-        this._isNotSupported = isNotSupported;
+        this._isSupported = (isNotSupported === false);
         this._node = node;
         this._sourceFile = sourceFile;
     }
@@ -42,12 +42,12 @@ export class Member<TNode extends TS.Node = TS.Node> {
      *
      * */
 
-    private _isNotSupported: boolean;
+    private _isSupported: boolean;
     private _node: TNode;
     private _sourceFile: TS.SourceFile;
 
-    protected get isNotSupported(): boolean {
-        return this._isNotSupported;
+    public get isSupported(): boolean {
+        return this._isSupported;
     }
 
     protected get node(): TNode {
@@ -70,16 +70,16 @@ export class Member<TNode extends TS.Node = TS.Node> {
         const nodeChildren = this.node.getChildren(sourceFile);
         const memberChildren: Array<Member> = [];
 
-        let memberChild: (Member|undefined);
+        let memberChild: Member;
 
         for (let nodeChild of nodeChildren) {
 
             memberChild = MembersUtilities.loadFromNode(sourceFile, nodeChild);
 
-            if (memberChild.isNotSupported) {
-                memberChildren.push(...memberChild.getChildren());
-            } else {
+            if (memberChild.isSupported) {
                 memberChildren.push(memberChild);
+            } else {
+                memberChildren.push(...memberChild.getChildren());
             }
         }
 
@@ -95,9 +95,13 @@ export class Member<TNode extends TS.Node = TS.Node> {
     public toJSON(): MemberJSON {
         return {
             children: this.getChildrenJSON(),
-            kind: '',
+            kind: this.toString(),
             kindID: this.node.kind
         };
+    }
+
+    public toString(): string {
+        return '';
     }
 }
 
