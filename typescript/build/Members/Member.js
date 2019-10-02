@@ -15,7 +15,8 @@ class Member {
      *  Constructor
      *
      * */
-    constructor(sourceFile, node) {
+    constructor(sourceFile, node, isNotSupported = false) {
+        this._isNotSupported = isNotSupported;
         this._node = node;
         this._sourceFile = sourceFile;
     }
@@ -26,6 +27,9 @@ class Member {
      * */
     static childrenJSONMapper(child) {
         return child.toJSON();
+    }
+    get isNotSupported() {
+        return this._isNotSupported;
     }
     get node() {
         return this._node;
@@ -45,7 +49,10 @@ class Member {
         let memberChild;
         for (let nodeChild of nodeChildren) {
             memberChild = MembersUtilities_1.default.loadFromNode(sourceFile, nodeChild);
-            if (typeof memberChild !== 'undefined') {
+            if (memberChild.isNotSupported) {
+                memberChildren.push(...memberChild.getChildren());
+            }
+            else {
                 memberChildren.push(memberChild);
             }
         }

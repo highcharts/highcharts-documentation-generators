@@ -5,13 +5,6 @@
  * */
 
 export interface JSONNode {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
     children: Array<JSONNode>;
 }
 

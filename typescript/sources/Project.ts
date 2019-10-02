@@ -79,18 +79,18 @@ export class Project {
 
     public getSourceFiles(): Array<TS.SourceFile> {
 
-        const filteredSourceFile: Array<TS.SourceFile> = [];
+        const filteredSourceFiles: Array<TS.SourceFile> = [];
         const directoryPath = this.directoryPath;
         const sourceFiles = this.program.getSourceFiles();
 
         for (let fileNode of sourceFiles) {
 
             if (fileNode.fileName.startsWith(directoryPath)) {
-                filteredSourceFile.push(fileNode);
+                filteredSourceFiles.push(fileNode);
             }
         }
 
-        return filteredSourceFile;
+        return filteredSourceFiles;
     }
 
     public toJSON(): ProjectJSON {

@@ -64,15 +64,15 @@ class Project {
             .map(Project.childrenJSONMapper);
     }
     getSourceFiles() {
-        const filteredSourceFile = [];
+        const filteredSourceFiles = [];
         const directoryPath = this.directoryPath;
         const sourceFiles = this.program.getSourceFiles();
         for (let fileNode of sourceFiles) {
             if (fileNode.fileName.startsWith(directoryPath)) {
-                filteredSourceFile.push(fileNode);
+                filteredSourceFiles.push(fileNode);
             }
         }
-        return filteredSourceFile;
+        return filteredSourceFiles;
     }
     toJSON() {
         return {

@@ -78,7 +78,7 @@ export class MembersUtilities {
             return new M.BlockMember(sourceFile, node);
         }
 
-        return new M.Member(sourceFile, node);
+        return new M.Member(sourceFile, node, true);
     }
 }
 

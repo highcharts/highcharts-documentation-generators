@@ -21,11 +21,7 @@ export class JSONUtilities {
         const jsonUtilities = new JSONUtilities();
 
         try {
-            return JSON.stringify(
-                obj,
-                jsonUtilities.filter,
-                '\t'
-            );
+            return JSON.stringify(obj, jsonUtilities.filter, '\t');
         }
         finally {
             jsonUtilities.dispose();

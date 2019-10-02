@@ -26,7 +26,12 @@ export class Member<TNode extends TS.Node = TS.Node> {
      *
      * */
 
-    public constructor (sourceFile: TS.SourceFile, node: TNode) {
+    public constructor (
+        sourceFile: TS.SourceFile,
+        node: TNode,
+        isNotSupported: boolean = false
+    ) {
+        this._isNotSupported = isNotSupported;
         this._node = node;
         this._sourceFile = sourceFile;
     }
@@ -37,8 +42,13 @@ export class Member<TNode extends TS.Node = TS.Node> {
      *
      * */
 
+    private _isNotSupported: boolean;
     private _node: TNode;
     private _sourceFile: TS.SourceFile;
+
+    protected get isNotSupported(): boolean {
+        return this._isNotSupported;
+    }
 
     protected get node(): TNode {
         return this._node;
@@ -66,7 +76,9 @@ export class Member<TNode extends TS.Node = TS.Node> {
 
             memberChild = MembersUtilities.loadFromNode(sourceFile, nodeChild);
 
-            if (typeof memberChild !== 'undefined') {
+            if (memberChild.isNotSupported) {
+                memberChildren.push(...memberChild.getChildren());
+            } else {
                 memberChildren.push(memberChild);
             }
         }
