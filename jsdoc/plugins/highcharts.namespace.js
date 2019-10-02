@@ -657,11 +657,15 @@ function getNodeFor (name, overload, searchOnly) {
  */
 function getParameters (doclet) {
 
-    if (!doclet.params) {
+    if (!doclet.params && !doclet.this) {
         return undefined;
     }
 
     let parameters = {};
+
+    if (doclet.this) {
+        parameters['this'] = { types: [ doclet.this ] };
+    }
 
     (doclet.params || []).forEach(item => {
 

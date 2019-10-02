@@ -36,6 +36,7 @@
         "docstrap",
         "jsdoc",
         "typedoc",
+        "typescript",
         "index.js",
         "LICENSE.md",
         "README.md"
@@ -47,6 +48,7 @@
     "main": "index.js",
     "scripts": {
         "build": "npm run build-1",
-        "build-1": "tsc --build typedoc"
+        "build-1": "tsc --build typedoc typescript",
+        "watch": "npm run build-1 -- --watch"
     }
 }

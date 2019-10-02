@@ -4,5 +4,6 @@
 
 module.exports = {
     ApiDocs: require('./api-docs/lib/index.js'),
-    TypeDoc: require('./typedoc/scripts/index.js')
+    TypeDoc: require('./typedoc/scripts/index.js'),
+    TypeScript: require('./typescript/build/index.js')
 };

@@ -416,14 +416,20 @@ function _inferType(node) {
     // remove JSDoc specific flag
     delete node.doclet.undocumented;
 
-    if (typeof node.doclet.type !== 'undefined') {
+    if (
+        typeof node.doclet.extends !== 'undefined' ||
+        typeof node.doclet.type !== 'undefined'
+    ) {
         // We allready have a type, so no infering is required
         return;
     }
 
     defVal = node.doclet.defaultvalue;
 
-    if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
+    if (
+        typeof node.meta.default !== 'undefined' &&
+        typeof node.doclet.defaultvalue === 'undefined'
+    ) {
         defVal = node.meta.default;
     }
 
