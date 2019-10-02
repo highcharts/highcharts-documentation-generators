@@ -9,6 +9,6 @@ import TS from 'typescript';
 export declare class MembersUtilities {
     static loadFromArguments(args: Array<string>): Project;
     static loadFromDirectory(directoryPath: string): Project;
-    static loadFromNode(node: TS.Node): M.Member;
+    static loadFromNode(sourceFile: TS.SourceFile, node: TS.Node): M.Member;
 }
 export default MembersUtilities;

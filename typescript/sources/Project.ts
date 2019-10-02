@@ -21,6 +21,12 @@ export class Project {
         return child.toJSON();
     }
 
+    private static childrenFileMemberMapper(
+        child: TS.SourceFile
+    ): M.FileMember {
+        return new M.FileMember(child);
+    }
+
     /* *
      *
      *  Constructor
@@ -60,33 +66,31 @@ export class Project {
      * */
 
     public getChildren(): Array<M.FileMember> {
-
-        const children: Array<M.FileMember> = [];
-        const directoryPath = this.directoryPath;
-        const fileNodes = this.program.getSourceFiles();
-
-        let child: (M.FileMember|undefined);
-
-        for (let fileNode of fileNodes) {
-
-            if (!fileNode.fileName.startsWith(directoryPath)) {
-                continue;
-            }
-
-            child = new M.FileMember(fileNode);
-
-            if (typeof child !== 'undefined') {
-                children.push(child);
-            }
-        }
-
-        return children;
+        return this
+            .getSourceFiles()
+            .map(Project.childrenFileMemberMapper);
     }
 
     public getChildrenJSON(): Array<M.FileMemberJSON> {
         return this
             .getChildren()
             .map(Project.childrenJSONMapper);
+    }
+
+    public getSourceFiles(): Array<TS.SourceFile> {
+
+        const filteredSourceFile: Array<TS.SourceFile> = [];
+        const directoryPath = this.directoryPath;
+        const sourceFiles = this.program.getSourceFiles();
+
+        for (let fileNode of sourceFiles) {
+
+            if (fileNode.fileName.startsWith(directoryPath)) {
+                filteredSourceFile.push(fileNode);
+            }
+        }
+
+        return filteredSourceFile;
     }
 
     public toJSON(): ProjectJSON {

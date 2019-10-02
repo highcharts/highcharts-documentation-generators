@@ -35,23 +35,23 @@ class MembersUtilities {
         project.directoryPath = directoryPath;
         return project;
     }
-    static loadFromNode(node) {
+    static loadFromNode(sourceFile, node) {
         if (typescript_1.default.isBundle(node)) {
-            return new M.BundleMember(node);
+            return new M.BundleMember(sourceFile, node);
         }
         if (typescript_1.default.isSourceFile(node)) {
             return new M.FileMember(node);
         }
         if (typescript_1.default.isModuleDeclaration(node)) {
-            return new M.ModuleMember(node);
+            return new M.ModuleMember(sourceFile, node);
         }
         if (typescript_1.default.isExportAssignment(node) || typescript_1.default.isExportDeclaration(node)) {
-            return new M.ExportMember(node);
+            return new M.ExportMember(sourceFile, node);
         }
         if (typescript_1.default.isBlock(node) || typescript_1.default.isModuleBlock(node)) {
-            return new M.BlockMember(node);
+            return new M.BlockMember(sourceFile, node);
         }
-        return new M.Member(node);
+        return new M.Member(sourceFile, node);
     }
 }
 exports.MembersUtilities = MembersUtilities;

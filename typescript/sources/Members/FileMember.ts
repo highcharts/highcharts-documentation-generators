@@ -11,6 +11,16 @@ export class FileMember extends M.Member<TS.SourceFile> {
 
     /* *
      *
+     *  Constructor
+     *
+     * */
+
+    public constructor (node: TS.SourceFile) {
+        super(node, node);
+    }
+
+    /* *
+     *
      *  Functions
      *
      * */

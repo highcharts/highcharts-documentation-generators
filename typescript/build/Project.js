@@ -34,6 +34,9 @@ class Project {
     static childrenJSONMapper(child) {
         return child.toJSON();
     }
+    static childrenFileMemberMapper(child) {
+        return new M.FileMember(child);
+    }
     get directoryPath() {
         return (this._directoryPath || '');
     }
@@ -51,25 +54,25 @@ class Project {
      *
      * */
     getChildren() {
-        const children = [];
-        const directoryPath = this.directoryPath;
-        const fileNodes = this.program.getSourceFiles();
-        let child;
-        for (let fileNode of fileNodes) {
-            if (!fileNode.fileName.startsWith(directoryPath)) {
-                continue;
-            }
-            child = new M.FileMember(fileNode);
-            if (typeof child !== 'undefined') {
-                children.push(child);
-            }
-        }
-        return children;
+        return this
+            .getSourceFiles()
+            .map(Project.childrenFileMemberMapper);
     }
     getChildrenJSON() {
         return this
             .getChildren()
             .map(Project.childrenJSONMapper);
+    }
+    getSourceFiles() {
+        const filteredSourceFile = [];
+        const directoryPath = this.directoryPath;
+        const sourceFiles = this.program.getSourceFiles();
+        for (let fileNode of sourceFiles) {
+            if (fileNode.fileName.startsWith(directoryPath)) {
+                filteredSourceFile.push(fileNode);
+            }
+        }
+        return filteredSourceFile;
     }
     toJSON() {
         return {

@@ -20,6 +20,14 @@ const typescript_1 = __importDefault(require("typescript"));
 class FileMember extends M.Member {
     /* *
      *
+     *  Constructor
+     *
+     * */
+    constructor(node) {
+        super(node, node);
+    }
+    /* *
+     *
      *  Functions
      *
      * */

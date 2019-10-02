@@ -15,8 +15,9 @@ class Member {
      *  Constructor
      *
      * */
-    constructor(node) {
+    constructor(sourceFile, node) {
         this._node = node;
+        this._sourceFile = sourceFile;
     }
     /* *
      *
@@ -29,23 +30,21 @@ class Member {
     get node() {
         return this._node;
     }
+    get sourceFile() {
+        return this._sourceFile;
+    }
     /* *
      *
      *  Functions
      *
      * */
     getChildren() {
+        const sourceFile = this.sourceFile;
+        const nodeChildren = this.node.getChildren(sourceFile);
         const memberChildren = [];
         let memberChild;
-        let nodeChildren;
-        try {
-            nodeChildren = this.node.getChildren();
-        }
-        catch (error) {
-            return [];
-        }
         for (let nodeChild of nodeChildren) {
-            memberChild = MembersUtilities_1.default.loadFromNode(nodeChild);
+            memberChild = MembersUtilities_1.default.loadFromNode(sourceFile, nodeChild);
             if (typeof memberChild !== 'undefined') {
                 memberChildren.push(memberChild);
             }

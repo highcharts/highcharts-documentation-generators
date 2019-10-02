@@ -53,10 +53,13 @@ export class MembersUtilities {
         return project;
     }
 
-    public static loadFromNode(node: TS.Node): M.Member {
+    public static loadFromNode(
+        sourceFile: TS.SourceFile,
+        node: TS.Node
+    ): M.Member {
 
         if (TS.isBundle(node)) {
-            return new M.BundleMember(node);
+            return new M.BundleMember(sourceFile, node);
         }
 
         if (TS.isSourceFile(node)) {
@@ -64,18 +67,18 @@ export class MembersUtilities {
         }
 
         if (TS.isModuleDeclaration(node)) {
-            return new M.ModuleMember(node);
+            return new M.ModuleMember(sourceFile, node);
         }
 
         if (TS.isExportAssignment(node) || TS.isExportDeclaration(node)) {
-            return new M.ExportMember(node);
+            return new M.ExportMember(sourceFile, node);
         }
 
         if (TS.isBlock(node) || TS.isModuleBlock(node)) {
-            return new M.BlockMember(node);
+            return new M.BlockMember(sourceFile, node);
         }
 
-        return new M.Member(node);
+        return new M.Member(sourceFile, node);
     }
 }
 
