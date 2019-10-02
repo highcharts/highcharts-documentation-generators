@@ -18,6 +18,15 @@ function changeCase (name) {
 
 module.exports = {
 
+    camelCase: function (name) {
+
+        if (!name) {
+            return name;
+        }
+
+        return changeCase(name);
+    },
+
     CamelCase: function (name) {
 
         if (!name) {
@@ -27,14 +36,5 @@ module.exports = {
         name = changeCase(name);
 
         return name[0].toUpperCase() + name.substr(1);
-    },
-
-    camelCase: function (name) {
-
-        if (!name) {
-            return name;
-        }
-
-        return changeCase(name);
     }
 }

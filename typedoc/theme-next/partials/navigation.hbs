@@ -1,0 +1,14 @@
+{{#if children}}
+    <ol>
+        {{#each children}}
+            <li>
+                <a href="{{relativeURL url}}">{{{wbr name}}}</a>
+                {{#ifCond @root.model.url '==' url}}
+                    {{#with @root.toc}}
+                        {{> navigation.toc}}
+                    {{/with}}
+                {{/ifCond}}
+            </li>
+        {{/each}}
+    </ol>
+{{/if}}
