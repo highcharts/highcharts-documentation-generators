@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MembersUtilities_1 = __importDefault(require("../MembersUtilities"));
+const typescript_1 = __importDefault(require("typescript"));
 class Member {
     /* *
      *
@@ -73,15 +74,16 @@ class Member {
             children: childrenJSON.length === 0 ?
                 undefined :
                 childrenJSON,
-            kind: this.toString(),
+            kind: '',
             kindID: node.kind,
+            name: this.toString(),
             unsupportedNode: this.isSupported ?
                 undefined :
                 node
         };
     }
     toString() {
-        return '';
+        return typescript_1.default.getGeneratedNameForNode(this.node).escapedText.toString();
     }
 }
 exports.Member = Member;

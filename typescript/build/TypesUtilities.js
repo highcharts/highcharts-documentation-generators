@@ -33,11 +33,17 @@ class TypesUtilities {
         return typeChildren;
     }
     static loadFromTypeNode(sourceFile, typeNode) {
+        if (typescript_1.default.isArrayTypeNode(typeNode)) {
+            return new T.ArrayType(sourceFile, typeNode);
+        }
         if (typescript_1.default.isTypeReferenceNode(typeNode)) {
-            // return new T.ReferenceType(sourceFile, typeNode);
+            return new T.ReferenceType(sourceFile, typeNode);
         }
         if (typescript_1.default.isUnionTypeNode(typeNode)) {
             return new T.UnionType(sourceFile, typeNode);
+        }
+        if (T.PrimitiveType.isKeywordTypeNode(typeNode)) {
+            return new T.PrimitiveType(sourceFile, typeNode);
         }
         return new T.Type(sourceFile, typeNode, true);
     }

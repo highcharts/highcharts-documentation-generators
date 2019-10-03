@@ -18,31 +18,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const JSONUtilities_1 = __importDefault(require("../JSONUtilities"));
 const T = __importStar(require("./index"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
-class ReferenceType extends T.Type {
+class ArrayType extends T.Type {
     /* *
      *
      *  Functions
      *
      * */
     getChildren() {
-        return TypesUtilities_1.default.loadFromChildren(this.sourceFile, (this.typeNode.typeArguments || []));
+        return [
+            TypesUtilities_1.default.loadFromTypeNode(this.sourceFile, this.typeNode.elementType)
+        ];
     }
     getChildrenJSON() {
-        const children = this.getChildren();
-        if (children.length === 0) {
-            return undefined;
-        }
-        return JSONUtilities_1.default.toJSONArray(children);
+        return JSONUtilities_1.default.toJSONArray(this.getChildren());
     }
     toJSON() {
         const superJSON = super.toJSON();
         return {
             genericArguments: this.getChildrenJSON(),
-            kind: 'reference',
+            kind: 'array',
             kindID: superJSON.kindID,
             name: superJSON.name
         };
     }
 }
-exports.ReferenceType = ReferenceType;
-exports.default = ReferenceType;
+exports.ArrayType = ArrayType;
+exports.default = ArrayType;

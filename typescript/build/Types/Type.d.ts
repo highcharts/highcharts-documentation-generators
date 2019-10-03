@@ -21,6 +21,7 @@ export interface TypeJSON extends JS.JSONObject {
     children?: Array<TypeJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
+    name?: string;
     unsupportedNode?: TS.TypeNode;
 }
 export default Type;

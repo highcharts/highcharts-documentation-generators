@@ -20,39 +20,27 @@ const typescript_1 = __importDefault(require("typescript"));
 class PrimitiveType extends T.Type {
     /* *
      *
-     *  Functions
+     *  Static Functions
      *
      * */
-    toString() {
-        switch (this.typeNode.kind) {
-            default:
+    static isKeywordTypeNode(node) {
+        switch (node.kind) {
             case typescript_1.default.SyntaxKind.AnyKeyword:
-                return 'any';
             case typescript_1.default.SyntaxKind.BigIntKeyword:
-                return 'bigint';
             case typescript_1.default.SyntaxKind.BooleanKeyword:
-                return 'boolean';
             case typescript_1.default.SyntaxKind.NeverKeyword:
-                return 'never';
             case typescript_1.default.SyntaxKind.NullKeyword:
-                return 'null';
             case typescript_1.default.SyntaxKind.NumberKeyword:
-                return 'number';
             case typescript_1.default.SyntaxKind.ObjectKeyword:
-                return 'object';
             case typescript_1.default.SyntaxKind.StringKeyword:
-                return 'string';
             case typescript_1.default.SyntaxKind.SymbolKeyword:
-                return 'symbol';
             case typescript_1.default.SyntaxKind.ThisKeyword:
-                return 'this';
             case typescript_1.default.SyntaxKind.UndefinedKeyword:
-                return 'undefined';
             case typescript_1.default.SyntaxKind.UnknownKeyword:
-                return 'unknown';
             case typescript_1.default.SyntaxKind.VoidKeyword:
-                return 'void';
+                return true;
         }
+        return false;
     }
 }
 exports.PrimitiveType = PrimitiveType;

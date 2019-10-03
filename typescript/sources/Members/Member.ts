@@ -107,8 +107,9 @@ export class Member<TNode extends TS.Node = TS.Node>
             children: childrenJSON.length === 0 ?
                 undefined :
                 childrenJSON,
-            kind: this.toString(),
+            kind: '',
             kindID: node.kind,
+            name: this.toString(),
             unsupportedNode: this.isSupported ?
                 undefined :
                 node
@@ -116,7 +117,7 @@ export class Member<TNode extends TS.Node = TS.Node>
     }
 
     public toString(): string {
-        return '';
+        return TS.getGeneratedNameForNode(this.node).escapedText.toString();
     }
 }
 

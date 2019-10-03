@@ -66,6 +66,7 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
         return {
             kind: '',
             kindID: typeNode.kind,
+            name: this.toString(),
             unsupportedNode: this.isSupported ?
                 undefined :
                 typeNode
@@ -73,7 +74,7 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
     }
 
     public toString(): string {
-        return this.typeNode.kind.toString();
+        return TS.getGeneratedNameForNode(this.typeNode).escapedText.toString();
     }
 }
 
@@ -81,6 +82,7 @@ export interface TypeJSON extends JS.JSONObject {
     children?: Array<TypeJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
+    name?: string;
     unsupportedNode?: TS.TypeNode;
 }
 

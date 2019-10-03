@@ -17,29 +17,41 @@ export class ReferenceType extends T.Type<TS.TypeReferenceType> {
      *
      * */
 
+    public getChildren(): Array<T.Type> {
+        return TypesUtilities.loadFromChildren(
+            this.sourceFile,
+            (this.typeNode.typeArguments || [])
+        );
+    }
+
+    public getChildrenJSON(): (Array<T.TypeJSON>|undefined) {
+
+        const children = this.getChildren();
+
+        if (children.length === 0) {
+            return undefined;
+        }
+
+        return JSONUtilities.toJSONArray(children);
+    }
+
     public toJSON(): ReferenceTypeJSON {
 
-        const typeNode = this.typeNode;
-        const sourceFile = this.sourceFile;
         const superJSON = super.toJSON();
 
         return {
-            arguments: JSONUtilities.toJSONArray(
-                TypesUtilities.loadFromChildren(
-                    sourceFile,
-                    (typeNode.typeArguments || [])
-                )
-            ),
+            genericArguments: this.getChildrenJSON(),
             kind: 'reference',
-            kindID: superJSON.kindID
+            kindID: superJSON.kindID,
+            name: superJSON.name
         };
     }
 
 }
 
 export interface ReferenceTypeJSON extends T.TypeJSON {
-    arguments: Array<T.TypeJSON>;
     children?: undefined;
+    genericArguments?: Array<T.TypeJSON>;
     kind: 'reference';
 }
 
