@@ -4,7 +4,6 @@
  *
  * */
 
-import JSONUtilities from '../JSONUtilities';
 import * as M from './index';
 import ModifiersUtilities from '../ModifiersUtilities';
 import * as T from '../Types/index';
@@ -22,6 +21,7 @@ export class PropertyMember extends M.Member<TS.PropertyDeclaration> {
     public toJSON(): PropertyMemberJSON {
 
         const node = this.node;
+        const sourceFile = this.sourceFile;
         const superJSON = super.toJSON();
 
         return {
@@ -34,9 +34,14 @@ export class PropertyMember extends M.Member<TS.PropertyDeclaration> {
             kind: 'property',
             kindID: superJSON.kindID,
             modifiers: ModifiersUtilities.getModifierArray(node.modifiers),
-            types: JSONUtilities.toJSONArray(
-                TypesUtilities.loadFromChildren(this.getChildNodes())
-            )
+            name: node.name.getText(sourceFile),
+            type: TypesUtilities.loadFromTypeNode(
+                sourceFile,
+                (
+                    node.type ||
+                    TS.createKeywordTypeNode(TS.SyntaxKind.UndefinedKeyword)
+                )
+            ).toJSON()
         }
     }
 }
@@ -47,7 +52,8 @@ export interface PropertyMemberJSON extends M.MemberJSON {
     isNonOptional?: boolean;
     isOptional?: boolean;
     modifiers: Array<string>;
-    types: Array<T.TypeJSON>;
+    name: string;
+    type: T.TypeJSON;
 }
 
 export default PropertyMember;

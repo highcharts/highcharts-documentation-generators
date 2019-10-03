@@ -101,13 +101,17 @@ export class Member<TNode extends TS.Node = TS.Node>
     public toJSON(): MemberJSON {
 
         const childrenJSON = this.getChildrenJSON();
+        const node = this.node;
 
         return {
             children: childrenJSON.length === 0 ?
                 undefined :
                 childrenJSON,
             kind: this.toString(),
-            kindID: this.node.kind
+            kindID: node.kind,
+            unsupportedNode: this.isSupported ?
+                undefined :
+                node
         };
     }
 
@@ -120,6 +124,7 @@ export interface MemberJSON extends JS.JSONObject {
     children?: Array<MemberJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
+    unsupportedNode?: TS.Node;
 }
 
 export default Member;

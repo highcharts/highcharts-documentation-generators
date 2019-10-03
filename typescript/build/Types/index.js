@@ -5,4 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./Type"));
 __export(require("./PrimitiveType"));
+__export(require("./ReferenceType"));
 __export(require("./UnionType"));

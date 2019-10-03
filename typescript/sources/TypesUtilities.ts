@@ -16,27 +16,37 @@ export class TypesUtilities {
      * */
 
     public static loadFromChildren(
-        nodeChildren: Array<TS.Node>
+        sourceFile: TS.SourceFile,
+        nodeChildren: (Array<TS.Node>|TS.NodeArray<TS.TypeNode>)
     ): Array<T.Type> {
 
         const typeChildren: Array<T.Type> = [];
 
         for (let nodeChild of nodeChildren) {
             if (TS.isTypeNode(nodeChild)) {
-                typeChildren.push(TypesUtilities.loadFromTypeNode(nodeChild));
+                typeChildren.push(
+                    TypesUtilities.loadFromTypeNode(sourceFile, nodeChild)
+                );
             }
         }
 
         return typeChildren;
     }
 
-    public static loadFromTypeNode(typeNode: TS.TypeNode): T.Type {
+    public static loadFromTypeNode(
+        sourceFile: TS.SourceFile,
+        typeNode: TS.TypeNode
+    ): T.Type {
 
-        if (TS.isUnionTypeNode(typeNode)) {
-            return new T.UnionType(typeNode);
+        if (TS.isTypeReferenceNode(typeNode)) {
+            // return new T.ReferenceType(sourceFile, typeNode);
         }
 
-        return new T.Type(typeNode, true);
+        if (TS.isUnionTypeNode(typeNode)) {
+            return new T.UnionType(sourceFile, typeNode);
+        }
+
+        return new T.Type(sourceFile, typeNode, true);
     }
 
     /* *

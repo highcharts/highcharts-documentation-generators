@@ -24,11 +24,12 @@ class UnionType extends T.Type {
      *
      * */
     getChildren() {
+        const sourceFile = this.sourceFile;
         const typeChildren = [];
         const typeNodes = this.typeNode.types;
         let typeChild;
         for (let typeNode of typeNodes) {
-            typeChild = TypesUtilities_1.default.loadFromTypeNode(typeNode);
+            typeChild = TypesUtilities_1.default.loadFromTypeNode(sourceFile, typeNode);
             if (typeChild.isSupported) {
                 typeChildren.push(typeChild);
             }

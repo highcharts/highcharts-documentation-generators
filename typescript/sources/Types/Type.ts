@@ -17,8 +17,13 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
      *
      * */
 
-    public constructor(typeNode: TTypeNode, isNotSupported: boolean = false) {
+    public constructor(
+        sourceFile: TS.SourceFile,
+        typeNode: TTypeNode,
+        isNotSupported: boolean = false
+    ) {
         this._isSupported = (isNotSupported === false);
+        this._sourceFile = sourceFile;
         this._typeNode = typeNode;
     }
 
@@ -29,10 +34,15 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
      * */
 
     private _isSupported: boolean;
+    private _sourceFile: TS.SourceFile;
     private _typeNode: TTypeNode;
 
     public get isSupported(): boolean {
         return this._isSupported;
+    }
+
+    protected get sourceFile(): TS.SourceFile {
+        return this._sourceFile;
     }
 
     protected get typeNode(): TTypeNode {
@@ -54,9 +64,11 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
         const typeNode = this.typeNode;
 
         return {
-            children: [],
             kind: '',
-            kindID: typeNode.kind
+            kindID: typeNode.kind,
+            unsupportedNode: this.isSupported ?
+                undefined :
+                typeNode
         };
     }
 
@@ -66,9 +78,10 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
 }
 
 export interface TypeJSON extends JS.JSONObject {
-    children: Array<TypeJSON>;
+    children?: Array<TypeJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
+    unsupportedNode?: TS.TypeNode;
 }
 
 export default Type;

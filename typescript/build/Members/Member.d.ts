@@ -24,5 +24,6 @@ export interface MemberJSON extends JS.JSONObject {
     children?: Array<MemberJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
+    unsupportedNode?: TS.Node;
 }
 export default Member;

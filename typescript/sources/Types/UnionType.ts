@@ -18,6 +18,7 @@ export class UnionType extends T.Type<TS.UnionTypeNode> {
 
     public getChildren(): Array<T.Type> {
 
+        const sourceFile = this.sourceFile;
         const typeChildren: Array<T.Type> = [];
         const typeNodes = this.typeNode.types;
 
@@ -25,7 +26,7 @@ export class UnionType extends T.Type<TS.UnionTypeNode> {
 
         for (let typeNode of typeNodes) {
 
-            typeChild = TypesUtilities.loadFromTypeNode(typeNode);
+            typeChild = TypesUtilities.loadFromTypeNode(sourceFile, typeNode);
 
             if (typeChild.isSupported) {
                 typeChildren.push(typeChild);

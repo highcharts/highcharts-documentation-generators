@@ -23,20 +23,23 @@ class TypesUtilities {
      *  Static Functions
      *
      * */
-    static loadFromChildren(nodeChildren) {
+    static loadFromChildren(sourceFile, nodeChildren) {
         const typeChildren = [];
         for (let nodeChild of nodeChildren) {
             if (typescript_1.default.isTypeNode(nodeChild)) {
-                typeChildren.push(TypesUtilities.loadFromTypeNode(nodeChild));
+                typeChildren.push(TypesUtilities.loadFromTypeNode(sourceFile, nodeChild));
             }
         }
         return typeChildren;
     }
-    static loadFromTypeNode(typeNode) {
-        if (typescript_1.default.isUnionTypeNode(typeNode)) {
-            return new T.UnionType(typeNode);
+    static loadFromTypeNode(sourceFile, typeNode) {
+        if (typescript_1.default.isTypeReferenceNode(typeNode)) {
+            // return new T.ReferenceType(sourceFile, typeNode);
         }
-        return new T.Type(typeNode, true);
+        if (typescript_1.default.isUnionTypeNode(typeNode)) {
+            return new T.UnionType(sourceFile, typeNode);
+        }
+        return new T.Type(sourceFile, typeNode, true);
     }
     /* *
      *

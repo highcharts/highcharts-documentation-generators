@@ -11,12 +11,16 @@ class Type {
      *  Constructor
      *
      * */
-    constructor(typeNode, isNotSupported = false) {
+    constructor(sourceFile, typeNode, isNotSupported = false) {
         this._isSupported = (isNotSupported === false);
+        this._sourceFile = sourceFile;
         this._typeNode = typeNode;
     }
     get isSupported() {
         return this._isSupported;
+    }
+    get sourceFile() {
+        return this._sourceFile;
     }
     get typeNode() {
         return this._typeNode;
@@ -32,9 +36,11 @@ class Type {
     toJSON() {
         const typeNode = this.typeNode;
         return {
-            children: [],
             kind: '',
-            kindID: typeNode.kind
+            kindID: typeNode.kind,
+            unsupportedNode: this.isSupported ?
+                undefined :
+                typeNode
         };
     }
     toString() {

@@ -68,12 +68,16 @@ class Member {
     }
     toJSON() {
         const childrenJSON = this.getChildrenJSON();
+        const node = this.node;
         return {
             children: childrenJSON.length === 0 ?
                 undefined :
                 childrenJSON,
             kind: this.toString(),
-            kindID: this.node.kind
+            kindID: node.kind,
+            unsupportedNode: this.isSupported ?
+                undefined :
+                node
         };
     }
     toString() {

@@ -15,6 +15,7 @@ export interface PropertyMemberJSON extends M.MemberJSON {
     isNonOptional?: boolean;
     isOptional?: boolean;
     modifiers: Array<string>;
-    types: Array<T.TypeJSON>;
+    name: string;
+    type: T.TypeJSON;
 }
 export default PropertyMember;

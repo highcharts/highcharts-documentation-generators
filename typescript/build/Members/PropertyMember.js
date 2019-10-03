@@ -4,9 +4,6 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -14,10 +11,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const JSONUtilities_1 = __importDefault(require("../JSONUtilities"));
 const M = __importStar(require("./index"));
 const ModifiersUtilities_1 = __importDefault(require("../ModifiersUtilities"));
+const typescript_1 = __importDefault(require("typescript"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
 class PropertyMember extends M.Member {
     /* *
@@ -27,6 +27,7 @@ class PropertyMember extends M.Member {
      * */
     toJSON() {
         const node = this.node;
+        const sourceFile = this.sourceFile;
         const superJSON = super.toJSON();
         return {
             isNonOptional: typeof node.exclamationToken === 'undefined' ?
@@ -38,7 +39,9 @@ class PropertyMember extends M.Member {
             kind: 'property',
             kindID: superJSON.kindID,
             modifiers: ModifiersUtilities_1.default.getModifierArray(node.modifiers),
-            types: JSONUtilities_1.default.toJSONArray(TypesUtilities_1.default.loadFromChildren(this.getChildNodes()))
+            name: node.name.getText(sourceFile),
+            type: TypesUtilities_1.default.loadFromTypeNode(sourceFile, (node.type ||
+                typescript_1.default.createKeywordTypeNode(typescript_1.default.SyntaxKind.UndefinedKeyword))).toJSON()
         };
     }
 }
