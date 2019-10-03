@@ -30,7 +30,7 @@ export class FileMember extends M.Member<TS.SourceFile> {
         const superJSON = super.toJSON();
 
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'file',
             kindID: superJSON.kindID,
             path: TS.sys.resolvePath(this.node.fileName)
@@ -39,6 +39,7 @@ export class FileMember extends M.Member<TS.SourceFile> {
 }
 
 export interface FileMemberJSON extends M.MemberJSON {
+    children: Array<M.MemberJSON>;
     kind: 'file';
     path: string;
 }

@@ -10,6 +10,7 @@ export declare class FileMember extends M.Member<TS.SourceFile> {
     toJSON(): FileMemberJSON;
 }
 export interface FileMemberJSON extends M.MemberJSON {
+    children: Array<M.MemberJSON>;
     kind: 'file';
     path: string;
 }

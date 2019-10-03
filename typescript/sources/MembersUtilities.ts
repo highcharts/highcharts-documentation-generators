@@ -78,6 +78,10 @@ export class MembersUtilities {
             return new M.BlockMember(sourceFile, node);
         }
 
+        if (TS.isPropertyDeclaration(node)) {
+            return new M.PropertyMember(sourceFile, node);
+        }
+
         return new M.Member(sourceFile, node, false);
     }
 

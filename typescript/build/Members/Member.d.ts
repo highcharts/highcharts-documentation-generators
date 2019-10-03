@@ -3,9 +3,9 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import JSONNode from '../JSONNode';
+import * as JS from '../JSON/index';
 import TS from 'typescript';
-export declare class Member<TNode extends TS.Node = TS.Node> {
+export declare class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter {
     private static childrenJSONMapper;
     constructor(sourceFile: TS.SourceFile, node: TNode, isNotSupported?: boolean);
     private _isSupported;
@@ -14,13 +14,14 @@ export declare class Member<TNode extends TS.Node = TS.Node> {
     readonly isSupported: boolean;
     protected readonly node: TNode;
     protected readonly sourceFile: TS.SourceFile;
+    getChildNodes(): Array<TS.Node>;
     getChildren(): Array<Member>;
     getChildrenJSON(): Array<MemberJSON>;
     toJSON(): MemberJSON;
     toString(): string;
 }
-export interface MemberJSON extends JSONNode {
-    children: Array<MemberJSON>;
+export interface MemberJSON extends JS.JSONObject {
+    children?: Array<MemberJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
 }

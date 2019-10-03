@@ -4,11 +4,13 @@
  *
  * */
 
-import JSONNode from '../JSONNode';
+import * as JS from '../JSON/index';
 import MembersUtilities from '../MembersUtilities';
 import TS from 'typescript';
 
-export class Member<TNode extends TS.Node = TS.Node> {
+export class Member<TNode extends TS.Node = TS.Node>
+    implements JS.JSONExporter
+{
 
     /* *
      *
@@ -64,10 +66,14 @@ export class Member<TNode extends TS.Node = TS.Node> {
      *
      * */
 
+    public getChildNodes(): Array<TS.Node> {
+        return this.node.getChildren(this.sourceFile);
+    }
+
     public getChildren(): Array<Member> {
 
         const sourceFile = this.sourceFile;
-        const nodeChildren = this.node.getChildren(sourceFile);
+        const nodeChildren = this.getChildNodes();
         const memberChildren: Array<Member> = [];
 
         let memberChild: Member;
@@ -93,8 +99,13 @@ export class Member<TNode extends TS.Node = TS.Node> {
     }
 
     public toJSON(): MemberJSON {
+
+        const childrenJSON = this.getChildrenJSON();
+
         return {
-            children: this.getChildrenJSON(),
+            children: childrenJSON.length === 0 ?
+                undefined :
+                childrenJSON,
             kind: this.toString(),
             kindID: this.node.kind
         };
@@ -105,8 +116,8 @@ export class Member<TNode extends TS.Node = TS.Node> {
     }
 }
 
-export interface MemberJSON extends JSONNode {
-    children: Array<MemberJSON>;
+export interface MemberJSON extends JS.JSONObject {
+    children?: Array<MemberJSON>;
     kind: string;
     kindID: TS.SyntaxKind;
 }

@@ -22,7 +22,6 @@ class ExportMember extends M.Member {
     toJSON() {
         const superJSON = super.toJSON();
         return {
-            children: superJSON.children,
             kind: 'export',
             kindID: superJSON.kindID
         };

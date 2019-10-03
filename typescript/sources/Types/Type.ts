@@ -4,10 +4,12 @@
  *
  * */
 
-import JSONNode from '../JSONNode';
+import * as JS from '../JSON/index';
 import TS from 'typescript';
 
-export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode> {
+export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode>
+    implements JS.JSONExporter
+{
 
     /* *
      *
@@ -63,7 +65,7 @@ export class Type<TTypeNode extends TS.TypeNode = TS.TypeNode> {
     }
 }
 
-export interface TypeJSON extends JSONNode {
+export interface TypeJSON extends JS.JSONObject {
     children: Array<TypeJSON>;
     kind: string;
     kindID: TS.SyntaxKind;

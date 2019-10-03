@@ -34,7 +34,7 @@ class FileMember extends M.Member {
     toJSON() {
         const superJSON = super.toJSON();
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'file',
             kindID: superJSON.kindID,
             path: typescript_1.default.sys.resolvePath(this.node.fileName)

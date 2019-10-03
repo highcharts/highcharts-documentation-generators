@@ -22,7 +22,7 @@ class ModuleMember extends M.Member {
     toJSON() {
         const superJSON = super.toJSON();
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'module',
             kindID: superJSON.kindID,
             name: this.node.name.text

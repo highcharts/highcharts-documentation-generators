@@ -15,13 +15,19 @@ export class TypesUtilities {
      *
      * */
 
-    public static loadFromNode(node: TS.Node): (T.Type|undefined) {
+    public static loadFromChildren(
+        nodeChildren: Array<TS.Node>
+    ): Array<T.Type> {
 
-        if (TS.isTypeNode(node)) {
-            return TypesUtilities.loadFromTypeNode(node);
+        const typeChildren: Array<T.Type> = [];
+
+        for (let nodeChild of nodeChildren) {
+            if (TS.isTypeNode(nodeChild)) {
+                typeChildren.push(TypesUtilities.loadFromTypeNode(nodeChild));
+            }
         }
 
-        return;
+        return typeChildren;
     }
 
     public static loadFromTypeNode(typeNode: TS.TypeNode): T.Type {

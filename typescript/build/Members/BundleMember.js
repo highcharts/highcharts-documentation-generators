@@ -22,7 +22,7 @@ class BundleMember extends M.Member {
     toJSON() {
         const superJSON = super.toJSON();
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'bundle',
             kindID: superJSON.kindID
         };

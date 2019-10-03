@@ -32,6 +32,17 @@ class JSONUtilities {
             jsonUtilities.dispose();
         }
     }
+    static toJSONArray(obj) {
+        const jsonArray = [];
+        let json;
+        for (let node of obj) {
+            json = node.toJSON();
+            if (typeof json !== 'undefined') {
+                jsonArray.push(json);
+            }
+        }
+        return jsonArray;
+    }
     /* *
      *
      *  Functions
@@ -40,7 +51,7 @@ class JSONUtilities {
     dispose() {
         this._memberReferences.length = 0;
     }
-    filter(key, member) {
+    filter(_key, member) {
         if (!member) {
             return member;
         }

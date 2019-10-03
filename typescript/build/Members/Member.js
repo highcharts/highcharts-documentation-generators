@@ -42,9 +42,12 @@ class Member {
      *  Functions
      *
      * */
+    getChildNodes() {
+        return this.node.getChildren(this.sourceFile);
+    }
     getChildren() {
         const sourceFile = this.sourceFile;
-        const nodeChildren = this.node.getChildren(sourceFile);
+        const nodeChildren = this.getChildNodes();
         const memberChildren = [];
         let memberChild;
         for (let nodeChild of nodeChildren) {
@@ -64,8 +67,11 @@ class Member {
             .map(Member.childrenJSONMapper);
     }
     toJSON() {
+        const childrenJSON = this.getChildrenJSON();
         return {
-            children: this.getChildrenJSON(),
+            children: childrenJSON.length === 0 ?
+                undefined :
+                childrenJSON,
             kind: this.toString(),
             kindID: this.node.kind
         };

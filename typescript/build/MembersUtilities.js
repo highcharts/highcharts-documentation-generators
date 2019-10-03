@@ -51,6 +51,9 @@ class MembersUtilities {
         if (typescript_1.default.isBlock(node) || typescript_1.default.isModuleBlock(node)) {
             return new M.BlockMember(sourceFile, node);
         }
+        if (typescript_1.default.isPropertyDeclaration(node)) {
+            return new M.PropertyMember(sourceFile, node);
+        }
         return new M.Member(sourceFile, node, false);
     }
     /* *

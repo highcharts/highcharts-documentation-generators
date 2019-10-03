@@ -20,7 +20,7 @@ export class BundleMember extends M.Member<TS.Bundle> {
         const superJSON = super.toJSON();
 
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'bundle',
             kindID: superJSON.kindID
         }
@@ -28,6 +28,7 @@ export class BundleMember extends M.Member<TS.Bundle> {
 }
 
 export interface BundleMemberJSON extends M.MemberJSON {
+    children: Array<M.MemberJSON>;
     kind: 'bundle';
 }
 

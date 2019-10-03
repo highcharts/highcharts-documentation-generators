@@ -22,7 +22,6 @@ export class ExportMember
         const superJSON = super.toJSON();
 
         return {
-            children: superJSON.children,
             kind: 'export',
             kindID: superJSON.kindID
         }
@@ -30,7 +29,8 @@ export class ExportMember
 }
 
 export interface ExportMemberJSON extends M.MemberJSON {
-    kind: 'export'
+    children?: undefined;
+    kind: 'export';
 }
 
 export default ExportMember;

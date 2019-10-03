@@ -23,11 +23,14 @@ class TypesUtilities {
      *  Static Functions
      *
      * */
-    static loadFromNode(node) {
-        if (typescript_1.default.isTypeNode(node)) {
-            return TypesUtilities.loadFromTypeNode(node);
+    static loadFromChildren(nodeChildren) {
+        const typeChildren = [];
+        for (let nodeChild of nodeChildren) {
+            if (typescript_1.default.isTypeNode(nodeChild)) {
+                typeChildren.push(TypesUtilities.loadFromTypeNode(nodeChild));
+            }
         }
-        return;
+        return typeChildren;
     }
     static loadFromTypeNode(typeNode) {
         if (typescript_1.default.isUnionTypeNode(typeNode)) {

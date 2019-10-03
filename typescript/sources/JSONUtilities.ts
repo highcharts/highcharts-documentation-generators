@@ -4,6 +4,8 @@
  *
  * */
 
+import * as JS from "./JSON/index";
+
 export class JSONUtilities {
 
     /* *
@@ -26,6 +28,26 @@ export class JSONUtilities {
         finally {
             jsonUtilities.dispose();
         }
+    }
+
+    public static toJSONArray<T extends JS.JSONExporter>(
+        obj: Array<T>
+    ): Array<ReturnType<T['toJSON']>> {
+        
+        const jsonArray: Array<ReturnType<T['toJSON']>> = [];
+        
+        let json: ReturnType<T['toJSON']>;
+
+        for (let node of obj) {
+
+            json = node.toJSON() as ReturnType<T['toJSON']>;
+
+            if (typeof json !== 'undefined') {
+                jsonArray.push(json);
+            }
+        }
+
+        return jsonArray;
     }
 
     /* *
@@ -59,7 +81,7 @@ export class JSONUtilities {
         this._memberReferences.length = 0;
     }
 
-    private filter<T>(key: string, member: T): (T|undefined) {
+    private filter<T>(_key: string, member: T): (T|undefined) {
 
         if (!member) {
             return member;

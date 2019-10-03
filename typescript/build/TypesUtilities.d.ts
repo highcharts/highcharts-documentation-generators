@@ -6,7 +6,7 @@
 import * as T from './Types/index';
 import TS from 'typescript';
 export declare class TypesUtilities {
-    static loadFromNode(node: TS.Node): (T.Type | undefined);
+    static loadFromChildren(nodeChildren: Array<TS.Node>): Array<T.Type>;
     static loadFromTypeNode(typeNode: TS.TypeNode): T.Type;
     private constructor();
 }
