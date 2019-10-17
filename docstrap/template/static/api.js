@@ -510,7 +510,7 @@ hapi.ajax = function(p) {
       ap(requireList,
         ap(
             cr('li'),
-            cr('a', { href: ('https://code.highcharts.com/' + requirement) }, requirement)
+            cr('a', { href: ('https://code.highcharts.com/' + requirement + '.js') }, requirement)
         )
       );
     });

@@ -927,7 +927,11 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         return doclet.requires.map(function (requirement) {
     
             if (requirement.startsWith('module:')) {
-                return requirement.substr(7);
+                requirement = requirement.substr(7);
+            }
+
+            if (requirement.endsWith('.js')) {
+                requirement = requirement.substr(0, (requirement.length - 3));
             }
 
             return requirement;
