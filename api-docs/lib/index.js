@@ -918,6 +918,22 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         return ret;
     }
 
+    function requiresFilter(doclet) {
+
+        if (typeof doclet.requires === 'undefined') {
+            return;
+        }
+
+        return doclet.requires.map(function (requirement) {
+    
+            if (requirement.startsWith('module:')) {
+                return requirement.substr(7);
+            }
+
+            return requirement;
+        });
+    }
+
     function resolveDefaultByProduct(node, product) {
       if (node.doclet) {
 
@@ -986,6 +1002,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 deprecated: node.doclet.deprecated,
                 description: node.doclet.description,
                 productdesc: productFilter(node.doclet, 'productdesc', product),
+                requires: requiresFilter(node.doclet),
                 samples: productFilter(node.doclet, 'samples', product),
                 typeList: node.doclet.type,
                 children: node.children.map(function (child) {
@@ -1003,6 +1020,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                         inheritedFrom: child.node.meta.inheritedFrom,
                         deprecated: child.node.doclet.deprecated,
                         since: child.node.doclet.since,
+                        requires: requiresFilter(child.node.doclet),
                         samples: productFilter(child.node.doclet, 'samples', product),
                         see: child.node.doclet.see,
                         filename: (child.node.meta.filename || ''),

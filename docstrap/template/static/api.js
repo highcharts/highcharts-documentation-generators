@@ -496,6 +496,27 @@ hapi.ajax = function(p) {
       .replace(/[^\w\.\#]+|\.\</gi, '_');
   }
 
+  function getRequireList(def) {
+    if (typeof def.requires === 'undefined') {
+      return;
+    }
+    requires = cr('div', 'requires');
+    requireList = cr('ul');
+    ap(requires,
+      cr('h4', undefined, 'Requires'),
+      requireList
+    );
+    def.requires.forEach(function (requirement) {
+      ap(requireList,
+        ap(
+            cr('li'),
+            cr('a', { href: ('https://code.highcharts.com/' + requirement) }, requirement)
+        )
+      );
+    });
+    return requires;
+  }
+
   function getSampleList(def) {
     var samples,
       sampleList;
@@ -679,6 +700,7 @@ hapi.ajax = function(p) {
         context,
         extend,
         inheritedFrom,
+        getRequireList(def),
         samples,
         see
       )
@@ -816,6 +838,7 @@ hapi.ajax = function(p) {
               title,
               deprecated,
               description,
+              getRequireList(data),
               getSampleList(data),
               see
             )
@@ -905,7 +928,11 @@ hapi.ajax = function(p) {
       members = [],
       query = '',
       productPath = '/' + location.pathname.split('/')[1] + '/',
-      webSearch = new HighsoftWebSearch.Search('../websearch/');
+      webSearch = (
+          typeof HighsoftWebSearch !== 'undefined' ?
+            new HighsoftWebSearch.Search('../websearch/') :
+            undefined
+      );
 
     if (location.pathname.lastIndexOf('/') <= 0) {
       searchField.focus();
@@ -978,9 +1005,11 @@ hapi.ajax = function(p) {
 
     function searchText(e) {
       query = searchField.value;
-      if (e.keyCode !== 13 &&
-        typeof page === 'undefined'
-      ) {
+      if (
+        typeof webSearch === 'undefined' || (
+          e.keyCode !== 13 &&
+          typeof page === 'undefined'
+      )) {
         return;
       }
       webSearch.find(query).then(function (entries) {
@@ -1115,7 +1144,6 @@ hapi.ajax = function(p) {
         url;
       for (var i = 0, ie = pageEntries.length; i < ie && i < maxElements; ++i) {
         entry = pageEntries[i];
-        console.log(entry);
         name = (entry.title || '');
         url = (entry.url || '/');
         if (name.indexOf('|') > -1) {
