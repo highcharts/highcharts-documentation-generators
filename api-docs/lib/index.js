@@ -319,6 +319,7 @@ function mergeNode(achildren, bchildren, fullExclude) {
       extends: 1,
       excludes: 1,
       products: 1,
+      requires: 1,
       since: 1,
       type: 1,
       values: 1
