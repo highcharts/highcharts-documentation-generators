@@ -1025,7 +1025,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                         inheritedFrom: child.node.meta.inheritedFrom,
                         deprecated: child.node.doclet.deprecated,
                         since: child.node.doclet.since,
-                        requires: requiresFilter(child.node.doclet),
+                        requires: (requiresFilter(child.node.doclet) || requiresFilter(node.doclet)),
                         samples: productFilter(child.node.doclet, 'samples', product),
                         see: child.node.doclet.see,
                         filename: (child.node.meta.filename || ''),
