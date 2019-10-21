@@ -496,8 +496,9 @@ hapi.ajax = function(p) {
       .replace(/[^\w\.\#]+|\.\</gi, '_');
   }
 
-  function getRequireList(def) {
-    if (typeof def.requires === 'undefined') {
+  function getRequireList(def, parentDef) {
+    const defRequires = [].concat(def.requires, parentDef.requires)
+    if (defRequires.length = 0) {
       return;
     }
     requires = cr('div', 'requires');
@@ -506,7 +507,7 @@ hapi.ajax = function(p) {
       cr('h4', undefined, 'Requires'),
       requireList
     );
-    def.requires.forEach(function (requirement) {
+    defRequires.forEach(function (requirement) {
       ap(requireList,
         ap(
             cr('li'),
@@ -551,7 +552,7 @@ hapi.ajax = function(p) {
     return samples;
   }
 
-  function createOption(target, def, state, origState) {
+  function createOption(target, def, parentDef, state, origState) {
     var option = cr('div', 'option ' + toClassName(def.fullname)),
       title = cr('h2', 'title'),
       titleLink,
@@ -700,7 +701,7 @@ hapi.ajax = function(p) {
         context,
         extend,
         inheritedFrom,
-        getRequireList(def),
+        getRequireList(def, parentDef),
         samples,
         see
       )
@@ -846,7 +847,7 @@ hapi.ajax = function(p) {
         );
 
         data.children.forEach(function(def) {
-          createOption(optionList, def, state, origState);
+          createOption(optionList, def, data, state, origState);
         });
         if (typeof callback === 'function') {
           callback();
