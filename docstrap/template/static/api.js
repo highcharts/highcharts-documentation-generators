@@ -501,7 +501,7 @@ hapi.ajax = function(p) {
         (def.requires || []),
         ((parentDef && parentDef.requires) || [])
     );
-    if (defRequires.length = 0) {
+    if (defRequires.length === 0) {
       return;
     }
     requires = cr('div', 'requires');
