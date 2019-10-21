@@ -497,7 +497,10 @@ hapi.ajax = function(p) {
   }
 
   function getRequireList(def, parentDef) {
-    const defRequires = [].concat(def.requires, parentDef.requires)
+    var defRequires = [].concat(
+        (def.requires || []),
+        ((parentDef && parentDef.requires) || [])
+    );
     if (defRequires.length = 0) {
       return;
     }
