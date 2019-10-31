@@ -938,7 +938,7 @@ hapi.ajax = function(p) {
             undefined
       );
 
-    if (location.pathname.lastIndexOf('/') <= 0) {
+    if (location.pathname.lastIndexOf('/') == (location.pathname.length - 1)) {
       searchField.focus();
     }
 
