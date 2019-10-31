@@ -1143,7 +1143,6 @@ hapi.ajax = function(p) {
         pageEntries = entries.slice((skip - 10), skip),
         entry,
         name,
-        snippet,
         total = entries.length,
         url;
       for (var i = 0, ie = pageEntries.length; i < ie && i < maxElements; ++i) {
@@ -1159,7 +1158,7 @@ hapi.ajax = function(p) {
         if (name.indexOf(':') === -1) {
           name = 'Option: ' + name;
         }
-        snippet = cr('p')
+        var snippet = cr('p')
         webSearch.preview(entry).then(text => {
             if (text.indexOf('Welcome') === 0 ||
                 text.indexOf('<b>') === -1
