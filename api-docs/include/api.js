@@ -1016,16 +1016,23 @@ hapi.ajax = function(p) {
       )) {
         return;
       }
-      webSearch.find(query).then(function (entries) {
-        return entries.filter(function (entry) {
+      webSearch
+        .find(query)
+        .then(function (entries) {
+          return entries.filter(function (entry) {
             return (
-                entry.url.indexOf('.html') === -1 && (
-                    entry.url.indexOf('/class-reference/') !== -1 ||
-                    entry.url.indexOf(productPath) !== -1
-                )
+              entry.url.indexOf('.html') === -1 && (
+                entry.url.indexOf('/class-reference/') !== -1 ||
+                entry.url.indexOf(productPath) !== -1
+              )
             );
-        });
-      }).then(showTextResults).catch(console.error);
+          });
+        })
+        .then(function (entries) {
+          clearTextResults();
+          showTextResults(entries);
+        })
+        .catch(console.error);
     }
 
     function clearSideResults() {
@@ -1158,7 +1165,7 @@ hapi.ajax = function(p) {
         if (name.indexOf(':') === -1) {
           name = 'Option: ' + name;
         }
-        var snippet = cr('p')
+        var snippet = cr('p');
         webSearch.preview(entry).then(text => {
             if (text.indexOf('Welcome') === 0 ||
                 text.indexOf('<b>') === -1
