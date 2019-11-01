@@ -7,7 +7,7 @@ var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
 if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
-  var hash = location.hash.replace(/^#/, '');
+  var hash = location.hash.replace(/^#/, '').replace('%23', '.');
 
   // Options: https://api.highcharts.com/highcharts#title.text
   if (/^[a-z]/.test(hash)) {
@@ -16,6 +16,7 @@ if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
   // Object members: https://api.highcharts.com/highcharts#Series.update()
   } else if (/^[A-Z]/.test(hash)) {
     hash = hash
+      .replace('Highcharts.', '')
       .replace('.', '#')
       .replace('()', '');
     location.href = '/class-reference/Highcharts.' + hash;
