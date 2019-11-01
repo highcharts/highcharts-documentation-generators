@@ -7,7 +7,7 @@ var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
 if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
-  var hash = location.hash.replace(/^#/, '');
+  var hash = location.hash.replace(/^#/, '').replace('%23', '.');
 
   // Options: https://api.highcharts.com/highcharts#title.text
   if (/^[a-z]/.test(hash)) {
@@ -16,6 +16,7 @@ if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
   // Object members: https://api.highcharts.com/highcharts#Series.update()
   } else if (/^[A-Z]/.test(hash)) {
     hash = hash
+      .replace('Highcharts.', '')
       .replace('.', '#')
       .replace('()', '');
     location.href = '/class-reference/Highcharts.' + hash;
@@ -496,6 +497,31 @@ hapi.ajax = function(p) {
       .replace(/[^\w\.\#]+|\.\</gi, '_');
   }
 
+  function getRequireList(def, parentDef) {
+    var defRequires = [].concat(
+        (def.requires || []),
+        ((parentDef && parentDef.requires) || [])
+    );
+    if (defRequires.length === 0) {
+      return;
+    }
+    requires = cr('div', 'requires');
+    requireList = cr('ul');
+    ap(requires,
+      cr('h4', undefined, 'Requires'),
+      requireList
+    );
+    defRequires.forEach(function (requirement) {
+      ap(requireList,
+        ap(
+            cr('li'),
+            cr('a', { href: ('https://code.highcharts.com/' + requirement + '.js') }, requirement)
+        )
+      );
+    });
+    return requires;
+  }
+
   function getSampleList(def) {
     var samples,
       sampleList;
@@ -530,7 +556,7 @@ hapi.ajax = function(p) {
     return samples;
   }
 
-  function createOption(target, def, state, origState) {
+  function createOption(target, def, parentDef, state, origState) {
     var option = cr('div', 'option ' + toClassName(def.fullname)),
       title = cr('h2', 'title'),
       titleLink,
@@ -679,6 +705,7 @@ hapi.ajax = function(p) {
         context,
         extend,
         inheritedFrom,
+        getRequireList(def, parentDef),
         samples,
         see
       )
@@ -816,6 +843,7 @@ hapi.ajax = function(p) {
               title,
               deprecated,
               description,
+              getRequireList(data),
               getSampleList(data),
               see
             )
@@ -823,7 +851,7 @@ hapi.ajax = function(p) {
         );
 
         data.children.forEach(function(def) {
-          createOption(optionList, def, state, origState);
+          createOption(optionList, def, data, state, origState);
         });
         if (typeof callback === 'function') {
           callback();
@@ -903,9 +931,15 @@ hapi.ajax = function(p) {
       minLength = minLength || 2,
       maxElements = maxElements || 15,
       members = [],
-      query = '';
+      query = '',
+      productPath = '/' + location.pathname.split('/')[1] + '/',
+      webSearch = (
+          typeof HighsoftWebSearch !== 'undefined' ?
+            new HighsoftWebSearch.Search('../websearch/') :
+            undefined
+      );
 
-    if (location.pathname.lastIndexOf('/') <= 0) {
+    if (location.pathname.lastIndexOf('/') == (location.pathname.length - 1)) {
       searchField.focus();
     }
 
@@ -974,37 +1008,32 @@ hapi.ajax = function(p) {
       }
     }
 
-    function searchText(e, page) {
+    function searchText(e) {
       query = searchField.value;
-      if (e.keyCode !== 13 &&
-        typeof page === 'undefined'
-      ) {
+      if (
+        typeof webSearch === 'undefined' || (
+          e.keyCode !== 13 &&
+          typeof page === 'undefined'
+      )) {
         return;
       }
-      page = (page || 1);
-      if (page < 2) {
-        clearSearch();
-      }
-      hapi.ajax({
-        dataType: 'json',
-        url: (
-          'https://api.highcharts.com/search/search.php' +
-          '?query=' + encodeURIComponent(query) +
-          '&type=and' +
-          '&start=' + page +
-          '&results=' + maxElements +
-          '&search=1'
-        ),
-        success: function(json) {
-          if (!json ||
-            json.query !== query ||
-            json.total_results === 0
-          ) {
-            return;
-          }
-          showTextResults(json, query);
-        }
-      });
+      webSearch
+        .find(query)
+        .then(function (entries) {
+          return entries.filter(function (entry) {
+            return (
+              entry.url.indexOf('.html') === -1 && (
+                entry.url.indexOf('/class-reference/') !== -1 ||
+                entry.url.indexOf(productPath) !== -1
+              )
+            );
+          });
+        })
+        .then(function (entries) {
+          clearTextResults();
+          showTextResults(entries);
+        })
+        .catch(console.error);
     }
 
     function clearSideResults() {
@@ -1093,7 +1122,7 @@ hapi.ajax = function(p) {
           sidebar.setAttribute('expanded', false);
           query = this.innerText;
           clearSearch();
-          searchText(e, 1);
+          searchText(e);
         });
         ap(sideResults, ap(cr('li', 'match'), a));
         if (sideResults.childElementCount >= maxElements) {
@@ -1114,23 +1143,20 @@ hapi.ajax = function(p) {
       showContent();
     }
 
-    function showTextResults(json, query) {
+    function showTextResults(entries, skip) {
+      skip = ((skip || 0) + 10);
       stopSideSuggestions();
       var a,
         div,
-        entries = (json.qry_results || []),
+        pageEntries = entries.slice((skip - 10), skip),
         entry,
         name,
-        next = (json.next || 2),
-        pages = (json.pages || 0),
-        snippet,
-        total = (json.total_results || 0),
+        total = entries.length,
         url;
-      for (var i = 0, ie = entries.length; i < ie && i < maxElements; ++i) {
-        entry = entries[i];
+      for (var i = 0, ie = pageEntries.length; i < ie && i < maxElements; ++i) {
+        entry = pageEntries[i];
         name = (entry.title || '');
         url = (entry.url || '/');
-        snippet = (entry.fulltxt || '');
         if (name.indexOf('|') > -1) {
           name = name.substr(0, name.indexOf('|'));
         }
@@ -1140,11 +1166,15 @@ hapi.ajax = function(p) {
         if (name.indexOf(':') === -1) {
           name = 'Option: ' + name;
         }
-        if (snippet.indexOf('Welcome') === 0 ||
-          snippet.indexOf('<b>') === -1
-        ) {
-          snippet = '';
-        }
+        var snippet = cr('p');
+        webSearch.preview(entry).then(text => {
+            if (text.indexOf('Welcome') === 0 ||
+                text.indexOf('<b>') === -1
+            ) {
+                text = '';
+            }
+            snippet.innerHTML = text;
+        }).catch(console.error);
         a = cr('a', null, name, true);
         a.setAttribute('href', url);
         a.setAttribute('title', 'Go to ' + url.substr(url.indexOf('//') + 2));
@@ -1155,7 +1185,7 @@ hapi.ajax = function(p) {
               cr('h2'),
               a
             ),
-            cr('p', null, snippet, true),
+            snippet,
           )
         );
       }
@@ -1176,7 +1206,7 @@ hapi.ajax = function(p) {
         scrollTo(textResults, textResults.firstChild, 200);
       }
       var foundText = 'Found ' + pluralize(total, ' result', ' results');
-      if (next <= pages) {
+      if (skip < total) {
         var divOptions = cr('div', 'options')
         var aClose = cr('span', 'close', 'Close results');
         on(aClose, 'click', function (e) {
@@ -1188,7 +1218,7 @@ hapi.ajax = function(p) {
         on(aMore, 'click', function (e) {
           e.preventDefault();
           textResults.removeChild(divOptions);
-          searchText(e, next);
+          showTextResults(entries, skip);
         });
         ap(
           textResults,
@@ -1216,7 +1246,7 @@ hapi.ajax = function(p) {
     }
 
     on(searchField, 'keydown', searchText);
-    on(searchButton, 'click', function (e) { searchText(e, 0); });
+    on(searchButton, 'click',  searchText);
 
     if (sideResults) {
       on(searchField.parentNode, 'keydown', navigateSearch, true);

@@ -7,6 +7,7 @@ import * as M from './Members/index';
 import TS from 'typescript';
 export declare class Project {
     private static childrenJSONMapper;
+    private static childrenFileMemberMapper;
     constructor(program: TS.Program);
     private _directoryPath;
     private _program;
@@ -14,6 +15,7 @@ export declare class Project {
     readonly program: TS.Program;
     getChildren(): Array<M.FileMember>;
     getChildrenJSON(): Array<M.FileMemberJSON>;
+    getSourceFiles(): Array<TS.SourceFile>;
     toJSON(): ProjectJSON;
 }
 export interface ProjectJSON extends M.MemberJSON {

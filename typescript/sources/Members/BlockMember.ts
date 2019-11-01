@@ -20,7 +20,7 @@ export class BlockMember extends M.Member<(TS.Block|TS.ModuleBlock)> {
         const superJSON = super.toJSON();
 
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'block',
             kindID: superJSON.kindID
         }
@@ -28,6 +28,7 @@ export class BlockMember extends M.Member<(TS.Block|TS.ModuleBlock)> {
 }
 
 export interface BlockMemberJSON extends M.MemberJSON {
+    children: Array<M.MemberJSON>;
     kind: 'block';
 }
 

@@ -22,7 +22,7 @@ class BlockMember extends M.Member {
     toJSON() {
         const superJSON = super.toJSON();
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'block',
             kindID: superJSON.kindID
         };

@@ -20,13 +20,21 @@ const typescript_1 = __importDefault(require("typescript"));
 class FileMember extends M.Member {
     /* *
      *
+     *  Constructor
+     *
+     * */
+    constructor(node) {
+        super(node, node);
+    }
+    /* *
+     *
      *  Functions
      *
      * */
     toJSON() {
         const superJSON = super.toJSON();
         return {
-            children: superJSON.children,
+            children: (superJSON.children || []),
             kind: 'file',
             kindID: superJSON.kindID,
             path: typescript_1.default.sys.resolvePath(this.node.fileName)

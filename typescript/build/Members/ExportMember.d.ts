@@ -9,6 +9,7 @@ export declare class ExportMember extends M.Member<(TS.ExportAssignment | TS.Exp
     toJSON(): ExportMemberJSON;
 }
 export interface ExportMemberJSON extends M.MemberJSON {
+    children?: undefined;
     kind: 'export';
 }
 export default ExportMember;
