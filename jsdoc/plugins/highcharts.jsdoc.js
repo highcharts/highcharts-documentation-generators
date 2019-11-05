@@ -144,8 +144,8 @@ function decorateOptions(parent, target, option, filename) {
             );
         });
     } else if (option.value && option.value.type === 'Literal') {
-       target[index].meta.default = option.value.value;
-       //target[option.key.name].meta.type = option.value.type;
+        target[index].meta.default = option.value.value;
+        //target[option.key.name].meta.type = option.value.type;
     } else if (option.value && option.value.type === 'UnaryExpression') {
         if (option.value.argument && option.value.argument.type === 'Literal') {
             if (option.value.operator === 'void') {
