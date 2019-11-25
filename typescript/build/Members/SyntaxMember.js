@@ -13,20 +13,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = __importStar(require("./"));
-class BundleMember extends M.Member {
+class SyntaxMember extends M.Member {
     /* *
      *
      *  Functions
      *
      * */
     toJSON() {
+        const thisSourceFile = this.sourceFile;
         const superJSON = super.toJSON();
+        const thisNode = this.node;
         return {
-            children: (superJSON.children || []),
-            kind: 'bundle',
-            kindID: superJSON.kindID
+            children: superJSON.children,
+            decorators: thisNode.decorators,
+            kind: 'syntax',
+            kindID: superJSON.kindID,
+            text: thisNode.getFullText(thisSourceFile)
         };
     }
 }
-exports.BundleMember = BundleMember;
-exports.default = BundleMember;
+exports.SyntaxMember = SyntaxMember;
+exports.default = DocletMember;

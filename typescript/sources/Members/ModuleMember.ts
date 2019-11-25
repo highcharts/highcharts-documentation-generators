@@ -4,7 +4,7 @@
  *
  * */
 
-import * as M from './Member';
+import * as M from './';
 import TS from 'typescript';
 
 export class ModuleMember extends M.Member<TS.ModuleDeclaration> {

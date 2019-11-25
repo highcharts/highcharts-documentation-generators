@@ -4,9 +4,9 @@
  *
  * */
 
-import * as M from './index';
+import * as M from './';
 import ModifiersUtilities from '../ModifiersUtilities';
-import * as T from '../Types/index';
+import * as T from '../Types/';
 import TS from 'typescript';
 import TypesUtilities from '../TypesUtilities';
 

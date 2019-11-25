@@ -13,7 +13,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = __importStar(require("./"));
-class BundleMember extends M.Member {
+class LiteralMember extends M.Member {
     /* *
      *
      *  Functions
@@ -21,12 +21,14 @@ class BundleMember extends M.Member {
      * */
     toJSON() {
         const superJSON = super.toJSON();
+        const thisNode = this.node;
         return {
-            children: (superJSON.children || []),
-            kind: 'bundle',
-            kindID: superJSON.kindID
+            children: superJSON.children,
+            kind: 'literal',
+            kindID: superJSON.kindID,
+            literal: thisNode.literal
         };
     }
 }
-exports.BundleMember = BundleMember;
-exports.default = BundleMember;
+exports.LiteralMember = LiteralMember;
+exports.default = LiteralMember;

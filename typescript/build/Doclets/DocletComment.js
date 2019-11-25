@@ -12,8 +12,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const M = __importStar(require("./"));
-class BundleMember extends M.Member {
+const D = __importStar(require("./Doclet"));
+class DocletComment extends D.Doclet {
     /* *
      *
      *  Functions
@@ -21,12 +21,14 @@ class BundleMember extends M.Member {
      * */
     toJSON() {
         const superJSON = super.toJSON();
+        const thisNode = this.node;
         return {
             children: (superJSON.children || []),
-            kind: 'bundle',
-            kindID: superJSON.kindID
+            kind: 'doclet',
+            kindID: superJSON.kindID,
+            text: thisNode.getText()
         };
     }
 }
-exports.BundleMember = BundleMember;
-exports.default = BundleMember;
+exports.DocletComment = DocletComment;
+exports.default = BlockMember;

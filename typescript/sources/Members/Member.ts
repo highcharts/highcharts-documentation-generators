@@ -4,23 +4,16 @@
  *
  * */
 
-import * as JS from '../JSON/index';
+import * as JS from '../JSON/';
 import MembersUtilities from '../MembersUtilities';
 import TS from 'typescript';
 
-export class Member<TNode extends TS.Node = TS.Node>
-    implements JS.JSONExporter
+function childrenJSONMapper(child: Member): MemberJSON {
+    return child.toJSON();
+}
+
+export class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter
 {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    private static childrenJSONMapper(child: Member): MemberJSON {
-        return child.toJSON();
-    }
 
     /* *
      *
@@ -95,7 +88,7 @@ export class Member<TNode extends TS.Node = TS.Node>
     public getChildrenJSON(): Array<MemberJSON> {
         return this
             .getChildren()
-            .map(Member.childrenJSONMapper);
+            .map(childrenJSONMapper);
     }
 
     public toJSON(): MemberJSON {

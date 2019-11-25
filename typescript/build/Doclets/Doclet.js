@@ -8,12 +8,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const MembersUtilities_1 = __importDefault(require("../MembersUtilities"));
+const DocletsUtilities_1 = __importDefault(require("../DocletsUtilities"));
 const typescript_1 = __importDefault(require("typescript"));
-function childrenJSONMapper(child) {
-    return child.toJSON();
-}
-class Member {
+class Doclet {
     /* *
      *
      *  Constructor
@@ -23,6 +20,14 @@ class Member {
         this._isSupported = (isNotSupported === false);
         this._node = node;
         this._sourceFile = sourceFile;
+    }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    static childrenJSONMapper(child) {
+        return child.toJSON();
     }
     get isSupported() {
         return this._isSupported;
@@ -47,7 +52,7 @@ class Member {
         const memberChildren = [];
         let memberChild;
         for (let nodeChild of nodeChildren) {
-            memberChild = MembersUtilities_1.default.loadFromNode(sourceFile, nodeChild);
+            memberChild = DocletsUtilities_1.default.loadFromNode(sourceFile, nodeChild);
             if (memberChild.isSupported) {
                 memberChildren.push(memberChild);
             }
@@ -60,7 +65,7 @@ class Member {
     getChildrenJSON() {
         return this
             .getChildren()
-            .map(childrenJSONMapper);
+            .map(Doclet.childrenJSONMapper);
     }
     toJSON() {
         const childrenJSON = this.getChildrenJSON();
@@ -81,5 +86,5 @@ class Member {
         return typescript_1.default.getGeneratedNameForNode(this.node).escapedText.toString();
     }
 }
-exports.Member = Member;
-exports.default = Member;
+exports.Doclet = Doclet;
+exports.default = Doclet;

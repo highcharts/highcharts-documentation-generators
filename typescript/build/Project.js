@@ -37,6 +37,17 @@ class Project {
     static childrenFileMemberMapper(child) {
         return new M.FileMember(child);
     }
+    static loadFromArguments(args) {
+        const parsedCommandLine = typescript_1.default.parseCommandLine(args);
+        return new Project(typescript_1.default.createProgram(parsedCommandLine.fileNames, parsedCommandLine.options));
+    }
+    static loadFromDirectory(directoryPath) {
+        const tsConfig = typescript_1.default.readJsonConfigFile(typescript_1.default.sys.resolvePath(directoryPath), typescript_1.default.sys.readFile);
+        const parsedCommandLine = typescript_1.default.parseJsonConfigFileContent(tsConfig, typescript_1.default.sys, directoryPath);
+        const project = new Project(typescript_1.default.createProgram(parsedCommandLine.fileNames, parsedCommandLine.options));
+        project.directoryPath = directoryPath;
+        return project;
+    }
     get directoryPath() {
         return (this._directoryPath || '');
     }

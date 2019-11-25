@@ -15,7 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const M = __importStar(require("./index"));
+const M = __importStar(require("./"));
 const ModifiersUtilities_1 = __importDefault(require("../ModifiersUtilities"));
 const typescript_1 = __importDefault(require("typescript"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));

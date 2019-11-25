@@ -15,31 +15,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const M = __importStar(require("./"));
+const D = __importStar(require("./Doclets"));
 const typescript_1 = __importDefault(require("typescript"));
-class FileMember extends M.Member {
+class DocletsUtilities {
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    static loadFromNode(sourceFile, node) {
+        if (typescript_1.default.isJSDoc(node)) {
+            return new D.Doclet(sourceFile, node);
+        }
+        return new D.Doclet(sourceFile, node, true);
+    }
     /* *
      *
      *  Constructor
      *
      * */
-    constructor(node) {
-        super(node, node);
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    toJSON() {
-        const superJSON = super.toJSON();
-        return {
-            children: (superJSON.children || []),
-            kind: 'file',
-            kindID: superJSON.kindID,
-            path: typescript_1.default.sys.resolvePath(this.node.fileName)
-        };
-    }
+    constructor() { }
+    ;
 }
-exports.FileMember = FileMember;
-exports.default = FileMember;
+exports.DocletsUtilities = DocletsUtilities;
+exports.default = DocletsUtilities;
