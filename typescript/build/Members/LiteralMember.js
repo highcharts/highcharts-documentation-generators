@@ -20,13 +20,13 @@ class LiteralMember extends M.Member {
      *
      * */
     toJSON() {
+        const node = this.node;
         const superJSON = super.toJSON();
-        const thisNode = this.node;
         return {
             children: superJSON.children,
             kind: 'literal',
             kindID: superJSON.kindID,
-            literal: thisNode.literal
+            literal: node.literal
         };
     }
 }

@@ -33,6 +33,9 @@ class MembersUtilities {
         if (typescript_1.default.isExportAssignment(node) || typescript_1.default.isExportDeclaration(node)) {
             return new M.ExportMember(sourceFile, node);
         }
+        if (typescript_1.default.isIdentifier(node)) {
+            return new M.IdentifierMember(sourceFile, node);
+        }
         if (typescript_1.default.isJSDoc(node)) {
             return new M.DocletMember(sourceFile, node);
         }
@@ -48,7 +51,7 @@ class MembersUtilities {
         if (typescript_1.default.isSourceFile(node)) {
             return new M.FileMember(node);
         }
-        return new M.Member(sourceFile, node, false);
+        return new M.Member(sourceFile, node, true);
     }
     /* *
      *

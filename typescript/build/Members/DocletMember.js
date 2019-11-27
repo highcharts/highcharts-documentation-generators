@@ -40,14 +40,14 @@ class DocletMember extends M.Member {
             .map(childrenJSONMapper);
     }
     toJSON() {
+        const node = this.node;
         const superJSON = super.toJSON();
         const thisChildrenJSON = this.getChildrenJSON();
-        const thisNode = this.node;
         return {
             children: thisChildrenJSON,
             kind: 'doclet',
             kindID: superJSON.kindID,
-            text: thisNode.comment
+            text: node.comment
         };
     }
 }

@@ -7,10 +7,10 @@ import * as JS from '../JSON/';
 import TS from 'typescript';
 export declare class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter {
     constructor(sourceFile: TS.SourceFile, node: TNode, isNotSupported?: boolean);
-    private _isSupported;
+    private _isNotSupported;
     private _node;
     private _sourceFile;
-    get isSupported(): boolean;
+    get isNotSupported(): boolean;
     protected get node(): TNode;
     protected get sourceFile(): TS.SourceFile;
     getChildNodes(): Array<TS.Node>;

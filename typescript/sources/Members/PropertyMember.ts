@@ -35,13 +35,9 @@ export class PropertyMember extends M.Member<TS.PropertyDeclaration> {
             kindID: superJSON.kindID,
             modifiers: ModifiersUtilities.getModifierArray(node.modifiers),
             name: node.name.getText(sourceFile),
-            type: TypesUtilities.loadFromTypeNode(
-                sourceFile,
-                (
-                    node.type ||
-                    TS.createKeywordTypeNode(TS.SyntaxKind.UndefinedKeyword)
-                )
-            ).toJSON()
+            type: TypesUtilities
+                .loadFromTypeNode(sourceFile, node.type)
+                .toJSON()
         }
     }
 }

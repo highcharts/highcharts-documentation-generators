@@ -20,12 +20,12 @@ class Member {
      *
      * */
     constructor(sourceFile, node, isNotSupported = false) {
-        this._isSupported = (isNotSupported === false);
+        this._isNotSupported = isNotSupported;
         this._node = node;
         this._sourceFile = sourceFile;
     }
-    get isSupported() {
-        return this._isSupported;
+    get isNotSupported() {
+        return this._isNotSupported;
     }
     get node() {
         return this._node;
@@ -48,11 +48,11 @@ class Member {
         let memberChild;
         for (let nodeChild of nodeChildren) {
             memberChild = MembersUtilities_1.default.loadFromNode(sourceFile, nodeChild);
-            if (memberChild.isSupported) {
-                memberChildren.push(memberChild);
+            if (memberChild.isNotSupported) {
+                memberChildren.push(...memberChild.getChildren());
             }
             else {
-                memberChildren.push(...memberChild.getChildren());
+                memberChildren.push(memberChild);
             }
         }
         return memberChildren;
@@ -72,9 +72,9 @@ class Member {
             kind: '',
             kindID: node.kind,
             name: this.toString(),
-            unsupportedNode: this.isSupported ?
-                undefined :
-                node
+            unsupportedNode: this.isNotSupported ?
+                node :
+                undefined
         };
     }
     toString() {

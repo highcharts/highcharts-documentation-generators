@@ -32,6 +32,10 @@ export class MembersUtilities {
             return new M.ExportMember(sourceFile, node);
         }
 
+        if (TS.isIdentifier(node)) {
+            return new M.IdentifierMember(sourceFile, node);
+        }
+
         if (TS.isJSDoc(node)) {
             return new M.DocletMember(sourceFile, node);
         }
@@ -52,7 +56,7 @@ export class MembersUtilities {
             return new M.FileMember(node);
         }
 
-        return new M.Member(sourceFile, node, false);
+        return new M.Member(sourceFile, node, true);
     }
 
     /* *

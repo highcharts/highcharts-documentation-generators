@@ -17,14 +17,14 @@ export class DocletTagMember extends M.Member<TS.JSDocTag> {
 
     public toJSON(): DocletTagMemberJSON {
 
+        const node = this.node;
         const superJSON = super.toJSON();
-        const thisNode = this.node;
 
         return {
             kind: 'doclettag',
             kindID: superJSON.kindID,
-            tag: thisNode.tagName.escapedText,
-            text: thisNode.comment
+            tag: node.tagName.escapedText,
+            text: node.comment
         };
     }
 }

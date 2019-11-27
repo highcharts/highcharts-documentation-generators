@@ -44,15 +44,15 @@ export class DocletMember extends M.Member<TS.JSDoc> {
 
     public toJSON(): DocletMemberJSON {
 
+        const node = this.node;
         const superJSON = super.toJSON();
         const thisChildrenJSON = this.getChildrenJSON();
-        const thisNode = this.node;
 
         return {
             children: thisChildrenJSON,
             kind: 'doclet',
             kindID: superJSON.kindID,
-            text: thisNode.comment
+            text: node.comment
         };
     }
 }

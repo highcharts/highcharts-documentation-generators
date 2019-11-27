@@ -11,9 +11,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = __importStar(require("./"));
-class DocletTagMember extends M.Member {
+const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
+class ParameterMember extends M.Member {
     /* *
      *
      *  Functions
@@ -21,14 +25,15 @@ class DocletTagMember extends M.Member {
      * */
     toJSON() {
         const node = this.node;
+        const sourceFile = this.sourceFile;
         const superJSON = super.toJSON();
         return {
-            kind: 'doclettag',
+            kind: 'parameter',
             kindID: superJSON.kindID,
-            tag: node.tagName.escapedText,
-            text: node.comment
+            name: node.name,
+            type: TypesUtilities_1.default.loadFromTypeNode(sourceFile, node.type)
         };
     }
 }
-exports.DocletTagMember = DocletTagMember;
-exports.default = DocletTagMember;
+exports.ParameterMember = ParameterMember;
+exports.default = ParameterMember;

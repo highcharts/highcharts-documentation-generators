@@ -17,14 +17,14 @@ export class LiteralMember extends M.Member<(TS.LiteralTypeNode)> {
 
     public toJSON(): LiteralMemberJSON {
 
+        const node = this.node;
         const superJSON = super.toJSON();
-        const thisNode = this.node;
 
         return {
             children: superJSON.children,
             kind: 'literal',
             kindID: superJSON.kindID,
-            literal: thisNode.literal
+            literal: node.literal
         };
     }
 }

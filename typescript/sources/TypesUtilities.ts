@@ -35,8 +35,16 @@ export class TypesUtilities {
 
     public static loadFromTypeNode(
         sourceFile: TS.SourceFile,
-        typeNode: TS.TypeNode
+        typeNode?: TS.TypeNode
     ): T.Type {
+
+        if (typeof typeNode === 'undefined') {
+            typeNode = TS.createKeywordTypeNode(TS.SyntaxKind.UndefinedKeyword);
+        }
+
+        if (TS.isParenthesizedTypeNode(typeNode)) {
+            typeNode = typeNode.type;
+        }
 
         if (TS.isArrayTypeNode(typeNode)) {
             return new T.ArrayType(sourceFile, typeNode);

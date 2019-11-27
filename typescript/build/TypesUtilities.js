@@ -33,6 +33,12 @@ class TypesUtilities {
         return typeChildren;
     }
     static loadFromTypeNode(sourceFile, typeNode) {
+        if (typeof typeNode === 'undefined') {
+            typeNode = typescript_1.default.createKeywordTypeNode(typescript_1.default.SyntaxKind.UndefinedKeyword);
+        }
+        if (typescript_1.default.isParenthesizedTypeNode(typeNode)) {
+            typeNode = typeNode.type;
+        }
         if (typescript_1.default.isArrayTypeNode(typeNode)) {
             return new T.ArrayType(sourceFile, typeNode);
         }

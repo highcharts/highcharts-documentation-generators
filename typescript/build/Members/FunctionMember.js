@@ -16,34 +16,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = __importStar(require("./"));
-const ModifiersUtilities_1 = __importDefault(require("../ModifiersUtilities"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
-class PropertyMember extends M.Member {
+function parameterJSONMapper(child) {
+    return child.toJSON();
+}
+class FunctionMember extends M.Member {
     /* *
      *
      *  Functions
      *
      * */
+    getParameterNodes() {
+        return (this.node.parameters || []).slice();
+    }
+    getParameters() {
+        const parameterNodes = this.getParameterNodes();
+        const parameters = [];
+        const sourceFile = this.sourceFile;
+        for (let parameterNode of parameterNodes) {
+            parameters.push(new M.ParameterMember(sourceFile, parameterNode));
+        }
+        return parameters;
+    }
+    getParametersJSON() {
+        return this
+            .getParameters()
+            .map(parameterJSONMapper);
+    }
     toJSON() {
         const node = this.node;
         const sourceFile = this.sourceFile;
         const superJSON = super.toJSON();
         return {
-            isNonOptional: typeof node.exclamationToken === 'undefined' ?
-                undefined :
-                true,
-            isOptional: typeof node.questionToken === 'undefined' ?
-                undefined :
-                true,
-            kind: 'property',
+            children: superJSON.children,
+            kind: 'function',
             kindID: superJSON.kindID,
-            modifiers: ModifiersUtilities_1.default.getModifierArray(node.modifiers),
-            name: node.name.getText(sourceFile),
-            type: TypesUtilities_1.default
+            modifiers: node.modifiers,
+            name: (node.name && node.name.toString() || ''),
+            parameters: this.getParametersJSON(),
+            returnType: TypesUtilities_1.default
                 .loadFromTypeNode(sourceFile, node.type)
                 .toJSON()
         };
     }
 }
-exports.PropertyMember = PropertyMember;
-exports.default = PropertyMember;
+exports.FunctionMember = FunctionMember;
+exports.default = FunctionMember;
