@@ -193,10 +193,7 @@ hapi.ajax = function(p) {
       if (def.default === null) {
         return 'null';
       }
-      if (typeof def.default === 'string') {
-        return '"' + encodeHTML(def.default) + '"';
-      }
-      return  encodeHTML(def.default.toString());
+      return encodeHTML(def.default.toString());
     }
     return 'undefined';
   }

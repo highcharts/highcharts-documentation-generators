@@ -411,6 +411,69 @@ function inferVersion(node, version) {
         ));
 }
 
+function _inferValue(value, types) {
+
+    const typesLength = types.length;
+
+    let typesIndex = -1;
+
+    while (
+        ++typesIndex < typesLength &&
+        types.indexOf(typeof value) === -1
+    ) {
+        switch (types[typesIndex]) {
+            case 'boolean':
+                switch (value) {
+                    case 'false':
+                        return false;
+                    case 'true':
+                        return true;
+                }
+                break;
+            case 'number':
+                if (!Number.isNaN(new Number(value))) {
+                    return new Number(value);
+                }
+                break;
+            case 'null':
+                return null;
+        }
+    }
+
+    return value;
+}
+
+function inferValue(obj) {
+
+    // check type format for defaults
+    if (
+        typeof obj.doclet !== 'undefined' &&
+        typeof obj.doclet.type !== 'undefined'
+    ) {
+
+        const types = obj.doclet.type.names;
+
+        if (typeof obj.meta.default !== 'undefined') {
+            obj.doclet.default = _inferValue(obj.meta.default, types);
+        }
+
+        if (typeof obj.meta.defaultvalue !== 'undefined') {
+            obj.doclet.defaultvalue = _inferValue(obj.meta.default, types);
+        }
+
+        if (typeof obj.doclet.defaultByProduct !== 'undefined') {
+            for (let product in obj.doclet.defaultByProduct) {
+                obj.doclet.defaultByProduct[product] = _inferValue(obj.doclet.defaultByProduct[product], types);
+            }
+        }
+    }
+
+    // Infer types
+    if (obj.children) {
+        Object.keys(obj.children).forEach(name => inferValue(obj.children[name]));
+    }
+}
+
 function _inferType(node) {
     var defVal;
 
@@ -751,15 +814,16 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag('default', {
         onTagged: function (doclet, tagObj) {
 
-            if (!tagObj.value) {
+            if (typeof tagObj.value === 'undefined') {
                 return;
             }
 
-            if (tagObj.value.indexOf('highcharts') < 0 &&
+            if (
+                tagObj.value.indexOf('highcharts') < 0 &&
                 tagObj.value.indexOf('highmaps') < 0 &&
                 tagObj.value.indexOf('highstock') < 0 &&
-                tagObj.value.indexOf('gantt') < 0) {
-
+                tagObj.value.indexOf('gantt') < 0
+            ) {
                 doclet.defaultvalue = tagObj.text;
                 return;
             }
@@ -874,6 +938,7 @@ Move them up before functional code for JSDoc to see them.`.yellow
         removeIgnoredOptions({children: options});
         inferVersion({children: options});
         inferType({children: options});
+        inferValue({children: options});
         improveDescription({children: options});
 
         function addSeriesTypeDescription(type) {
