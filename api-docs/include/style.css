@@ -529,16 +529,15 @@ a:hover {
 
 .options-tree .default.type-string:before,
 .options-tree .default.type-string:after,
-.options-tree .default.type-array-highcharts-colorstring-:before,
-.options-tree .default.type-array-highcharts-colorstring-:after,
 .options-tree .default.type-highcharts-colorstring:before,
 .options-tree .default.type-highcharts-colorstring:after {
   content: '"'
 }
 
 .options-tree .default.type-string,
-.options-tree .default.type-array-highcharts-colorstring-,
-.options-tree .default.type-highcharts-colorstring {
+.options-tree .default.type-array-string-,
+.options-tree .default.type-highcharts-colorstring,
+.options-tree .default.type-array-highcharts-colorstring- {
   color: #39A832;
 }
 
