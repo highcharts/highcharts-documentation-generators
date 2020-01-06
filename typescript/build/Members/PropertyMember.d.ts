@@ -3,8 +3,8 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import * as M from './index';
-import * as T from '../Types/index';
+import * as M from './';
+import * as T from '../Types/';
 import TS from 'typescript';
 export declare class PropertyMember extends M.Member<TS.PropertyDeclaration> {
     toJSON(): PropertyMemberJSON;

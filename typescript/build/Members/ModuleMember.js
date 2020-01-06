@@ -12,7 +12,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const M = __importStar(require("./Member"));
+const M = __importStar(require("./"));
 class ModuleMember extends M.Member {
     /* *
      *

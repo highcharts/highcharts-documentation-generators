@@ -529,19 +529,24 @@ a:hover {
 
 .options-tree .default.type-string:before,
 .options-tree .default.type-string:after,
-.options-tree .default.type-color:before,
-.options-tree .default.type-color:after {
+.options-tree .default.type-highcharts-colorstring:before,
+.options-tree .default.type-highcharts-colorstring:after {
   content: '"'
 }
 
 .options-tree .default.type-string,
-.options-tree .default.type-color,
-.options-tree .default.type-highcharts-colorstring {
+.options-tree .default.type-array-string-,
+.options-tree .default.type-highcharts-colorstring,
+.options-tree .default.type-array-highcharts-colorstring- {
   color: #39A832;
 }
 
 .options-tree .default.type-number {
   color: #297EA8;
+}
+
+.options-tree .default.type-boolean {
+  color: #7E29A8;
 }
 
 
@@ -648,7 +653,6 @@ a:hover {
 }
 
 .option .title .type-list a {
-  color: inherit;
   text-decoration: none;
 }
 

@@ -15,9 +15,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const M = __importStar(require("./index"));
+const M = __importStar(require("./"));
 const ModifiersUtilities_1 = __importDefault(require("../ModifiersUtilities"));
-const typescript_1 = __importDefault(require("typescript"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
 class PropertyMember extends M.Member {
     /* *
@@ -40,8 +39,9 @@ class PropertyMember extends M.Member {
             kindID: superJSON.kindID,
             modifiers: ModifiersUtilities_1.default.getModifierArray(node.modifiers),
             name: node.name.getText(sourceFile),
-            type: TypesUtilities_1.default.loadFromTypeNode(sourceFile, (node.type ||
-                typescript_1.default.createKeywordTypeNode(typescript_1.default.SyntaxKind.UndefinedKeyword))).toJSON()
+            type: TypesUtilities_1.default
+                .loadFromTypeNode(sourceFile, node.type)
+                .toJSON()
         };
     }
 }

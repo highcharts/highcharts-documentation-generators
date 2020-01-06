@@ -4,23 +4,16 @@
  *
  * */
 
-import * as JS from '../JSON/index';
+import * as JS from '../JSON/';
 import MembersUtilities from '../MembersUtilities';
 import TS from 'typescript';
 
-export class Member<TNode extends TS.Node = TS.Node>
-    implements JS.JSONExporter
+function childrenJSONMapper(child: Member): MemberJSON {
+    return child.toJSON();
+}
+
+export class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter
 {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    private static childrenJSONMapper(child: Member): MemberJSON {
-        return child.toJSON();
-    }
 
     /* *
      *
@@ -33,7 +26,7 @@ export class Member<TNode extends TS.Node = TS.Node>
         node: TNode,
         isNotSupported: boolean = false
     ) {
-        this._isSupported = (isNotSupported === false);
+        this._isNotSupported = isNotSupported;
         this._node = node;
         this._sourceFile = sourceFile;
     }
@@ -44,12 +37,12 @@ export class Member<TNode extends TS.Node = TS.Node>
      *
      * */
 
-    private _isSupported: boolean;
+    private _isNotSupported: boolean;
     private _node: TNode;
     private _sourceFile: TS.SourceFile;
 
-    public get isSupported(): boolean {
-        return this._isSupported;
+    public get isNotSupported(): boolean {
+        return this._isNotSupported;
     }
 
     protected get node(): TNode {
@@ -82,10 +75,10 @@ export class Member<TNode extends TS.Node = TS.Node>
 
             memberChild = MembersUtilities.loadFromNode(sourceFile, nodeChild);
 
-            if (memberChild.isSupported) {
-                memberChildren.push(memberChild);
-            } else {
+            if (memberChild.isNotSupported) {
                 memberChildren.push(...memberChild.getChildren());
+            } else {
+                memberChildren.push(memberChild);
             }
         }
 
@@ -95,7 +88,7 @@ export class Member<TNode extends TS.Node = TS.Node>
     public getChildrenJSON(): Array<MemberJSON> {
         return this
             .getChildren()
-            .map(Member.childrenJSONMapper);
+            .map(childrenJSONMapper);
     }
 
     public toJSON(): MemberJSON {
@@ -110,9 +103,9 @@ export class Member<TNode extends TS.Node = TS.Node>
             kind: '',
             kindID: node.kind,
             name: this.toString(),
-            unsupportedNode: this.isSupported ?
-                undefined :
-                node
+            unsupportedNode: this.isNotSupported ?
+                node :
+                undefined
         };
     }
 
