@@ -15,23 +15,23 @@
         "async": "^3.1.0",
         "colors": "^1.4.0",
         "express": "^4.17.1",
-        "fast-deep-equal": "^2.0.1",
-        "handlebars": "^4.5.1",
+        "fast-deep-equal": "^3.1.1",
+        "handlebars": "^4.5.3",
         "highcharts-assembler": "github:highcharts/highcharts-assembler",
-        "marked": "^0.7.0",
+        "marked": "^0.8.0",
         "mkdirp": "^0.5.1",
         "moment": "^2.24.0",
         "sanitize-html": "^1.20.1",
-        "semver": "^6.3.0",
+        "semver": "^7.1.1",
         "taffydb": "^2.7.3",
-        "typedoc": "github:highcharts/typedoc#v0.15.36-modified",
+        "typedoc": "^0.15.6",
         "underscore": "^1.9.1",
-        "yargs": "^14.2.0"
+        "yargs": "^15.1.0"
     },
     "devDependencies": {
         "@types/mkdirp": "^0.5.2",
         "@types/node": "^12.12.3",
-        "typescript": "~3.7.2"
+        "typescript": "~3.7.4"
     },
     "files": [
         "api-docs",
