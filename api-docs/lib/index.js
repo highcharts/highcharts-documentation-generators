@@ -436,8 +436,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         }
     }
     filterUndefined({children:input});
-    var versionFuns = [],
-        commonSeries = {},
+    var commonSeries = {},
         stringifiedInput = JSON.stringify(input),
         versionProps = {
             commit: input._meta.commit,
