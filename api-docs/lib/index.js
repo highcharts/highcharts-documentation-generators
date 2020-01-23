@@ -593,7 +593,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         node.children = children;
     }
 
-    function merge(node, trigger, fullname, inheritedExcludes) {
+    function merge(node, fullname) {
         fullname = fullname || '';
 
         var exclude = {
@@ -621,26 +621,24 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 node.doclet.extends = 'plotOptions.' + node.doclet.extends;
             }
 
-            if (trigger === 'series') {
-                node.doclet.extends = node.doclet.extends.replace('series,', '');
-                node.doclet.extends += 'plotOptions.series';
-            }
-
-            // Should always extend plotOptions.series last
             let ext = node.doclet.extends
                 .replace('{', '')
                 .replace('}', '')
                 .replace('<', '.')
                 .replace(/\s/g, ',')
                 .replace('>', '')
-                //.replace('series,', 'plotOptions.series')
                 .split(',');
 
+            // Should always extend plotOptions.series last
             ext.sort((a, b) => {
                 if (a === 'plotOptions.series') return 1;
+                if (b === 'plotOptions.series') return -1;
                 return 0;
             });
 
+            if (node.meta.filename === 'highcharts/js/parts/AreaSeries.js') {
+                console.log(ext);
+            }
             ext.forEach(function (parent) {
                 //Duplicate children
                 if (parent && parent.length > 0) {
@@ -658,7 +656,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                     delete node.children[c];
                     return;
                 }
-                merge(node.children[c], false, (fullname.length > 0 ? fullname + '.' : '') + c, exclude);
+                merge(node.children[c], (fullname.length > 0 ? fullname + '.' : '') + c);
             });
         }
     }
