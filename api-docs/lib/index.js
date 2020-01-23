@@ -636,9 +636,6 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 return 0;
             });
 
-            if (node.meta.filename === 'highcharts/js/parts/AreaSeries.js') {
-                console.log(ext);
-            }
             ext.forEach(function (parent) {
                 //Duplicate children
                 if (parent && parent.length > 0) {
