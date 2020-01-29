@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "highcharts-documentation-generators",
-    "version": "0.5.4",
+    "version": "0.5.6",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
