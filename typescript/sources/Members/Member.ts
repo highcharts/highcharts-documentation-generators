@@ -107,7 +107,7 @@ export class Member<TNode extends TS.Node = TS.Node>
             children: childrenJSON.length === 0 ?
                 undefined :
                 childrenJSON,
-            kind: '',
+            kind: TS.SyntaxKind[node.kind],
             kindID: node.kind,
             name: this.toString(),
             unsupportedNode: this.isSupported ?

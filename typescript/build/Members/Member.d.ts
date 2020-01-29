@@ -11,9 +11,9 @@ export declare class Member<TNode extends TS.Node = TS.Node> implements JS.JSONE
     private _isSupported;
     private _node;
     private _sourceFile;
-    readonly isSupported: boolean;
-    protected readonly node: TNode;
-    protected readonly sourceFile: TS.SourceFile;
+    get isSupported(): boolean;
+    protected get node(): TNode;
+    protected get sourceFile(): TS.SourceFile;
     getChildNodes(): Array<TS.Node>;
     getChildren(): Array<Member>;
     getChildrenJSON(): Array<MemberJSON>;

@@ -5,7 +5,6 @@
  * */
 
 import * as M from './Members/index';
-import Project from './Project';
 import TS from 'typescript';
 
 export class MembersUtilities {
@@ -15,43 +14,6 @@ export class MembersUtilities {
      *  Static Functions
      *
      * */
-
-    public static loadFromArguments(args: Array<string>): Project {
-
-        const parsedCommandLine = TS.parseCommandLine(args);
-
-        return new Project(
-            TS.createProgram(
-                parsedCommandLine.fileNames,
-                parsedCommandLine.options
-            )
-        );
-    }
-
-    public static loadFromDirectory(directoryPath: string): Project {
-
-        const tsConfig = TS.readJsonConfigFile(
-            TS.sys.resolvePath(directoryPath),
-            TS.sys.readFile
-        );
-
-        const parsedCommandLine = TS.parseJsonConfigFileContent(
-            tsConfig,
-            TS.sys,
-            directoryPath
-        );
-
-        const project = new Project(
-            TS.createProgram(
-                parsedCommandLine.fileNames,
-                parsedCommandLine.options
-            )
-        );
-
-        project.directoryPath = directoryPath;
-
-        return project;
-    }
 
     public static loadFromNode(
         sourceFile: TS.SourceFile,

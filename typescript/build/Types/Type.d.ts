@@ -10,9 +10,9 @@ export declare class Type<TTypeNode extends TS.TypeNode = TS.TypeNode> implement
     private _isSupported;
     private _sourceFile;
     private _typeNode;
-    readonly isSupported: boolean;
-    protected readonly sourceFile: TS.SourceFile;
-    protected readonly typeNode: TTypeNode;
+    get isSupported(): boolean;
+    protected get sourceFile(): TS.SourceFile;
+    protected get typeNode(): TTypeNode;
     getChildren(): Array<Type>;
     toJSON(): TypeJSON;
     toString(): string;
