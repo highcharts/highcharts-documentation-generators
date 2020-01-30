@@ -10,6 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const MembersUtilities_1 = __importDefault(require("../MembersUtilities"));
 const typescript_1 = __importDefault(require("typescript"));
+function childrenJSONMapper(child) {
+    return child.toJSON();
+}
 class Member {
     /* *
      *
@@ -17,20 +20,12 @@ class Member {
      *
      * */
     constructor(sourceFile, node, isNotSupported = false) {
-        this._isSupported = (isNotSupported === false);
+        this._isNotSupported = isNotSupported;
         this._node = node;
         this._sourceFile = sourceFile;
     }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    static childrenJSONMapper(child) {
-        return child.toJSON();
-    }
-    get isSupported() {
-        return this._isSupported;
+    get isNotSupported() {
+        return this._isNotSupported;
     }
     get node() {
         return this._node;
@@ -53,11 +48,11 @@ class Member {
         let memberChild;
         for (let nodeChild of nodeChildren) {
             memberChild = MembersUtilities_1.default.loadFromNode(sourceFile, nodeChild);
-            if (memberChild.isSupported) {
-                memberChildren.push(memberChild);
+            if (memberChild.isNotSupported) {
+                memberChildren.push(...memberChild.getChildren());
             }
             else {
-                memberChildren.push(...memberChild.getChildren());
+                memberChildren.push(memberChild);
             }
         }
         return memberChildren;
@@ -65,7 +60,7 @@ class Member {
     getChildrenJSON() {
         return this
             .getChildren()
-            .map(Member.childrenJSONMapper);
+            .map(childrenJSONMapper);
     }
     toJSON() {
         const childrenJSON = this.getChildrenJSON();
@@ -77,9 +72,9 @@ class Member {
             kind: typescript_1.default.SyntaxKind[node.kind],
             kindID: node.kind,
             name: this.toString(),
-            unsupportedNode: this.isSupported ?
-                undefined :
-                node
+            unsupportedNode: this.isNotSupported ?
+                node :
+                undefined
         };
     }
     toString() {

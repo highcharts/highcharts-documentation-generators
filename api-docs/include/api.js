@@ -193,7 +193,7 @@ hapi.ajax = function(p) {
       if (def.default === null) {
         return 'null';
       }
-      return  encodeHTML(def.default.toString());
+      return encodeHTML(def.default.toString());
     }
     return 'undefined';
   }
@@ -498,10 +498,14 @@ hapi.ajax = function(p) {
   }
 
   function getRequireList(def, parentDef) {
-    var defRequires = [].concat(
-        (def.requires || []),
-        ((parentDef && parentDef.requires) || [])
-    );
+    var defRequires = (def.requires || []).slice();
+    if (parentDef && parentDef.requires) {
+      parentDef.requires.forEach(function (req) {
+        if (defRequires.indexOf(req) === -1) {
+          defRequires.push(req);
+        }
+      });
+    }
     if (defRequires.length === 0) {
       return;
     }
@@ -608,8 +612,6 @@ hapi.ajax = function(p) {
           );
           typeHTMLPath = getClassReferenceUrl(type);
           if (typeHTMLPath) {
-              def.see = (def.see || []);
-              def.see.push(cr('a', { href: typeHTMLPath }, type));
               typeHTML = cr('a', { 'class': typeHTMLClass, href: typeHTMLPath }, type);
           } else {
               typeHTML = cr('span', typeHTMLClass, type);
@@ -810,13 +812,13 @@ hapi.ajax = function(p) {
         addClass(target, 'loaded');
 
         if (data.typeList) {
-            data.typeList.names.forEach(function(type) {
+          data.typeList.names.forEach(function(type) {
             typeHTMLPath = getClassReferenceUrl(type);
-            if (typeHTMLPath) {
+            if (hasChildren && typeHTMLPath) {
                 data.see = (data.see || []);
                 data.see.push(cr('a', { href: typeHTMLPath }, type));
             }
-            });
+          });
         }
 
         if (data.see) {

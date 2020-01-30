@@ -4,9 +4,6 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -14,27 +11,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const JSONUtilities_1 = __importDefault(require("../JSONUtilities"));
-const T = __importStar(require("./index"));
+const M = __importStar(require("./"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
-class GenericType extends T.Type {
+class ParameterMember extends M.Member {
     /* *
      *
      *  Functions
      *
      * */
     toJSON() {
-        const typeNode = this.typeNode;
+        const node = this.node;
         const sourceFile = this.sourceFile;
         const superJSON = super.toJSON();
         return {
-            arguments: JSONUtilities_1.default.toJSONArray(TypesUtilities_1.default.loadFromChildren(sourceFile, (typeNode.typeArguments || []))),
-            kind: 'generic',
+            kind: 'parameter',
             kindID: superJSON.kindID,
-            name: typeNode.getText(this.sourceFile)
+            name: node.name,
+            type: TypesUtilities_1.default.loadFromTypeNode(sourceFile, node.type)
         };
     }
 }
-exports.GenericType = GenericType;
-exports.default = GenericType;
+exports.ParameterMember = ParameterMember;
+exports.default = ParameterMember;

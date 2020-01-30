@@ -4,9 +4,9 @@
  *
  * */
 
-import * as M from './index';
+import * as M from './';
 import ModifiersUtilities from '../ModifiersUtilities';
-import * as T from '../Types/index';
+import * as T from '../Types/';
 import TS from 'typescript';
 import TypesUtilities from '../TypesUtilities';
 
@@ -35,13 +35,9 @@ export class PropertyMember extends M.Member<TS.PropertyDeclaration> {
             kindID: superJSON.kindID,
             modifiers: ModifiersUtilities.getModifierArray(node.modifiers),
             name: node.name.getText(sourceFile),
-            type: TypesUtilities.loadFromTypeNode(
-                sourceFile,
-                (
-                    node.type ||
-                    TS.createKeywordTypeNode(TS.SyntaxKind.UndefinedKeyword)
-                )
-            ).toJSON()
+            type: TypesUtilities
+                .loadFromTypeNode(sourceFile, node.type)
+                .toJSON()
         }
     }
 }

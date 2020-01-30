@@ -3,7 +3,7 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import * as M from './Member';
+import * as M from './';
 import TS from 'typescript';
 export declare class BundleMember extends M.Member<TS.Bundle> {
     toJSON(): BundleMemberJSON;
