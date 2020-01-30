@@ -40,7 +40,8 @@ let allDocletPropertyNames = [],
     apiOptionMembers = [],
     currentFilePath = '',
     globalNamespace = {},
-    ignoredMembers = [];
+    ignoredMembers = [],
+    products = [];
 
 /* *
  *
@@ -844,8 +845,28 @@ function sortNodes (node) {
     ));
 
     node.children.forEach(sortNodes);
- }
- 
+}
+
+/**
+ * Converts blacklist product lists into whitelists.
+ *
+ * @param {Node} node
+ *        Root node.
+ */
+function whilelistProducts (node) {
+
+    const inferProducts = ((node.doclet && node.doclet.products) || []).slice();
+    const blacklistMode = inferProducts.some(product => product[0] === '-');
+
+    if (blacklistMode) {
+        node.doclet.products = products.filter(product => !inferProducts.includes('-' + product));
+    }
+
+    if (node.children) {
+        Object.keys(node.children).forEach(key => whilelistProducts(node.children[key]));
+    }
+}
+
 /**
  * Updates corresponding node in the tree with information from the doclet.
  *
@@ -1343,6 +1364,7 @@ function processingComplete (e) {
 
     filterNodes(globalNamespace);
     sortNodes(globalNamespace);
+    whilelistProducts(globalNamespace);
 
     FS.writeFileSync(
         Path.join(rootPath, 'tree-namespace.json'),
@@ -1395,10 +1417,23 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('product', {
         mustHaveValue: true,
-        onTagged: (doclet, tag) => doclet.products =
+        onTagged: (doclet, tag) => {
+            doclet.products = (doclet.products || []);
             tag.value
                 .split(/[,\s]+/)
-                .map(product => product.trim())
+                .forEach(product => {
+                    product = product.trim();
+                    if (!doclet.products.includes(product)) {
+                        doclet.products.push(product);
+                    }
+                    if (product[0] === '-') {
+                        product = product.substr(1);
+                    }
+                    if (!products.includes(product)) {
+                        products.push(product);
+                    }
+                })
+        }
     });
 
     dictionary.defineTag('validvalue', {

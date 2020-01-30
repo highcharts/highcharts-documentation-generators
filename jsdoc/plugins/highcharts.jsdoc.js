@@ -22,12 +22,14 @@ const parseBreak = /[\n\r]+/;
 const parseJsdocLink = /\{@link\s+((?:[^\|]|\s)+?)(?:\|([^\}]|\s+?))?\}/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
 
-var options = {
+const options = {
     _meta: {
-        commit: '',
-        branch: ''
+        branch: '',
+        commit: ''
     }
 };
+
+const products = []
 
 function getLocation(option) {
     return {
@@ -556,6 +558,23 @@ function inferType(obj) {
     }
 }
 
+function _inferProduct(node) {
+    const inferProducts = ((node.doclet && node.doclet.products) || []).slice();
+    const blacklistMode = inferProducts.some(product => product[0] === '-');
+
+    if (blacklistMode) {
+        node.doclet.products = products.filter(product => !inferProducts.includes('-' + product));
+    }
+}
+
+function inferProduct(obj) {
+    _inferProduct(obj);
+
+    if (obj.children) {
+        Object.keys(obj.children).forEach(key => inferProduct(obj.children[key]));
+    }
+}
+
 function augmentOption(path, obj) {
     // This is super nasty.
     var current = options,
@@ -778,10 +797,14 @@ exports.defineTags = function (dictionary) {
 
             // Need to make sure we don't add dupes
             adds.forEach(function (add) {
-                if (doclet.products.filter(function (e) {
-                    return e === add;
-                }).length === 0) {
+                if (!doclet.products.includes(add)) {
                     doclet.products.push(add);
+                }
+                if (add[0] === '-') {
+                    add = add.substr(1);
+                }
+                if (!products.includes(add)) {
+                    products.push(add);
                 }
             });
         }
@@ -938,6 +961,7 @@ Move them up before functional code for JSDoc to see them.`.yellow
         removeIgnoredOptions({children: options});
         inferVersion({children: options});
         inferType({children: options});
+        inferProduct({children: options});
         inferValue({children: options});
         improveDescription({children: options});
 

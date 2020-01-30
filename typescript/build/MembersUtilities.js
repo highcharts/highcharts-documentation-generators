@@ -36,6 +36,9 @@ class MembersUtilities {
         if (typescript_1.default.isIdentifier(node)) {
             return new M.IdentifierMember(sourceFile, node);
         }
+        if (typescript_1.default.isImportDeclaration(node)) {
+            return new M.ImportMember(sourceFile, node);
+        }
         if (typescript_1.default.isJSDoc(node)) {
             return new M.DocletMember(sourceFile, node);
         }

@@ -12,6 +12,7 @@ __export(require("./ExportMember"));
 __export(require("./FileMember"));
 __export(require("./FunctionMember"));
 __export(require("./IdentifierMember"));
+__export(require("./ImportMember"));
 __export(require("./LiteralMember"));
 __export(require("./ModuleMember"));
 __export(require("./ParameterMember"));

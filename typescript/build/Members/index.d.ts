@@ -7,6 +7,7 @@ export * from './ExportMember';
 export * from './FileMember';
 export * from './FunctionMember';
 export * from './IdentifierMember';
+export * from './ImportMember';
 export * from './LiteralMember';
 export * from './ModuleMember';
 export * from './ParameterMember';

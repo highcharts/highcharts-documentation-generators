@@ -36,6 +36,10 @@ export class MembersUtilities {
             return new M.IdentifierMember(sourceFile, node);
         }
 
+        if (TS.isImportDeclaration(node)) {
+            return new M.ImportMember(sourceFile, node);
+        }
+
         if (TS.isJSDoc(node)) {
             return new M.DocletMember(sourceFile, node);
         }

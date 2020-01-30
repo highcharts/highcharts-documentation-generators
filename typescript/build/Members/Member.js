@@ -69,7 +69,7 @@ class Member {
             children: childrenJSON.length === 0 ?
                 undefined :
                 childrenJSON,
-            kind: '',
+            kind: typescript_1.default.SyntaxKind[node.kind],
             kindID: node.kind,
             name: this.toString(),
             unsupportedNode: this.isNotSupported ?
