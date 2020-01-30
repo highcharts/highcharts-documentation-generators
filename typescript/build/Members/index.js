@@ -8,5 +8,6 @@ __export(require("./BlockMember"));
 __export(require("./BundleMember"));
 __export(require("./ExportMember"));
 __export(require("./FileMember"));
+__export(require("./ImportMember"));
 __export(require("./ModuleMember"));
 __export(require("./PropertyMember"));

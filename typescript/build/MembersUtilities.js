@@ -27,6 +27,9 @@ class MembersUtilities {
         if (typescript_1.default.isBundle(node)) {
             return new M.BundleMember(sourceFile, node);
         }
+        if (typescript_1.default.isImportDeclaration(node)) {
+            return new M.ImportMember(sourceFile, node);
+        }
         if (typescript_1.default.isSourceFile(node)) {
             return new M.FileMember(node);
         }

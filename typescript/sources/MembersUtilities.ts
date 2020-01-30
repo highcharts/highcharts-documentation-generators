@@ -24,6 +24,10 @@ export class MembersUtilities {
             return new M.BundleMember(sourceFile, node);
         }
 
+        if (TS.isImportDeclaration(node)) {
+            return new M.ImportMember(sourceFile, node);
+        }
+
         if (TS.isSourceFile(node)) {
             return new M.FileMember(node);
         }
