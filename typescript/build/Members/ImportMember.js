@@ -33,8 +33,12 @@ class ImportMember extends M.Member {
             return;
         }
         const bindings = [];
+        let bindingText;
         for (let bindingNode of bindingNodes) {
-            bindings.push(bindingNode.getText(sourceFile));
+            bindingText = bindingNode.getText(sourceFile);
+            if (bindingText) {
+                bindings.push(bindingText);
+            }
         }
         if (bindings.length === 0) {
             return;
