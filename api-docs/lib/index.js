@@ -913,24 +913,33 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         return ret;
     }
 
-    function requiresFilter(doclet) {
+    function requiresFilter(doclet, product) {
 
         if (typeof doclet.requires === 'undefined') {
             return;
         }
 
-        return doclet.requires.map(function (requirement) {
-    
+        var filteredRequires = [];
+
+        doclet.requires.some(function (requirement) {
+
             if (requirement.startsWith('module:')) {
                 requirement = requirement.substr(7);
+            }
+
+            if (requirement.startsWith('product:')) {
+                requirement = requirement.substr(8);
+                return (requirement === product);
             }
 
             if (requirement.endsWith('.js')) {
                 requirement = requirement.substr(0, (requirement.length - 3));
             }
 
-            return requirement;
+            filteredRequires.push(requirement);
         });
+
+        return filteredRequires;
     }
 
     function resolveDefaultByProduct(node, product) {
@@ -1001,7 +1010,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 deprecated: node.doclet.deprecated,
                 description: node.doclet.description,
                 productdesc: productFilter(node.doclet, 'productdesc', product),
-                requires: requiresFilter(node.doclet),
+                requires: requiresFilter(node.doclet, product),
                 samples: productFilter(node.doclet, 'samples', product),
                 typeList: node.doclet.type,
                 children: node.children.map(function (child) {
@@ -1019,7 +1028,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                         inheritedFrom: child.node.meta.inheritedFrom,
                         deprecated: child.node.doclet.deprecated,
                         since: child.node.doclet.since,
-                        requires: requiresFilter(child.node.doclet),
+                        requires: requiresFilter(child.node.doclet, product),
                         samples: productFilter(child.node.doclet, 'samples', product),
                         see: child.node.doclet.see,
                         filename: (child.node.meta.filename || ''),

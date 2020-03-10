@@ -829,7 +829,7 @@ exports.defineTags = function (dictionary) {
     });
 
     dictionary.defineTag('ignore-option', {
-        onTagged: function (doclet, tagObj) {
+        onTagged: function (doclet) {
             doclet.ignored = true;
         }
     });
@@ -883,7 +883,7 @@ exports.defineTags = function (dictionary) {
     });
 
     dictionary.defineTag('internal', {
-        onTagged: function (doclet, tagObj) {
+        onTagged: function (doclet) {
             doclet.internal = true;
         }
     });
@@ -906,6 +906,20 @@ exports.defineTags = function (dictionary) {
         mustNotHaveDescription: true,
         onTagged: function (doclet, tag) {
             doclet.declare = tag.value;
+        }
+    });
+
+    dictionary.defineTag('requires', {
+        mustHaveValue: true,
+        mustNotHaveDescription: true,
+        onTagged: function (doclet, tag) {
+            var require = tag.value;
+            doclet.requires = (doclet.requires || []);
+            doclet.requires.push(
+                require.indexOf(':') === -1 ?
+                    'module:' + require :
+                    require
+            );
         }
     });
 };
