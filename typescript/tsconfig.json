@@ -6,8 +6,6 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "noUnusedLocals": false,
-        "noUnusedParameters": false,
         "strict": true,
         "strictNullChecks": true,
         "module": "commonjs",

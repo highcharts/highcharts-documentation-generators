@@ -42,20 +42,7 @@ class Member {
         return this.node.getChildren(this.sourceFile);
     }
     getChildren() {
-        const sourceFile = this.sourceFile;
-        const nodeChildren = this.getChildNodes();
-        const memberChildren = [];
-        let memberChild;
-        for (let nodeChild of nodeChildren) {
-            memberChild = MembersUtilities_1.default.loadFromNode(sourceFile, nodeChild);
-            if (memberChild.isNotSupported) {
-                memberChildren.push(...memberChild.getChildren());
-            }
-            else {
-                memberChildren.push(memberChild);
-            }
-        }
-        return memberChildren;
+        return MembersUtilities_1.default.loadNodeChildren(this.sourceFile, this.getChildNodes());
     }
     getChildrenJSON() {
         return this

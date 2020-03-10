@@ -12,8 +12,7 @@ function childrenJSONMapper(child: Member): MemberJSON {
     return child.toJSON();
 }
 
-export class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter
-{
+export class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter {
 
     /* *
      *
@@ -64,25 +63,7 @@ export class Member<TNode extends TS.Node = TS.Node> implements JS.JSONExporter
     }
 
     public getChildren(): Array<Member> {
-
-        const sourceFile = this.sourceFile;
-        const nodeChildren = this.getChildNodes();
-        const memberChildren: Array<Member> = [];
-
-        let memberChild: Member;
-
-        for (let nodeChild of nodeChildren) {
-
-            memberChild = MembersUtilities.loadFromNode(sourceFile, nodeChild);
-
-            if (memberChild.isNotSupported) {
-                memberChildren.push(...memberChild.getChildren());
-            } else {
-                memberChildren.push(memberChild);
-            }
-        }
-
-        return memberChildren;
+        return MembersUtilities.loadNodeChildren(this.sourceFile, this.getChildNodes());
     }
 
     public getChildrenJSON(): Array<MemberJSON> {
