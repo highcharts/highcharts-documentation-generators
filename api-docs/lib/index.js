@@ -8,12 +8,16 @@
  *
  */
 
-const async = require('async');
-const colors = require('colors');
 const fs = require('fs');
+const {
+    lstat,
+    readdir,
+    readFile,
+    writeFile
+} = fs.promises;
 const join = require('path').join;
 const marked = require('marked'); // markdown parser
-const mkdir = require('mkdirp');
+const mkdirp = require('mkdirp');
 const templates = require('./templates');
 
 const manualSearchBoost = {
@@ -369,35 +373,6 @@ function mergeNode(achildren, bchildren, fullExclude) {
   });
 }
 
-/**
- * Promisify functions which has the error-first callback style.
- * In NodeJS v8 this polyfill can be replaced with util.promisify.
- *
- * @param {Function} fn The original function.
- * @returns {Function} Returns a promisified function.
- */
-const promisify = (fn) => {
-    return function () {
-        const ctx = this;
-        const args = Array.from(arguments);
-        return new Promise((resolve, reject) => {
-            args.push((err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });
-            fn.apply(ctx, args);
-        });
-    };
-};
-
-const lstat = promisify(fs.lstat);
-const readdir = promisify(fs.readdir);
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-
 const copyFile = (from, to) => {
     return readFile(from)
         .then((data) => writeFile(to, data));
@@ -412,7 +387,7 @@ const copyDir = (from, to) => {
                 return lstat(pathFrom)
                     .then((stats) => (
                         stats.isDirectory() ?
-                        mkdirPromise(pathTo).then(() => copyDir(pathFrom, pathTo)) :
+                        mkdirp(pathTo).then(() => copyDir(pathFrom, pathTo)) :
                         copyFile(pathFrom, pathTo)
                     ));
             });
@@ -567,6 +542,18 @@ module.exports = function (input, outputPath, currentOnly, fn) {
             return true;
         }
         return false;
+    }
+
+    function getProductName(product) {
+        return (
+            ({
+                'highcharts': 'Highcharts',
+                'highstock': 'Highcharts Stock',
+                'highmaps': 'Highcharts Maps',
+                'gantt': 'Highcharts Gantt'
+            })[product] ||
+            (product[0].toUpperCase() + product.substr(1))
+        );
     }
 
     function sortAndArrayify(node) {
@@ -1060,13 +1047,13 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         }
 
         var filename = (name || 'index') + '.html',
-            productTitle = (product[0].toUpperCase() + product.substr(1)),
+            productName = getProductName(product),
             opengraph = {
                 description: 'Interactive charts for your web pages.',
                 determiner: '',
                 image: (urlRoot + product + '/mstile-310x310.png'),
                 sitename: 'Highcharts',
-                title: (productTitle + ' API Options'),
+                title: (productName + ' API Options'),
                 type: 'website',
                 url: (urlRoot + product + '/')
             },
@@ -1130,7 +1117,8 @@ module.exports = function (input, outputPath, currentOnly, fn) {
             opengraph: opengraph,
             platforms: platforms,
             platform: platform,
-            product: productTitle,
+            productModule: product,
+            productName: productName,
             productVersionStr: product + '-' + version,
             searchBoost: (getSearchBoost(node.meta.fullname) * 100),
             searchTitle: getSearchTitle(node),
@@ -1150,19 +1138,12 @@ module.exports = function (input, outputPath, currentOnly, fn) {
     transform('', {children: input});
     let oldDump = toFlatDump({children: input});
 
-    /**
-     * mkdirPromise - A Promise based version of mkdir.
-     * @param path Path to the directory.
-     * @return Returns a Promise which resolves when the directory is created.
-     */
-    mkdirPromise = promisify(mkdir);
-
     // Output each product in a separate folder,
     // with the sub-folder being version numbers
     templates.load(function () {
         const sitemapIndex = [];
         const promisesProducts = Object.keys(products).map(function (product) {
-            return mkdirPromise(outputPath + product)
+            return mkdirp(outputPath + product)
             .then(function () {
 
                 // Copy the input (tree.json) to the product folders
@@ -1183,7 +1164,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                     // Generate a TOC with relative paths to this product
                     Object.keys(products).forEach(function (p) {
                         var entry = productToc[p] = {
-                                displayName: p[0].toUpperCase() + p.substr(1),
+                                displayName: getProductName(p),
                                 versions: {},
                                 active: product === p
                             },
@@ -1236,9 +1217,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                         op = outputPath + product + '/';
                     }
 
-                    return mkdirPromise(op)
-                    .then(function () {
-                        return mkdirPromise(op + 'nav/')
+                    return mkdirp(op + 'nav/')
                         .then(function () {
                             var flatList = {},
                                 filtered = filterByProductAndVersion({
@@ -1296,7 +1275,6 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                             );
                         })
                         .then(() => copyIncludes(op));
-                    });
                 });
                 return Promise.all(promisesVersions)
                 .then(() => {
