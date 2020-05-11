@@ -763,6 +763,8 @@ function getTypes (doclet) {
         );
     }
 
+    types = types.map(type => type.replace(/\?(\w+)/g, '$1?'));
+
     return types;
 }
 
