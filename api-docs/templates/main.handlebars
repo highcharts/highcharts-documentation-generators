@@ -3,7 +3,7 @@
     <head>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{#if node.meta.fullname}}{{node.meta.fullname}} | {{/if}}{{product}} {{platform}} API Reference</title>
+        <title>{{#if node.meta.fullname}}{{node.meta.fullname}} | {{/if}}{{productName}} {{platform}} API Reference</title>
         <link rel="stylesheet" href="style.css" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
@@ -58,7 +58,7 @@
             <div class="row row-2">
                 {{#if toc}}
                     <div id="product-selector" class="menu" expanded="false">
-                        <a href="#" class="dropdown-link">{{product}} <i class="fa fa-chevron-down" aria-hidden="true"></i></a>
+                        <a href="#" class="dropdown-link">{{productName}} <i class="fa fa-chevron-down" aria-hidden="true"></i></a>
                         <div class="dropdown-menu">
                             <ul>
                                 {{#each toc}}
@@ -207,7 +207,7 @@
 
             <div id="body" class="body{{#if node.meta.fullname}} loaded{{/if}}">
                 <div id="splashText">
-                    <h1>Welcome to the <strong>{{product}} {{platform}}</strong> Options Reference</h1>
+                    <h1>Welcome to the <strong>{{productName}} {{platform}}</strong> ({{productModule}}) Options Reference</h1>
                     <p>These pages outline the chart configuration options, and the methods and properties of Highcharts objects.</p>
                     <p>Feel free to search this <a target="_blank" href="https://en.wikipedia.org/wiki/Application_programming_interface">API</a> through the search bar or the navigation tree in the sidebar.</p>
                 </div>
