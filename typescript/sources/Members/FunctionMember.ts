@@ -12,7 +12,7 @@ function parameterJSONMapper (child: M.ParameterMember): M.ParameterMemberJSON {
     return child.toJSON();
 }
 
-export class FunctionMember extends M.Member<(TS.FunctionDeclaration|TS.FunctionExpression|TS.FunctionTypeNode)> {
+export class FunctionMember extends M.Member<(TS.FunctionDeclaration|TS.MethodDeclaration)> {
 
     /* *
      *

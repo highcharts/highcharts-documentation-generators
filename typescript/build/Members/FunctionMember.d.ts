@@ -5,7 +5,7 @@
  * */
 import * as M from './';
 import TS from 'typescript';
-export declare class FunctionMember extends M.Member<(TS.FunctionDeclaration | TS.FunctionExpression | TS.FunctionTypeNode)> {
+export declare class FunctionMember extends M.Member<(TS.FunctionDeclaration | TS.MethodDeclaration)> {
     getParameterNodes(): Array<TS.ParameterDeclaration>;
     getParameters(): Array<M.ParameterMember>;
     getParametersJSON(): Array<M.ParameterMemberJSON>;

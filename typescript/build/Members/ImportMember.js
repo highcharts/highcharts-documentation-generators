@@ -24,10 +24,10 @@ class ImportMember extends M.Member {
         return (_b = (_a = this.node.importClause) === null || _a === void 0 ? void 0 : _a.name) === null || _b === void 0 ? void 0 : _b.getText(this.sourceFile);
     }
     getBindings() {
-        var _a, _b;
+        var _a;
         const sourceFile = this.sourceFile;
         const importClause = this.node.importClause;
-        const bindingNodes = (_b = (_a = importClause) === null || _a === void 0 ? void 0 : _a.namedBindings) === null || _b === void 0 ? void 0 : _b.getChildren(sourceFile);
+        const bindingNodes = (_a = importClause === null || importClause === void 0 ? void 0 : importClause.namedBindings) === null || _a === void 0 ? void 0 : _a.getChildren(sourceFile);
         if (typeof importClause === 'undefined' ||
             typeof bindingNodes === 'undefined') {
             return;

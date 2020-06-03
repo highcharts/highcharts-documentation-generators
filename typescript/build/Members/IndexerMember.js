@@ -13,7 +13,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const M = __importStar(require("./"));
-class IdentifierMember extends M.Member {
+class IndexerMember extends M.Member {
     /* *
      *
      *  Functions
@@ -25,12 +25,12 @@ class IdentifierMember extends M.Member {
         return {
             children: superJSON.children,
             decorators: node.decorators,
-            kind: 'identifier',
+            expression: node.expression,
+            kind: 'indexer',
             kindID: superJSON.kindID,
             modifiers: node.modifiers,
-            name: node.escapedText.toString()
         };
     }
 }
-exports.IdentifierMember = IdentifierMember;
-exports.default = IdentifierMember;
+exports.IndexerMember = IndexerMember;
+exports.default = IndexerMember;

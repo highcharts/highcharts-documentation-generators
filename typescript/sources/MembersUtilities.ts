@@ -56,44 +56,57 @@ export class MembersUtilities {
             return;
         }
 
-        if (TS.isBlock(node) || TS.isModuleBlock(node)) {
-            member = new M.BlockMember(sourceFile, node);
-        }
 
-        if (TS.isBundle(node)) {
-            member = new M.BundleMember(sourceFile, node);
-        }
-
-        if (TS.isExportAssignment(node) || TS.isExportDeclaration(node)) {
-            member = new M.ExportMember(sourceFile, node);
-        }
-
-        if (TS.isIdentifier(node)) {
-            member = new M.IdentifierMember(sourceFile, node);
-        }
-
-        if (TS.isImportDeclaration(node)) {
-            member = new M.ImportMember(sourceFile, node);
-        }
-
-        if (TS.isJSDoc(node)) {
-            member = new M.DocletMember(sourceFile, node);
-        }
-
-        if (TS.isLiteralTypeNode(node)) {
-            member = new M.LiteralMember(sourceFile, node);
-        }
-
-        if (TS.isModuleDeclaration(node)) {
-            member = new M.ModuleMember(sourceFile, node);
+        if (TS.isSourceFile(node)) {
+            member = new M.FileMember(node);
         }
 
         if (TS.isPropertyDeclaration(node)) {
             member = new M.PropertyMember(sourceFile, node);
         }
 
-        if (TS.isSourceFile(node)) {
-            member = new M.FileMember(node);
+        if (TS.isModuleDeclaration(node)) {
+            member = new M.ModuleMember(sourceFile, node);
+        }
+
+        if (TS.isLiteralTypeNode(node)) {
+            member = new M.LiteralMember(sourceFile, node);
+        }
+
+        if (TS.isJSDoc(node)) {
+            member = new M.DocletMember(sourceFile, node);
+        }
+
+        if (TS.isImportDeclaration(node)) {
+            member = new M.ImportMember(sourceFile, node);
+        }
+
+        if (TS.isIdentifier(node)) {
+            member = new M.IdentifierMember(sourceFile, node);
+        }
+
+        if (TS.isFunctionDeclaration(node) || TS.isMethodDeclaration(node)) {
+            member = new M.FunctionMember(sourceFile, node);
+        }
+
+        if (TS.isExportAssignment(node) || TS.isExportDeclaration(node)) {
+            member = new M.ExportMember(sourceFile, node);
+        }
+
+        if (TS.isComputedPropertyName(node)) {
+            member = new M.IndexerMember(sourceFile, node);
+        }
+
+        if (TS.isClassDeclaration(node) || TS.isClassExpression(node)) {
+            member = new M.ClassMember(sourceFile, node);
+        }
+
+        if (TS.isBundle(node)) {
+            member = new M.BundleMember(sourceFile, node);
+        }
+
+        if (TS.isBlock(node) || TS.isModuleBlock(node)) {
+            member = new M.BlockMember(sourceFile, node);
         }
 
         if (member) {

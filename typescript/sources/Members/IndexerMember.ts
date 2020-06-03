@@ -7,7 +7,7 @@
 import * as M from './';
 import TS from 'typescript';
 
-export class IdentifierMember extends M.Member<TS.Identifier> {
+export class IndexerMember extends M.Member<TS.ComputedPropertyName> {
 
     /* *
      *
@@ -15,7 +15,7 @@ export class IdentifierMember extends M.Member<TS.Identifier> {
      *
      * */
 
-    public toJSON(): IdentifierMemberJSON {
+    public toJSON(): IndexerMemberJSON {
 
         const node = this.node;
         const superJSON = super.toJSON();
@@ -23,17 +23,16 @@ export class IdentifierMember extends M.Member<TS.Identifier> {
         return {
             children: superJSON.children,
             decorators: node.decorators,
-            kind: 'identifier',
+            expression: node.expression,
+            kind: 'indexer',
             kindID: superJSON.kindID,
             modifiers: node.modifiers,
-            name: node.escapedText.toString()
         };
     }
 }
 
-export interface IdentifierMemberJSON extends M.MemberJSON {
-    kind: 'identifier';
-    name: string;
+export interface IndexerMemberJSON extends M.MemberJSON {
+    kind: 'indexer';
 }
 
-export default IdentifierMember;
+export default IndexerMember;

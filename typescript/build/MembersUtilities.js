@@ -29,8 +29,7 @@ class MembersUtilities {
      *  Constructor
      *
      * */
-    constructor() {
-    }
+    constructor() { }
     /* *
      *
      *  Static Functions
@@ -51,35 +50,44 @@ class MembersUtilities {
         if (IGNORED_SYNTAX_KIND.includes(node.kind)) {
             return;
         }
-        if (typescript_1.default.isBlock(node) || typescript_1.default.isModuleBlock(node)) {
-            member = new M.BlockMember(sourceFile, node);
-        }
-        if (typescript_1.default.isBundle(node)) {
-            member = new M.BundleMember(sourceFile, node);
-        }
-        if (typescript_1.default.isExportAssignment(node) || typescript_1.default.isExportDeclaration(node)) {
-            member = new M.ExportMember(sourceFile, node);
-        }
-        if (typescript_1.default.isIdentifier(node)) {
-            member = new M.IdentifierMember(sourceFile, node);
-        }
-        if (typescript_1.default.isImportDeclaration(node)) {
-            member = new M.ImportMember(sourceFile, node);
-        }
-        if (typescript_1.default.isJSDoc(node)) {
-            member = new M.DocletMember(sourceFile, node);
-        }
-        if (typescript_1.default.isLiteralTypeNode(node)) {
-            member = new M.LiteralMember(sourceFile, node);
-        }
-        if (typescript_1.default.isModuleDeclaration(node)) {
-            member = new M.ModuleMember(sourceFile, node);
+        if (typescript_1.default.isSourceFile(node)) {
+            member = new M.FileMember(node);
         }
         if (typescript_1.default.isPropertyDeclaration(node)) {
             member = new M.PropertyMember(sourceFile, node);
         }
-        if (typescript_1.default.isSourceFile(node)) {
-            member = new M.FileMember(node);
+        if (typescript_1.default.isModuleDeclaration(node)) {
+            member = new M.ModuleMember(sourceFile, node);
+        }
+        if (typescript_1.default.isLiteralTypeNode(node)) {
+            member = new M.LiteralMember(sourceFile, node);
+        }
+        if (typescript_1.default.isJSDoc(node)) {
+            member = new M.DocletMember(sourceFile, node);
+        }
+        if (typescript_1.default.isImportDeclaration(node)) {
+            member = new M.ImportMember(sourceFile, node);
+        }
+        if (typescript_1.default.isIdentifier(node)) {
+            member = new M.IdentifierMember(sourceFile, node);
+        }
+        if (typescript_1.default.isFunctionDeclaration(node) || typescript_1.default.isMethodDeclaration(node)) {
+            member = new M.FunctionMember(sourceFile, node);
+        }
+        if (typescript_1.default.isExportAssignment(node) || typescript_1.default.isExportDeclaration(node)) {
+            member = new M.ExportMember(sourceFile, node);
+        }
+        if (typescript_1.default.isComputedPropertyName(node)) {
+            member = new M.IndexerMember(sourceFile, node);
+        }
+        if (typescript_1.default.isClassDeclaration(node) || typescript_1.default.isClassExpression(node)) {
+            member = new M.ClassMember(sourceFile, node);
+        }
+        if (typescript_1.default.isBundle(node)) {
+            member = new M.BundleMember(sourceFile, node);
+        }
+        if (typescript_1.default.isBlock(node) || typescript_1.default.isModuleBlock(node)) {
+            member = new M.BlockMember(sourceFile, node);
         }
         if (member) {
             MembersUtilities.saveToCache(node, member);
