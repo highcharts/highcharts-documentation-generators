@@ -23,7 +23,7 @@ class PrimitiveType extends T.Type {
      *  Static Functions
      *
      * */
-    static isKeywordTypeNode(node) {
+    static test(node) {
         switch (node.kind) {
             case typescript_1.default.SyntaxKind.AnyKeyword:
             case typescript_1.default.SyntaxKind.BigIntKeyword:

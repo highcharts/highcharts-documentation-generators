@@ -6,6 +6,7 @@
 import * as T from './index';
 import TS from 'typescript';
 export declare class ArrayType extends T.Type<TS.ArrayTypeNode> {
+    static test(node: TS.Node): node is TS.ArrayTypeNode;
     getChildren(): Array<T.Type>;
     getChildrenJSON(): Array<T.TypeJSON>;
     toJSON(): ArrayTypeJSON;

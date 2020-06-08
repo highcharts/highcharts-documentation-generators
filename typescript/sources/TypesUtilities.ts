@@ -42,24 +42,28 @@ export class TypesUtilities {
             typeNode = TS.createKeywordTypeNode(TS.SyntaxKind.UndefinedKeyword);
         }
 
+        if (T.UnionType.test(typeNode)) {
+            return new T.UnionType(sourceFile, typeNode);
+        }
+
+        if (T.ReferenceType.test(typeNode)) {
+            return new T.ReferenceType(sourceFile, typeNode);
+        }
+
+        if (T.PrimitiveType.test(typeNode)) {
+            return new T.PrimitiveType(sourceFile, typeNode);
+        }
+
+        if (T.LiteralType.test(typeNode)) {
+            return new T.LiteralType(sourceFile, typeNode);
+        }
+
         if (TS.isParenthesizedTypeNode(typeNode)) {
             typeNode = typeNode.type;
         }
 
-        if (TS.isArrayTypeNode(typeNode)) {
+        if (T.ArrayType.test(typeNode)) {
             return new T.ArrayType(sourceFile, typeNode);
-        }
-
-        if (TS.isTypeReferenceNode(typeNode)) {
-            return new T.ReferenceType(sourceFile, typeNode);
-        }
-
-        if (TS.isUnionTypeNode(typeNode)) {
-            return new T.UnionType(sourceFile, typeNode);
-        }
-
-        if (T.PrimitiveType.isKeywordTypeNode(typeNode)) {
-            return new T.PrimitiveType(sourceFile, typeNode);
         }
 
         return new T.Type(sourceFile, typeNode, true);

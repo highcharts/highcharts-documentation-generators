@@ -13,6 +13,16 @@ export class ArrayType extends T.Type<TS.ArrayTypeNode> {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static test(node: TS.Node): node is TS.ArrayTypeNode {
+        return TS.isArrayTypeNode(node);
+    }
+
+    /* *
+     *
      *  Functions
      *
      * */

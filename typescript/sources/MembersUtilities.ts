@@ -56,7 +56,6 @@ export class MembersUtilities {
             return;
         }
 
-
         if (TS.isSourceFile(node)) {
             member = new M.FileMember(node);
         }
@@ -77,6 +76,10 @@ export class MembersUtilities {
             member = new M.DocletMember(sourceFile, node);
         }
 
+        if (TS.isComputedPropertyName(node)) {
+            member = new M.IndexerMember(sourceFile, node);
+        }
+
         if (TS.isImportDeclaration(node)) {
             member = new M.ImportMember(sourceFile, node);
         }
@@ -93,11 +96,7 @@ export class MembersUtilities {
             member = new M.ExportMember(sourceFile, node);
         }
 
-        if (TS.isComputedPropertyName(node)) {
-            member = new M.IndexerMember(sourceFile, node);
-        }
-
-        if (TS.isClassDeclaration(node) || TS.isClassExpression(node)) {
+        if (M.ClassMember.test(node)) {
             member = new M.ClassMember(sourceFile, node);
         }
 
@@ -111,6 +110,8 @@ export class MembersUtilities {
 
         if (member) {
             MembersUtilities.saveToCache(node, member);
+        // } else {
+        //    member = new M.Member(sourceFile, node, true);
         }
 
         return member;

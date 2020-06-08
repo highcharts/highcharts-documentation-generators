@@ -16,8 +16,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const T = __importStar(require("./index"));
+const typescript_1 = __importDefault(require("typescript"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
 class UnionType extends T.Type {
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    static test(node) {
+        return typescript_1.default.isUnionTypeNode(node);
+    }
     /* *
      *
      *  Functions

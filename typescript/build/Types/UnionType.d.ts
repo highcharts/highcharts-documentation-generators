@@ -6,6 +6,7 @@
 import * as T from './index';
 import TS from 'typescript';
 export declare class UnionType extends T.Type<TS.UnionTypeNode> {
+    static test(node: TS.Node): node is TS.UnionTypeNode;
     getChildren(): Array<T.Type>;
     toJSON(): UnionTypeJSON;
     toString(): string;
