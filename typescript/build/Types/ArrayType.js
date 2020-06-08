@@ -17,8 +17,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const JSONUtilities_1 = __importDefault(require("../JSONUtilities"));
 const T = __importStar(require("./index"));
+const typescript_1 = __importDefault(require("typescript"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
 class ArrayType extends T.Type {
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    static test(node) {
+        return typescript_1.default.isArrayTypeNode(node);
+    }
     /* *
      *
      *  Functions

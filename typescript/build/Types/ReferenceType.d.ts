@@ -6,6 +6,7 @@
 import * as T from './index';
 import TS from 'typescript';
 export declare class ReferenceType extends T.Type<TS.TypeReferenceType> {
+    static test(node: TS.Node): node is TS.TypeReferenceType;
     getChildren(): Array<T.Type>;
     getChildrenJSON(): (Array<T.TypeJSON> | undefined);
     toJSON(): ReferenceTypeJSON;

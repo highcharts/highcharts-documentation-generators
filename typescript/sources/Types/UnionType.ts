@@ -12,6 +12,16 @@ export class UnionType extends T.Type<TS.UnionTypeNode> {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static test(node: TS.Node): node is TS.UnionTypeNode {
+        return TS.isUnionTypeNode(node);
+    }
+
+    /* *
+     *
      *  Functions
      *
      * */

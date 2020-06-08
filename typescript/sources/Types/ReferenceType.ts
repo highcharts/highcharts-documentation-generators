@@ -13,6 +13,16 @@ export class ReferenceType extends T.Type<TS.TypeReferenceType> {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static test(node: TS.Node): node is TS.TypeReferenceType {
+        return TS.isTypeReferenceNode(node);
+    }
+
+    /* *
+     *
      *  Functions
      *
      * */

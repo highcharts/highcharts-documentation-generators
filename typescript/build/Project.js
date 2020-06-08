@@ -37,6 +37,25 @@ class Project {
     static childrenFileMemberMapper(child) {
         return new M.FileMember(child);
     }
+    static debug(sourcePath, targetPath) {
+        const tsConfig = typescript_1.default.readJsonConfigFile(typescript_1.default.sys.resolvePath(sourcePath), typescript_1.default.sys.readFile);
+        const parsedCommandLine = typescript_1.default.parseJsonConfigFileContent(tsConfig, typescript_1.default.sys, sourcePath);
+        typescript_1.default.sys.writeFile(targetPath, JSON.stringify(typescript_1.default
+            .createProgram(parsedCommandLine.fileNames, parsedCommandLine.options)
+            .getSourceFiles()
+            .slice()
+            .map(sourceFile => ({
+            fileName: sourceFile.fileName,
+            children: sourceFile
+                .getChildren(sourceFile)[0]
+                .getChildren(sourceFile)
+                .map(child => ({
+                kind: child.kind,
+                kindName: typescript_1.default.SyntaxKind[child.kind],
+                text: child.getText(sourceFile).substr(0, 32)
+            }))
+        })), void 0, ' '));
+    }
     static loadFromArguments(args) {
         const parsedCommandLine = typescript_1.default.parseCommandLine(args);
         return new Project(typescript_1.default.createProgram(parsedCommandLine.fileNames, parsedCommandLine.options));

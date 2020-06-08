@@ -8,6 +8,7 @@ import TS from 'typescript';
 export declare class Project {
     private static childrenJSONMapper;
     private static childrenFileMemberMapper;
+    static debug(sourcePath: string, targetPath: string): void;
     static loadFromArguments(args: Array<string>): Project;
     static loadFromDirectory(directoryPath: string): Project;
     constructor(program: TS.Program);

@@ -15,7 +15,7 @@ export class PrimitiveType extends T.Type<TS.KeywordTypeNode> {
      *
      * */
 
-    public static isKeywordTypeNode(node: TS.Node): node is TS.KeywordTypeNode {
+    public static test(node: TS.Node): node is TS.KeywordTypeNode {
 
         switch (node.kind) {
             case TS.SyntaxKind.AnyKeyword:

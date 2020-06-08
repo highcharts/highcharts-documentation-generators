@@ -27,6 +27,46 @@ export class Project {
         return new M.FileMember(child);
     }
 
+    public static debug(sourcePath: string, targetPath: string): void {
+
+        const tsConfig = TS.readJsonConfigFile(
+            TS.sys.resolvePath(sourcePath),
+            TS.sys.readFile
+        );
+
+        const parsedCommandLine = TS.parseJsonConfigFileContent(
+            tsConfig,
+            TS.sys,
+            sourcePath
+        );
+
+        TS.sys.writeFile(
+            targetPath,
+            JSON.stringify(
+                TS
+                    .createProgram(
+                        parsedCommandLine.fileNames,
+                        parsedCommandLine.options
+                    )
+                    .getSourceFiles()
+                    .slice()
+                    .map(sourceFile => ({
+                        fileName: sourceFile.fileName,
+                        children: sourceFile
+                            .getChildren(sourceFile)[0]
+                            .getChildren(sourceFile)
+                            .map(child => ({
+                                kind: child.kind,
+                                kindName: TS.SyntaxKind[child.kind],
+                                text: child.getText(sourceFile).substr(0, 32)
+                            }))
+                    })),
+                void 0,
+                ' '
+            )
+        );
+    }
+
     public static loadFromArguments(args: Array<string>): Project {
 
         const parsedCommandLine = TS.parseCommandLine(args);

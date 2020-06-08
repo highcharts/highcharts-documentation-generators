@@ -65,6 +65,9 @@ class MembersUtilities {
         if (typescript_1.default.isJSDoc(node)) {
             member = new M.DocletMember(sourceFile, node);
         }
+        if (typescript_1.default.isComputedPropertyName(node)) {
+            member = new M.IndexerMember(sourceFile, node);
+        }
         if (typescript_1.default.isImportDeclaration(node)) {
             member = new M.ImportMember(sourceFile, node);
         }
@@ -77,10 +80,7 @@ class MembersUtilities {
         if (typescript_1.default.isExportAssignment(node) || typescript_1.default.isExportDeclaration(node)) {
             member = new M.ExportMember(sourceFile, node);
         }
-        if (typescript_1.default.isComputedPropertyName(node)) {
-            member = new M.IndexerMember(sourceFile, node);
-        }
-        if (typescript_1.default.isClassDeclaration(node) || typescript_1.default.isClassExpression(node)) {
+        if (M.ClassMember.test(node)) {
             member = new M.ClassMember(sourceFile, node);
         }
         if (typescript_1.default.isBundle(node)) {
@@ -91,6 +91,8 @@ class MembersUtilities {
         }
         if (member) {
             MembersUtilities.saveToCache(node, member);
+            // } else {
+            //    member = new M.Member(sourceFile, node, true);
         }
         return member;
     }

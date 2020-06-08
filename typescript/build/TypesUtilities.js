@@ -36,20 +36,23 @@ class TypesUtilities {
         if (typeof typeNode === 'undefined') {
             typeNode = typescript_1.default.createKeywordTypeNode(typescript_1.default.SyntaxKind.UndefinedKeyword);
         }
+        if (T.UnionType.test(typeNode)) {
+            return new T.UnionType(sourceFile, typeNode);
+        }
+        if (T.ReferenceType.test(typeNode)) {
+            return new T.ReferenceType(sourceFile, typeNode);
+        }
+        if (T.PrimitiveType.test(typeNode)) {
+            return new T.PrimitiveType(sourceFile, typeNode);
+        }
+        if (T.LiteralType.test(typeNode)) {
+            return new T.LiteralType(sourceFile, typeNode);
+        }
         if (typescript_1.default.isParenthesizedTypeNode(typeNode)) {
             typeNode = typeNode.type;
         }
-        if (typescript_1.default.isArrayTypeNode(typeNode)) {
+        if (T.ArrayType.test(typeNode)) {
             return new T.ArrayType(sourceFile, typeNode);
-        }
-        if (typescript_1.default.isTypeReferenceNode(typeNode)) {
-            return new T.ReferenceType(sourceFile, typeNode);
-        }
-        if (typescript_1.default.isUnionTypeNode(typeNode)) {
-            return new T.UnionType(sourceFile, typeNode);
-        }
-        if (T.PrimitiveType.isKeywordTypeNode(typeNode)) {
-            return new T.PrimitiveType(sourceFile, typeNode);
         }
         return new T.Type(sourceFile, typeNode, true);
     }
