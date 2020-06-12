@@ -7,6 +7,7 @@ import * as M from './';
 import TS from 'typescript';
 export declare class FileMember extends M.Member<TS.SourceFile> {
     constructor(node: TS.SourceFile);
+    getChildNodes(): Array<TS.Node>;
     toJSON(): FileMemberJSON;
 }
 export interface FileMemberJSON extends M.MemberJSON {

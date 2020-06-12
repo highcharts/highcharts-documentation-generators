@@ -158,11 +158,15 @@ export class Project {
 
         const filteredSourceFiles: Array<TS.SourceFile> = [];
         const directoryPath = this.directoryPath;
+        const fullPath = TS.sys.resolvePath(directoryPath);
         const sourceFiles = this.program.getSourceFiles();
 
         for (let fileNode of sourceFiles) {
 
-            if (fileNode.fileName.startsWith(directoryPath)) {
+            if (
+                fileNode.fileName.startsWith(directoryPath) ||
+                fileNode.fileName.startsWith(fullPath)
+            ) {
                 filteredSourceFiles.push(fileNode);
             }
         }

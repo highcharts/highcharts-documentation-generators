@@ -199,7 +199,6 @@ function toFlatDump(input) {
   const visit = (node, nodeName, parentKey) => {
     var key = '';
     var pn = parentKey;
-    var fullName = '';
     var myProducts = {};
 
     if (parentKey === 'series') {

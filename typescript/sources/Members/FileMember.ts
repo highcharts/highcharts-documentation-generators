@@ -20,17 +20,21 @@ export class FileMember extends M.Member<TS.SourceFile> {
     }
 
     /* *
-     *
+     * 
      *  Functions
      *
      * */
+
+    public getChildNodes(): Array<TS.Node> {
+        return this.node.getChildren(this.sourceFile)[0].getChildren(this.sourceFile);
+    }
 
     public toJSON(): FileMemberJSON {
 
         const superJSON = super.toJSON();
 
         return {
-            children: (superJSON.children || []),
+            children: superJSON.children || [],
             kind: 'file',
             kindID: superJSON.kindID,
             path: TS.sys.resolvePath(this.node.fileName)
