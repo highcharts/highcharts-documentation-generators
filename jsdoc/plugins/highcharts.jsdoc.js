@@ -91,7 +91,12 @@ function resolveBinaryExpression(node) {
 }
 
 function decorateOptions(parent, target, option, filename) {
-    var index;
+    let index,
+        comment = (
+            option.leadingComments &&
+            option.leadingComments[option.leadingComments.length - 1].value ||
+            ''
+        );
 
     if (!option) {
         console.error('WARN: decorateOptions called with no valid AST node');
@@ -99,8 +104,11 @@ function decorateOptions(parent, target, option, filename) {
     }
 
     if (
-        option.leadingComments &&
-        option.leadingComments[0].value.indexOf('@ignore') !== -1
+        comment &&
+        (
+            comment.indexOf('@ignore') !== -1 ||
+            comment.indexOf('@apioption') !== -1 // has manual decoration
+        )
     ) {
         return;
     }
@@ -163,9 +171,9 @@ function decorateOptions(parent, target, option, filename) {
     } else if (option.value && option.value.type === 'BinaryExpression') {
         target[index].meta.default = resolveBinaryExpression(option.value);
     } else {
-      // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
-        // console.info('OPTION:', option, 'COMMENT:', option.leadingComments);
-      // }
+        // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
+        //     console.info('OPTION:', option, 'COMMENT:', option.leadingComments);
+        // }
     }
 
     // Add options decorations directly to the node
@@ -193,20 +201,20 @@ function nodeVisitor(node, e, _, currentSourceName) {
         properties,
         fullPath,
         s,
-        rawComment
+        comment = (e.comment || '')
     ;
 
     if (node.highcharts && node.highcharts.isOption) {
         node.ignored = (
             node.ignored ||
-            (e.comment || '').indexOf('@ignore-option') > 0
+            comment.indexOf('@ignore-option') > 0
         );
         if (node.ignored) {
             removeOption(node.highcharts.fullname);
-        } else if ((e.comment || '').indexOf('@apioption') < 0) {
+        } else if (comment.indexOf('@apioption') < 0) {
             appendComment(e, ['@optionparent ' + node.highcharts.fullname]);
-        } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
-            console.error(e.comment);
+        } else if (comment.indexOf('@apioption tooltip') >= 0) {
+            console.error(comment);
         }
         return;
     }
@@ -216,17 +224,16 @@ function nodeVisitor(node, e, _, currentSourceName) {
     }
 
     if (!e.comment) {
-        rawComment = '';
         (node.leadingComments || []).some(function (c) {
             // We only use the one containing @optionparent
-            rawComment = c.raw || c.value;
-            if (rawComment.indexOf('@optionparent') >= 0) {
+            comment = c.raw || c.value;
+            if (comment.indexOf('@optionparent') >= 0) {
                 return true;
             }
             return false;
         });
 
-        e.comment = rawComment;
+        e.comment = comment;
         // e.comment = node.leadingComments[0].raw || node.leadingComments[0].value;
     }
 
