@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "highcharts-documentation-generators",
-    "version": "0.5.11",
+    "version": "0.5.12",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
@@ -24,14 +24,14 @@
         "sanitize-html": "^1.26.0",
         "semver": "^7.3.2",
         "taffydb": "^2.7.3",
-        "typedoc": "^0.17.7",
+        "typedoc": "~0.18.0",
         "underscore": "^1.10.2",
         "yargs": "^15.3.1"
     },
     "devDependencies": {
         "@types/mkdirp": "^1.0.1",
         "@types/node": "^12.12.3",
-        "typescript": "~3.9.5"
+        "typescript": "~3.9.7"
     },
     "files": [
         "api-docs",
