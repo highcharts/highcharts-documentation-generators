@@ -286,7 +286,6 @@ function nodeVisitor(node, e, _, currentSourceName) {
                 properties = node.arguments[2].properties;
             } else if (
                 node.type === 'CallExpression' &&
-                node.callee.object.name === 'BaseSeries' &&
                 node.callee.property.name === 'seriesType'
             ) {
                 console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
