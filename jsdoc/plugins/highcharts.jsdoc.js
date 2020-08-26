@@ -284,6 +284,14 @@ function nodeVisitor(node, e, _, currentSourceName) {
                 console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
                 // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
                 properties = node.arguments[2].properties;
+            } else if (
+                node.type === 'CallExpression' &&
+                node.callee.object.name === 'BaseSeries' &&
+                node.callee.property.name === 'seriesType'
+            ) {
+                console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+                // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
+                properties = node.arguments[2].properties;
             } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                 properties = node.arguments[0].properties;
             } else if (node.type === 'ObjectExpression') {
