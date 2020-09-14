@@ -700,9 +700,10 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         // }
 
         if (node.meta.filename) {
-            node.meta.filename = node.meta.filename.replace(/\\/g, '/').replace(/\/\//g, '/');
-            node.meta.filename = node.meta.filename.substr(node.meta.filename.indexOf('highcharts/'));
-            node.meta.filename = node.meta.filename.replace('highcharts/', '');
+            node.meta.filename = node.meta.filename
+                .replace(/\\/g, '/')
+                .replace(/\/\//g, '/')
+                .replace(/.*\/(js\/.*)/, '$1');
         }
 
         // if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {

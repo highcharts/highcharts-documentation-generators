@@ -280,14 +280,13 @@ function nodeVisitor(node, e, _, currentSourceName) {
         }
 
         if (target) {
-            if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
-                console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
-                // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
-                properties = node.arguments[2].properties;
-            } else if (
+            if (
                 node.type === 'CallExpression' &&
-                node.callee.property.name === 'seriesType'
-            ) {
+                (
+                    node.callee.name === 'seriesType' ||
+                    node.callee.property.name === 'seriesType'
+                )
+             ) {
                 console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
                 // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
                 properties = node.arguments[2].properties;
@@ -554,9 +553,9 @@ function inferType(obj) {
 
     if (obj.meta && obj.meta.filename) {
         // Remove user-identifiable info in filename
-        obj.meta.filename = obj.meta.filename.substr(
-            obj.meta.filename.indexOf('highcharts')
-        );
+        obj.meta.filename = obj.meta.filename
+            .replace(/\\/g, '/')
+            .replace(/.*\/(js\/.*)/, '$1');
     }
 
     // Infer types
