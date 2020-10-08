@@ -999,6 +999,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 productdesc: productFilter(node.doclet, 'productdesc', product),
                 requires: requiresFilter(node.doclet, product),
                 samples: productFilter(node.doclet, 'samples', product),
+                see: node.doclet.see,
                 typeList: node.doclet.type,
                 children: node.children.map(function (child) {
                     return {
