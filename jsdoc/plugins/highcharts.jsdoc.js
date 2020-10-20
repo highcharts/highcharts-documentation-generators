@@ -300,7 +300,17 @@ function nodeVisitor(node, e, _, currentSourceName) {
                 properties = node.value.properties;
             } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
                 properties = node.right.properties;
-            } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
+            } else if (
+                node.right &&
+                node.right.type === 'CallExpression' &&
+                node.right.callee.name === 'merge'
+            ) {
+                properties = node.right.arguments[node.right.arguments.length - 1].properties;
+            } else if (
+                node.right &&
+                node.right.type === 'CallExpression' &&
+                node.right.callee.property.name === 'seriesType'
+            ) {
                 console.info('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
                 properties = node.right.arguments[2].properties;
             } else {
