@@ -11,7 +11,6 @@
 // const colors = require('colors');
 const exec = require('child_process').execSync;
 const fs = require('fs');
-const getPalette = require('highcharts-assembler/src/process.js').getPalette;
 const logger = require('jsdoc/util/logger');
 // const parseTag = require('jsdoc/tag/type').parse;
 // const path = require('path');
@@ -21,6 +20,7 @@ const hcRoot = process.cwd(); // __dirname + '/../../../..';
 const parseBreak = /[\n\r]+/;
 const parseJsdocLink = /\{@link\s+((?:[^\|]|\s)+?)(?:\|([^\}]|\s+?))?\}/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
+
 
 const options = {
     _meta: {
@@ -40,6 +40,16 @@ function getLocation(option) {
             (option.leadingComments && option.leadingComments[0].loc.end) ||
             option.key.loc.end
     };
+}
+
+const getPalette = () => {
+    const file = fs
+        .readFileSync(`${hcRoot}/js/Core/Palette.js`, 'utf-8')
+        .replace('export default palette;', '');
+
+    const palette = (new Function(`${file}; return palette`)());
+
+    return palette;
 }
 
 function dumpOptions() {
@@ -63,7 +73,7 @@ function resolveBinaryExpression(node) {
 
     if (node.left.type === 'Literal') {
         lside = node.left.value;
-    } 
+    }
 
     if (node.right.type === 'Literal') {
         rside = node.right.value;
@@ -91,6 +101,8 @@ function resolveBinaryExpression(node) {
 }
 
 function decorateOptions(parent, target, option, filename) {
+
+    const palette = getPalette();
     let index,
         comment = (
             option.leadingComments &&
@@ -170,17 +182,33 @@ function decorateOptions(parent, target, option, filename) {
         }
     } else if (option.value && option.value.type === 'BinaryExpression') {
         target[index].meta.default = resolveBinaryExpression(option.value);
+
+    // Resolve palette
+    } else if (
+        option.value &&
+        option.value.type == 'MemberExpression' &&
+        option.value.object.name === 'palette'
+    ) {
+        const key = option.value.property.name;
+
+        if (typeof key === 'string') {
+            target[index].meta.default = palette[key];
+        }
+
     } else {
         // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
         //     console.info('OPTION:', option, 'COMMENT:', option.leadingComments);
         // }
     }
 
+
+
     // Add options decorations directly to the node
     option.highcharts = option.highcharts || {};
     option.highcharts.fullname = parent + index;
     option.highcharts.name = index;
     option.highcharts.isOption = true;
+
 }
 
 function appendComment(node, lines) {
@@ -536,17 +564,17 @@ function _inferType(node) {
         // We can not infer this type, so abort.
         return;
     }
-    
+
     node.doclet.type = { names: [] };
-    
+
     if (isBool(defVal)) {
         node.doclet.type.names.push('boolean');
     }
-    
+
     if (isNum(defVal)) {
         node.doclet.type.names.push('number');
     }
-    
+
     if (isStr(defVal)) {
         node.doclet.type.names.push('string');
     }
@@ -954,8 +982,9 @@ exports.astNodeVisitor = {
 exports.handlers = {
 
     beforeParse: function (e) {
-        var palette = getPalette(hcRoot + '/css/highcharts.scss');
+        var palette = getPalette();
 
+        // Resolve palette in doclets
         Object.keys(palette).forEach(function (key) {
             var reg = new RegExp('\\$\\{palette\\.' + key + '\\}', 'g');
 
