@@ -11,6 +11,7 @@
 // const colors = require('colors');
 const exec = require('child_process').execSync;
 const fs = require('fs');
+const fsPath = require('path');
 const logger = require('jsdoc/util/logger');
 // const parseTag = require('jsdoc/tag/type').parse;
 // const path = require('path');
@@ -43,11 +44,17 @@ function getLocation(option) {
 }
 
 const getPalette = () => {
+    const filePath = [hcRoot, 'js', 'Core'];
+
+    if (fs.existsSync(fsPath.join(...filePath, 'Color', 'Palette.js'))) {
+        filePath.push('Color');
+    }
+
     const file = fs
-        .readFileSync(`${hcRoot}/js/Core/Palette.js`, 'utf-8')
+        .readFileSync(fsPath.join(...filePath, 'Palette.js'), 'utf-8')
         .replace('export default palette;', '');
 
-    const palette = (new Function(`${file}; return palette`)());
+    const palette = (new Function(`${file}; return palette;`)());
 
     return palette;
 }
@@ -333,7 +340,7 @@ function nodeVisitor(node, e, _, currentSourceName) {
                 node.right.type === 'CallExpression' &&
                 node.right.callee.name === 'merge'
             ) {
-                properties = node.right.arguments[node.right.arguments.length - 1].properties;
+                properties = node.right.arguments[node.right.arguments.length - 1].properties || [];
             } else if (
                 node.right &&
                 node.right.type === 'CallExpression' &&
