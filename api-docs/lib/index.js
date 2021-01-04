@@ -314,6 +314,7 @@ function mergeNode(achildren, bchildren, fullExclude) {
       filename: 1
     },
     doclet: {
+      defaultByProduct: 1,
       defaultvalue: 1,
       deprecated: 1,
       description: 1,
@@ -933,7 +934,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
       if (node.doclet) {
 
         if (Object.keys(node.doclet.defaultByProduct || {}).length > 0) {
-          return node.doclet.defaultByProduct[product] || node.doclet.defaultByProduct.highcharts;
+          return node.doclet.defaultByProduct[product] ?? node.doclet.defaultByProduct.highcharts;
         }
 
         if (node.doclet.defaultvalue) {
