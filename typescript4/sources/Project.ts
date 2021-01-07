@@ -11,6 +11,7 @@
  * */
 
 import JSON from './JSON';
+import Member from './Member';
 import Path from 'path';
 import TypeScript, {
     InterfaceDeclaration,
@@ -92,97 +93,6 @@ export class Project {
      *
      * */
 
-    private createInterfaceMember(
-        interfaceNode: InterfaceDeclaration,
-        sourceFile: SourceFile
-    ): Project.InterfaceMember {
-        const project = this;
-        return {
-            kind: 'interface',
-            name: interfaceNode.name.text,
-            children: interfaceNode.members.map(node => project.parseNode(node, sourceFile))
-        };
-    }
-
-    private createModuleMember(
-        moduleNode: ModuleDeclaration,
-        sourceFile: SourceFile
-    ): Project.ModuleMember {
-        const project = this,
-            children = moduleNode.getChildren(sourceFile);
-
-        let node: Node,
-            name: (string|undefined),
-            path: (string|undefined),
-            declarations: (ModuleBlock|undefined);
-
-        for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
-            node = children[i];
-            if (TypeScript.isIdentifier(node)) {
-                name = node.text;
-            }
-            else if (TypeScript.isModuleBlock(node)) {
-                declarations = node;
-            }
-            else if (TypeScript.isStringLiteral(node)) {
-                path = project.normalizePath(
-                    Path.dirname(sourceFile.fileName),
-                    node.text
-                );
-            }
-        }
-
-        return {
-            kind: 'module',
-            path,
-            name,
-            children: (
-                declarations ?
-                    project.parseNodeChildren(
-                        declarations.getChildAt(1, sourceFile),
-                        sourceFile
-                    ) :
-                    []
-            )
-        };
-    }
-
-    private createPropertyMember(
-        propertyNode: PropertySignature,
-        sourceFile: SourceFile
-    ): Project.PropertyMember {
-        let type = propertyNode.type?.getText(sourceFile) || 'any';
-
-        return {
-            kind: 'property',
-            name: propertyNode.name.getText(sourceFile),
-            type
-        };
-    }
-
-    private createUnknownMember(
-        unknownNode: Node,
-        sourceFile: SourceFile
-    ): Project.UnknownMember {
-        const project = this,
-            unknownMember: Project.UnknownMember = {
-                kind: SyntaxKind[unknownNode.kind],
-                kindID: unknownNode.kind,
-            };
-
-        if (
-            TypeScript.isInterfaceDeclaration(unknownNode)
-        ) {
-            const children = project.parseNodeChildren(unknownNode, sourceFile);
-
-            if (children.length) {
-                unknownMember.children = children;
-            }
-        }
-
-        return unknownMember;
-    }
-
     public normalizePath(...paths: Array<string>): string {
         const project = this,
             resolvedPath = project.resolvedPath;
@@ -215,9 +125,10 @@ export class Project {
                     sourcePath = project.normalizePath(sourceFile.fileName);
                     projectFiles[sourcePath] = {
                         path: sourcePath,
-                        children: project.parseNodeChildren(
+                        children: Member.parseNodeChildren(
                             sourceFile.getChildAt(0, sourceFile),
-                            sourceFile
+                            sourceFile,
+                            this
                         )
                     };
                 }
@@ -226,36 +137,6 @@ export class Project {
 
         return Object.values(projectFiles);
 
-    }
-
-    private parseNode(
-        node: Node,
-        sourceFile: SourceFile
-    ): Project.MemberType {
-        const project = this;
-
-        if (TypeScript.isInterfaceDeclaration(node)) {
-            return project.createInterfaceMember(node, sourceFile);
-        }
-        if (TypeScript.isModuleDeclaration(node)) {
-            return project.createModuleMember(node, sourceFile);
-        }
-        if (TypeScript.isPropertySignature(node)) {
-            return project.createPropertyMember(node, sourceFile);
-        }
-
-        return project.createUnknownMember(node, sourceFile);
-    }
-
-    private parseNodeChildren(
-        node: Node,
-        sourceFile: SourceFile
-    ): Array<Project.Member> {
-        const project = this;
-
-        return node
-            .getChildren(sourceFile)
-            .map(child => project.parseNode(child, sourceFile));
     }
 
     public toJSON(): JSON.Collection {
@@ -289,37 +170,10 @@ export namespace Project {
         children: Array<Member>;
     }
 
-    export interface InterfaceMember extends Member {
-        kind: 'interface';
-        name: string;
-        children: Array<Member>;
-    }
-
     export interface Member extends JSON.Object {
         kind: string;
+        comment?: string;
         children?: Array<Member>;
-    }
-
-    export type MemberType = (
-        InterfaceMember|ModuleMember|PropertyMember|UnknownMember
-    );
-
-    export interface ModuleMember extends Member {
-        kind: 'module';
-        path?: string;
-        name?: string;
-        children: Array<Member>;
-    }
-
-    export interface PropertyMember extends Member {
-        kind: 'property';
-        name: string;
-        type: string;
-    }
-
-    export interface UnknownMember extends Member {
-        kind: typeof TypeScript.SyntaxKind[0];
-        kindID: TypeScript.SyntaxKind;
     }
 
 }
