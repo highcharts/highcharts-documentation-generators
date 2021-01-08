@@ -16,13 +16,13 @@ export declare class Project {
     readonly resolvedPath: string;
     normalizePath(...paths: Array<string>): string;
     private parseFiles;
-    toJSON(): JSON.Collection;
+    toJSON(): Array<Project.File>;
     toString(): string;
 }
 export declare namespace Project {
-    interface File extends JSON.Object {
+    interface File extends Member {
+        kind: 'file';
         path: string;
-        children: Array<Member>;
     }
     interface Member extends JSON.Object {
         kind: string;

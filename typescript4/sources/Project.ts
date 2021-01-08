@@ -10,18 +10,12 @@
  *
  * */
 
+import JSDoc from './JSDoc';
 import JSON from './JSON';
 import Member from './Member';
 import Path from 'path';
 import TypeScript, {
-    InterfaceDeclaration,
-    ModuleBlock,
-    ModuleDeclaration,
-    Node,
     Program,
-    PropertySignature,
-    SourceFile,
-    SyntaxKind,
     sys as System
 } from 'typescript';
 
@@ -115,18 +109,22 @@ export class Project {
             sourceFiles = project.program.getSourceFiles();
 
         if (!Object.keys(projectFiles).length) {
-            let sourceFile: SourceFile,
+            let sourceFile: TypeScript.SourceFile,
+                sourceNode: TypeScript.Node,
                 sourcePath: string;
 
             for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
                 sourceFile = sourceFiles[i];
 
                 if (sourceFile.fileName.startsWith(resolvedPath)) {
+                    sourceNode = sourceFile.getChildAt(0, sourceFile);
                     sourcePath = project.normalizePath(sourceFile.fileName);
                     projectFiles[sourcePath] = {
+                        kind: 'file',
+                        comment: JSDoc.extractSimpleComment(sourceNode, sourceFile),
                         path: sourcePath,
                         children: Member.parseNodeChildren(
-                            sourceFile.getChildAt(0, sourceFile),
+                            sourceNode,
                             sourceFile,
                             this
                         )
@@ -139,7 +137,7 @@ export class Project {
 
     }
 
-    public toJSON(): JSON.Collection {
+    public toJSON(): Array<Project.File> {
         const project = this;
 
         return project.parseFiles();
@@ -165,9 +163,9 @@ export namespace Project {
      *
      * */
 
-    export interface File extends JSON.Object {
+    export interface File extends Member {
+        kind: 'file';
         path: string;
-        children: Array<Member>;
     }
 
     export interface Member extends JSON.Object {

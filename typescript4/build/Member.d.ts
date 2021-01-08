@@ -8,35 +8,47 @@ import TypeScript from 'typescript';
 declare namespace Member {
     interface Class extends Project.Member {
         kind: 'class';
-        children: Array<Project.Member>;
+        children?: Array<Type>;
+    }
+    interface Function extends Project.Member {
+        kind: 'function';
+        name: string;
+        children?: Array<Type>;
     }
     interface Interface extends Project.Member {
         kind: 'interface';
         name: string;
-        children: Array<Project.Member>;
+        children?: Array<Type>;
     }
     interface Module extends Project.Member {
         kind: 'module';
         path?: string;
         name?: string;
-        children: Array<Project.Member>;
+        isDeclaration?: boolean;
+        children?: Array<Type>;
+    }
+    interface Namespace extends Project.Member {
+        kind: 'namespace';
+        name: string;
+        isDeclaration?: boolean;
+        children?: Array<Type>;
+    }
+    interface Parameter extends Project.Member {
+        kind: 'parameter';
+        name: string;
+        type?: Array<Type>;
     }
     interface Property extends Project.Member {
         kind: 'property';
         name: string;
-        type: string;
+        type?: Array<Type>;
     }
-    type Type = (Class | Interface | Module | Property | Unknown);
+    type Type = (Class | Function | Interface | Module | Namespace | Parameter | Property | Unknown);
     interface Unknown extends Project.Member {
         kind: typeof TypeScript.SyntaxKind[0];
         kindID: TypeScript.SyntaxKind;
     }
-    function createClass(classNode: TypeScript.ClassDeclaration, sourceFile: TypeScript.SourceFile, project: Project): Member.Class;
-    function createInterface(interfaceNode: TypeScript.InterfaceDeclaration, sourceFile: TypeScript.SourceFile, project: Project): Member.Interface;
-    function createModule(moduleNode: TypeScript.ModuleDeclaration, sourceFile: TypeScript.SourceFile, project: Project): Member.Module;
-    function createProperty(propertyNode: TypeScript.PropertySignature, sourceFile: TypeScript.SourceFile, _project: Project): Member.Property;
-    function createUnknown(unknownNode: TypeScript.Node, sourceFile: TypeScript.SourceFile, project: Project): Member.Unknown;
-    function parseNode(node: TypeScript.Node, sourceFile: TypeScript.SourceFile, project: Project): Member.Type;
-    function parseNodeChildren(node: TypeScript.Node, sourceFile: TypeScript.SourceFile, project: Project): Array<Project.Member>;
+    function parseNode(node: TypeScript.Node, sourceFile: TypeScript.SourceFile, project: Project): Type;
+    function parseNodeChildren(node: (TypeScript.Node | Readonly<Array<TypeScript.Node>>), sourceFile: TypeScript.SourceFile, project: Project): Array<Type>;
 }
 export default Member;

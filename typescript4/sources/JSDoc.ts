@@ -10,7 +10,10 @@
  *
  * */
 
-import TypeScript from 'typescript';
+import TypeScript, {
+    SyntaxKind
+} from 'typescript';
+import Utilities from './Utilities';
 
 /* *
  *
@@ -44,22 +47,49 @@ namespace JSDoc {
         node: TypeScript.Node,
         sourceFile: TypeScript.SourceFile
     ): Array<TypeScript.JSDoc> {
-        const children = node.getChildren(sourceFile),
-            doclets: Array<TypeScript.JSDoc> = [];
+        const doclets: Array<TypeScript.JSDoc> = [];
 
-        let child: TypeScript.Node;
+        if (TypeScript.isJSDoc(node)) {
+            doclets.push(node);
+        } else {
+            const children = node.getChildren(sourceFile);
 
-        for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
-            child = children[i];
+            let child: TypeScript.Node;
 
-            if (TypeScript.isJSDoc(child)) {
-                doclets.push(child);
-            } else {
-                break;
+            for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
+                child = children[i];
+
+                if (TypeScript.isJSDoc(child)) {
+                    doclets.push(child);
+                } else {
+                    break;
+                }
             }
         }
 
         return doclets;
+    }
+
+    export function extractSimpleComment(
+        node: TypeScript.Node,
+        sourceFile: TypeScript.SourceFile,
+        ignoreChildren?: boolean
+    ): (string|undefined) {
+        switch (node.kind) {
+            case SyntaxKind.MultiLineCommentTrivia:
+            case SyntaxKind.SingleLineCommentTrivia:
+                return node.getText(sourceFile);
+        }
+
+        if (!ignoreChildren) {
+            return Utilities.extractInChildren(
+                node,
+                sourceFile,
+                extractSimpleComment
+            );
+        }
+
+        return void 0;
     }
 
 }

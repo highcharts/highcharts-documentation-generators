@@ -14,6 +14,7 @@ import type Project from './Project';
 
 import JSDoc from './JSDoc';
 import Path from 'path';
+import MemberUtilities from './MemberUtilities';
 import TypeScript, {
     SyntaxKind
 } from 'typescript';
@@ -34,29 +35,51 @@ namespace Member {
 
     export interface Class extends Project.Member {
         kind: 'class';
-        children: Array<Project.Member>;
+        children?: Array<Type>;
+    }
+
+    export interface Function extends Project.Member {
+        kind: 'function';
+        name: string;
+        children?: Array<Type>;
     }
 
     export interface Interface extends Project.Member {
         kind: 'interface';
         name: string;
-        children: Array<Project.Member>;
+        children?: Array<Type>;
     }
 
     export interface Module extends Project.Member {
         kind: 'module';
         path?: string;
         name?: string;
-        children: Array<Project.Member>;
+        isDeclaration?: boolean;
+        children?: Array<Type>;
+    }
+
+    export interface Namespace extends Project.Member {
+        kind: 'namespace';
+        name: string;
+        isDeclaration?: boolean;
+        children?: Array<Type>;
+    }
+
+    export interface Parameter extends Project.Member {
+        kind: 'parameter';
+        name: string;
+        type?: Array<Type>;
     }
 
     export interface Property extends Project.Member {
         kind: 'property';
         name: string;
-        type: string;
+        type?: Array<Type>;
     }
 
-    export type Type = (Class|Interface|Module|Property|Unknown);
+    export type Type = (
+        Class|Function|Interface|Module|Namespace|Parameter|Property|Unknown
+    );
 
     export interface Unknown extends Project.Member {
         kind: typeof TypeScript.SyntaxKind[0];
@@ -69,65 +92,93 @@ namespace Member {
      *
      * */
 
-    export function createClass(
+    function parseClass(
         classNode: TypeScript.ClassDeclaration,
         sourceFile: TypeScript.SourceFile,
         project: Project
-    ): Member.Class {
+    ): Class {
         return {
             kind: 'class',
             name: (classNode.name && classNode.name.text || '[anonymous]'),
             comment: JSDoc.extractComment(classNode, sourceFile),
-            children: classNode.members.map(
-                node => parseNode(
-                    node,
-                    sourceFile,
-                    project
-                )
+            children: parseNodeChildren(
+                classNode.members,
+                sourceFile,
+                project
             )
         };
     }
 
-    export function createInterface(
+    function parseFunction(
+        functionNode: (
+            TypeScript.FunctionDeclaration|
+            TypeScript.MethodDeclaration
+        ),
+        sourceFile: TypeScript.SourceFile,
+        project: Project
+    ): Function {
+        return {
+            kind: 'function',
+            name: (
+                functionNode.name ?
+                    functionNode.name.getText(sourceFile) :
+                    '[anonymous]'
+            ),
+            comment: JSDoc.extractComment(functionNode, sourceFile),
+            children: parseNodeChildren(
+                functionNode.parameters,
+                sourceFile,
+                project
+            )
+        }
+    }
+
+    function parseInterface(
         interfaceNode: TypeScript.InterfaceDeclaration,
         sourceFile: TypeScript.SourceFile,
         project: Project
-    ): Member.Interface {
+    ): Interface {
         return {
             kind: 'interface',
             name: interfaceNode.name.text,
             comment: JSDoc.extractComment(interfaceNode, sourceFile),
-            children: interfaceNode.members.map(
-                node => parseNode(
-                    node,
-                    sourceFile,
-                    project
-                )
+            children: parseNodeChildren(
+                interfaceNode.members,
+                sourceFile,
+                project
             )
         };
     }
 
-    export function createModule(
+    function parseModule(
         moduleNode: TypeScript.ModuleDeclaration,
         sourceFile: TypeScript.SourceFile,
         project: Project
-    ): Member.Module {
-        const children = moduleNode.getChildren(sourceFile);
+    ): (Module|Namespace) {
+        const children = moduleNode.getChildren(sourceFile),
+            isDeclaration = (
+                (MemberUtilities.extractSyntax(moduleNode, sourceFile) || []).includes('declare') ||
+                void 0
+            ),
+            isNamespace = (MemberUtilities.extractKeyword(moduleNode, sourceFile) === 'namespace');
 
         let node: TypeScript.Node,
+            block: (TypeScript.ModuleBlock|undefined),
             name: (string|undefined),
-            path: (string|undefined),
-            declarations: (TypeScript.ModuleBlock|undefined);
+            path: (string|undefined);
 
         for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
             node = children[i];
+
             if (TypeScript.isIdentifier(node)) {
                 name = node.text;
-            }
-            else if (TypeScript.isModuleBlock(node)) {
-                declarations = node;
-            }
-            else if (TypeScript.isStringLiteral(node)) {
+            } else if (
+                TypeScript.isModuleBlock(node)
+            ) {
+                block = node;
+            } else if (
+                TypeScript.isStringLiteral(node)
+            ) {
                 path = project.normalizePath(
                     Path.dirname(sourceFile.fileName),
                     node.text
@@ -135,46 +186,139 @@ namespace Member {
             }
         }
 
+        if (isNamespace) {
+            return {
+                kind: 'namespace',
+                name: name || '[anonymous]',
+                comment: JSDoc.extractComment(moduleNode, sourceFile),
+                isDeclaration,
+                children: (
+                    block ?
+                        parseNodeChildren(
+                            block.statements,
+                            sourceFile,
+                            project
+                        ) :
+                        []
+                )
+            }
+        } else {
+            return {
+                kind: 'module',
+                path,
+                name,
+                comment: JSDoc.extractComment(moduleNode, sourceFile),
+                isDeclaration,
+                children: (
+                    block ?
+                        parseNodeChildren(
+                            block.statements,
+                            sourceFile,
+                            project
+                        ) :
+                        []
+                )
+            };
+        }
+    }
+
+    export function parseNode(
+        node: TypeScript.Node,
+        sourceFile: TypeScript.SourceFile,
+        project: Project
+    ): Type {
+        if (TypeScript.isClassDeclaration(node)) {
+            return parseClass(node, sourceFile, project);
+        } else if (
+            TypeScript.isFunctionDeclaration(node) ||
+            TypeScript.isMethodDeclaration(node)
+        ) {
+            return parseFunction(node, sourceFile, project);
+        } else if (
+            TypeScript.isInterfaceDeclaration(node)
+        ) {
+            return parseInterface(node, sourceFile, project);
+        } else if (
+            TypeScript.isModuleDeclaration(node)
+        ) {
+            return parseModule(node, sourceFile, project);
+        } else if (
+            TypeScript.isParameter(node)
+        ) {
+            return parseParameter(node, sourceFile, project);
+        } else if (
+            TypeScript.isPropertyDeclaration(node) ||
+            TypeScript.isPropertySignature(node)
+        ) {
+            return parseProperty(node, sourceFile, project);
+        }
+
+        return parseUnknown(node, sourceFile, project);
+    }
+
+    export function parseNodeChildren(
+        node: (TypeScript.Node|Readonly<Array<TypeScript.Node>>),
+        sourceFile: TypeScript.SourceFile,
+        project: Project
+    ): Array<Type> {
+        let children: Readonly<Array<TypeScript.Node>>;
+
+        if (node instanceof Array) {
+            children = node;
+        } else {
+            children = node.getChildren(sourceFile);
+        }
+
+        return children.map(child => parseNode(child, sourceFile, project));
+    }
+
+    function parseParameter(
+        parameterNode: TypeScript.ParameterDeclaration,
+        sourceFile: TypeScript.SourceFile,
+        project: Project
+    ): Parameter {
         return {
-            kind: 'module',
-            path,
-            name,
-            comment: JSDoc.extractComment(moduleNode, sourceFile),
-            children: (
-                declarations ?
-                    parseNodeChildren(
-                        declarations.getChildAt(1, sourceFile),
-                        sourceFile,
-                        project
-                    ) :
-                    []
+            kind: 'parameter',
+            name: parameterNode.name.getText(sourceFile),
+            type: parameterNode.type && parseNodeChildren(
+                parameterNode.type,
+                sourceFile,
+                project
             )
         };
     }
 
-    export function createProperty(
-        propertyNode: TypeScript.PropertySignature,
+    function parseProperty(
+        propertyNode: (
+            TypeScript.PropertyDeclaration|
+            TypeScript.PropertySignature
+        ),
         sourceFile: TypeScript.SourceFile,
-        _project: Project
-    ): Member.Property {
-        let type = propertyNode.type?.getText(sourceFile) || 'any';
-
+        project: Project
+    ): Property {
         return {
             kind: 'property',
             name: propertyNode.name.getText(sourceFile),
             comment: JSDoc.extractComment(propertyNode, sourceFile),
-            type
+            modifiers: MemberUtilities.extractModifiers(propertyNode, sourceFile),
+            optional: propertyNode.questionToken && true,
+            type: propertyNode.type && parseNodeChildren(
+                propertyNode.type,
+                sourceFile,
+                project
+            )
         };
     }
 
-    export function createUnknown(
+    function parseUnknown(
         unknownNode: TypeScript.Node,
         sourceFile: TypeScript.SourceFile,
         project: Project
-    ): Member.Unknown {
+    ): Unknown {
         const unknownMember: Member.Unknown = {
             kind: SyntaxKind[unknownNode.kind],
             kindID: unknownNode.kind,
+            syntax: MemberUtilities.extractSyntax(unknownNode, sourceFile)
         };
 
         if (
@@ -192,37 +336,6 @@ namespace Member {
         }
 
         return unknownMember;
-    }
-
-    export function parseNode(
-        node: TypeScript.Node,
-        sourceFile: TypeScript.SourceFile,
-        project: Project
-    ): Member.Type {
-        if (TypeScript.isClassDeclaration(node)) {
-            return createClass(node, sourceFile, project);
-        }
-        if (TypeScript.isInterfaceDeclaration(node)) {
-            return createInterface(node, sourceFile, project);
-        }
-        if (TypeScript.isModuleDeclaration(node)) {
-            return createModule(node, sourceFile, project);
-        }
-        if (TypeScript.isPropertySignature(node)) {
-            return createProperty(node, sourceFile, project);
-        }
-
-        return createUnknown(node, sourceFile, project);
-    }
-
-    export function parseNodeChildren(
-        node: TypeScript.Node,
-        sourceFile: TypeScript.SourceFile,
-        project: Project
-    ): Array<Project.Member> {
-        return node
-            .getChildren(sourceFile)
-            .map(child => parseNode(child, sourceFile, project));
     }
 
 }

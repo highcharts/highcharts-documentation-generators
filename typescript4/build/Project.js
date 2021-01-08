@@ -28,6 +28,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Project = void 0;
+/* *
+ *
+ *  Imports
+ *
+ * */
+const JSDoc_1 = __importDefault(require("./JSDoc"));
 const Member_1 = __importDefault(require("./Member"));
 const path_1 = __importDefault(require("path"));
 const typescript_1 = __importStar(require("typescript"));
@@ -83,14 +89,17 @@ class Project {
     parseFiles() {
         const project = this, projectFiles = project.files, resolvedPath = project.resolvedPath, sourceFiles = project.program.getSourceFiles();
         if (!Object.keys(projectFiles).length) {
-            let sourceFile, sourcePath;
+            let sourceFile, sourceNode, sourcePath;
             for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
                 sourceFile = sourceFiles[i];
                 if (sourceFile.fileName.startsWith(resolvedPath)) {
+                    sourceNode = sourceFile.getChildAt(0, sourceFile);
                     sourcePath = project.normalizePath(sourceFile.fileName);
                     projectFiles[sourcePath] = {
+                        kind: 'file',
+                        comment: JSDoc_1.default.extractSimpleComment(sourceNode, sourceFile),
                         path: sourcePath,
-                        children: Member_1.default.parseNodeChildren(sourceFile.getChildAt(0, sourceFile), sourceFile, this)
+                        children: Member_1.default.parseNodeChildren(sourceNode, sourceFile, this)
                     };
                 }
             }
