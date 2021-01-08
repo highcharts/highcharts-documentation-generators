@@ -22,6 +22,18 @@ var Utilities;
      *  Functions
      *
      * */
+    function extractMeta(node, sourceFile) {
+        const start = node.getStart(sourceFile), end = node.getEnd(), sourceText = sourceFile.getFullText(), startLines = sourceText.substr(0, start).split('\n'), startLine = startLines.length, startColumn = (startLines.pop() || '').length + 1, endLines = sourceText.substr(0, end).split('\n'), endLine = endLines.length, endColumn = (endLines.pop() || '').length + 1;
+        return {
+            start,
+            startLine,
+            startColumn,
+            end,
+            endLine,
+            endColumn
+        };
+    }
+    Utilities.extractMeta = extractMeta;
     function extractInChildren(node, sourceFile, extractor) {
         const children = node.getChildren(sourceFile);
         let result;

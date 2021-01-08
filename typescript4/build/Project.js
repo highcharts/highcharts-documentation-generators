@@ -28,15 +28,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Project = void 0;
-/* *
- *
- *  Imports
- *
- * */
+const child_process_1 = __importDefault(require("child_process"));
 const JSDoc_1 = __importDefault(require("./JSDoc"));
 const Member_1 = __importDefault(require("./Member"));
 const path_1 = __importDefault(require("path"));
 const typescript_1 = __importStar(require("typescript"));
+const Utilities_1 = __importDefault(require("./Utilities"));
 /* *
  *
  *  Class
@@ -52,16 +49,19 @@ class Project {
      *
      * */
     constructor(path) {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        this.files = {};
-        const resolvedPath = typescript_1.sys.resolvePath(path), parsedCommandLine = typescript_1.default.parseJsonConfigFileContent(typescript_1.default.readJsonConfigFile(resolvedPath, typescript_1.sys.readFile), typescript_1.sys, resolvedPath);
+        const cwd = process.cwd(), npm = require(`${cwd}/package.json`), resolvedPath = typescript_1.sys.resolvePath(path), parsedCommandLine = typescript_1.default.parseJsonConfigFileContent(typescript_1.default.readJsonConfigFile(resolvedPath, typescript_1.sys.readFile), typescript_1.sys, resolvedPath);
+        this.branch = child_process_1.default.execSync('git rev-parse --abbrev-ref HEAD', { cwd }).toString().trim();
+        this.commit = child_process_1.default.execSync('git rev-parse --short HEAD', { cwd }).toString().trim();
+        this.date = new Date();
+        this.description = npm.description;
+        this.name = (npm.name || '');
         this.path = path;
         this.program = typescript_1.default.createProgram(parsedCommandLine.fileNames, parsedCommandLine.options);
+        this.repository = (typeof npm.repository === 'string' ?
+            npm.repository :
+            npm.repository && npm.repository.url);
         this.resolvedPath = resolvedPath;
+        this.version = (npm.version || '');
     }
     /* *
      *
@@ -76,6 +76,28 @@ class Project {
      *  Functions
      *
      * */
+    getFiles() {
+        const project = this;
+        if (!project.files) {
+            const projectFiles = project.files = {}, resolvedPath = project.resolvedPath, sourceFiles = project.program.getSourceFiles();
+            let sourceFile, sourceNode, sourcePath;
+            for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
+                sourceFile = sourceFiles[i];
+                if (sourceFile.fileName.startsWith(resolvedPath)) {
+                    sourceNode = sourceFile.getChildAt(0, sourceFile);
+                    sourcePath = project.normalizePath(sourceFile.fileName);
+                    projectFiles[sourcePath] = {
+                        kind: 'file',
+                        path: sourcePath,
+                        comment: JSDoc_1.default.extractSimpleComment(sourceNode, sourceFile),
+                        meta: Utilities_1.default.extractMeta(sourceFile, sourceFile),
+                        children: Member_1.default.parseNodeChildren(sourceNode, sourceFile, project)
+                    };
+                }
+            }
+        }
+        return Object.values(project.files);
+    }
     normalizePath(...paths) {
         const project = this, resolvedPath = project.resolvedPath;
         let path = typescript_1.sys
@@ -86,29 +108,18 @@ class Project {
         }
         return path;
     }
-    parseFiles() {
-        const project = this, projectFiles = project.files, resolvedPath = project.resolvedPath, sourceFiles = project.program.getSourceFiles();
-        if (!Object.keys(projectFiles).length) {
-            let sourceFile, sourceNode, sourcePath;
-            for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
-                sourceFile = sourceFiles[i];
-                if (sourceFile.fileName.startsWith(resolvedPath)) {
-                    sourceNode = sourceFile.getChildAt(0, sourceFile);
-                    sourcePath = project.normalizePath(sourceFile.fileName);
-                    projectFiles[sourcePath] = {
-                        kind: 'file',
-                        comment: JSDoc_1.default.extractSimpleComment(sourceNode, sourceFile),
-                        path: sourcePath,
-                        children: Member_1.default.parseNodeChildren(sourceNode, sourceFile, this)
-                    };
-                }
-            }
-        }
-        return Object.values(projectFiles);
-    }
     toJSON() {
-        const project = this;
-        return project.parseFiles();
+        const { branch, commit, date, description, name, repository, version } = this;
+        return {
+            name,
+            version,
+            repository,
+            branch,
+            commit,
+            date: date.toISOString(),
+            description,
+            files: this.getFiles()
+        };
     }
     toString() {
         return '[object Project]';

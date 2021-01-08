@@ -31,6 +31,7 @@ const JSDoc_1 = __importDefault(require("./JSDoc"));
 const path_1 = __importDefault(require("path"));
 const MemberUtilities_1 = __importDefault(require("./MemberUtilities"));
 const typescript_1 = __importStar(require("typescript"));
+const Utilities_1 = __importDefault(require("./Utilities"));
 /* *
  *
  *  Namespace
@@ -53,6 +54,7 @@ var Member;
             kind: 'class',
             name: (classNode.name && classNode.name.text || '[anonymous]'),
             comment: JSDoc_1.default.extractComment(classNode, sourceFile),
+            meta: Utilities_1.default.extractMeta(classNode, sourceFile),
             children: parseNodeChildren(classNode.members, sourceFile, project)
         };
     }
@@ -63,6 +65,7 @@ var Member;
                 functionNode.name.getText(sourceFile) :
                 '[anonymous]'),
             comment: JSDoc_1.default.extractComment(functionNode, sourceFile),
+            meta: Utilities_1.default.extractMeta(functionNode, sourceFile),
             children: parseNodeChildren(functionNode.parameters, sourceFile, project)
         };
     }
@@ -71,12 +74,12 @@ var Member;
             kind: 'interface',
             name: interfaceNode.name.text,
             comment: JSDoc_1.default.extractComment(interfaceNode, sourceFile),
+            meta: Utilities_1.default.extractMeta(interfaceNode, sourceFile),
             children: parseNodeChildren(interfaceNode.members, sourceFile, project)
         };
     }
     function parseModule(moduleNode, sourceFile, project) {
-        const children = moduleNode.getChildren(sourceFile), isDeclaration = ((MemberUtilities_1.default.extractSyntax(moduleNode, sourceFile) || []).includes('declare') ||
-            void 0), isNamespace = (MemberUtilities_1.default.extractKeyword(moduleNode, sourceFile) === 'namespace');
+        const children = moduleNode.getChildren(sourceFile), comment = JSDoc_1.default.extractComment(moduleNode, sourceFile), isDeclaration = ((MemberUtilities_1.default.extractSyntax(moduleNode, sourceFile) || []).includes('declare') || void 0), isNamespace = (MemberUtilities_1.default.extractKeyword(moduleNode, sourceFile) === 'namespace' || void 0), meta = Utilities_1.default.extractMeta(moduleNode, sourceFile);
         let node, block, name, path;
         for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
             node = children[i];
@@ -94,8 +97,9 @@ var Member;
             return {
                 kind: 'namespace',
                 name: name || '[anonymous]',
-                comment: JSDoc_1.default.extractComment(moduleNode, sourceFile),
+                comment,
                 isDeclaration,
+                meta,
                 children: (block ?
                     parseNodeChildren(block.statements, sourceFile, project) :
                     [])
@@ -106,8 +110,9 @@ var Member;
                 kind: 'module',
                 path,
                 name,
-                comment: JSDoc_1.default.extractComment(moduleNode, sourceFile),
+                comment,
                 isDeclaration,
+                meta,
                 children: (block ?
                     parseNodeChildren(block.statements, sourceFile, project) :
                     [])
@@ -153,7 +158,8 @@ var Member;
         return {
             kind: 'parameter',
             name: parameterNode.name.getText(sourceFile),
-            type: parameterNode.type && parseNodeChildren(parameterNode.type, sourceFile, project)
+            type: parameterNode.type && parseNodeChildren(parameterNode.type, sourceFile, project),
+            meta: Utilities_1.default.extractMeta(parameterNode, sourceFile)
         };
     }
     function parseProperty(propertyNode, sourceFile, project) {
@@ -163,21 +169,17 @@ var Member;
             comment: JSDoc_1.default.extractComment(propertyNode, sourceFile),
             modifiers: MemberUtilities_1.default.extractModifiers(propertyNode, sourceFile),
             optional: propertyNode.questionToken && true,
-            type: propertyNode.type && parseNodeChildren(propertyNode.type, sourceFile, project)
+            type: propertyNode.type && parseNodeChildren(propertyNode.type, sourceFile, project),
+            meta: Utilities_1.default.extractMeta(propertyNode, sourceFile)
         };
     }
-    function parseUnknown(unknownNode, sourceFile, project) {
+    function parseUnknown(unknownNode, sourceFile, _project) {
         const unknownMember = {
             kind: typescript_1.SyntaxKind[unknownNode.kind],
             kindID: unknownNode.kind,
-            syntax: MemberUtilities_1.default.extractSyntax(unknownNode, sourceFile)
+            syntax: MemberUtilities_1.default.extractSyntax(unknownNode, sourceFile),
+            meta: Utilities_1.default.extractMeta(unknownNode, sourceFile)
         };
-        if (typescript_1.default.isInterfaceDeclaration(unknownNode)) {
-            const children = parseNodeChildren(unknownNode, sourceFile, project);
-            if (children.length) {
-                unknownMember.children = children;
-            }
-        }
         return unknownMember;
     }
 })(Member || (Member = {}));

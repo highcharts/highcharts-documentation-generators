@@ -10,6 +10,8 @@
  *
  * */
 
+import type JSON from './JSON';
+
 import TypeScript from 'typescript';
 
 /* *
@@ -32,11 +34,44 @@ namespace Utilities {
         ignoreChildren?: boolean
     ) => T;
 
+    export interface Meta extends JSON.Object {
+        start: number;
+        startLine: number;
+        startColumn: number;
+        end: number;
+        endLine: number;
+        endColumn: number;
+    }
+
     /* *
      *
      *  Functions
      *
      * */
+
+    export function extractMeta(
+        node: TypeScript.Node,
+        sourceFile: TypeScript.SourceFile
+    ): Meta {
+        const start = node.getStart(sourceFile),
+            end = node.getEnd(),
+            sourceText = sourceFile.getFullText(),
+            startLines = sourceText.substr(0, start).split('\n'),
+            startLine = startLines.length,
+            startColumn = (startLines.pop() || '').length + 1,
+            endLines = sourceText.substr(0, end).split('\n'),
+            endLine = endLines.length,
+            endColumn = (endLines.pop() || '').length + 1;
+
+        return {
+            start,
+            startLine,
+            startColumn,
+            end,
+            endLine,
+            endColumn
+        };
+    }
 
     export function extractInChildren<T>(
         node: TypeScript.Node,

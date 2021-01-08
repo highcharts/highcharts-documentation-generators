@@ -10,14 +10,17 @@
  *
  * */
 
+import type JSON from './JSON';
+
+import ChildProcess from 'child_process';
 import JSDoc from './JSDoc';
-import JSON from './JSON';
 import Member from './Member';
 import Path from 'path';
 import TypeScript, {
     Program,
     sys as System
 } from 'typescript';
+import Utilities from './Utilities';
 
 /* *
  *
@@ -49,7 +52,9 @@ export class Project {
     private constructor (
         path: string
     ) {
-        const resolvedPath = System.resolvePath(path),
+        const cwd = process.cwd(),
+            npm = require(`${cwd}/package.json`),
+            resolvedPath = System.resolvePath(path),
             parsedCommandLine = TypeScript.parseJsonConfigFileContent(
                 TypeScript.readJsonConfigFile(
                     resolvedPath,
@@ -59,12 +64,29 @@ export class Project {
                 resolvedPath
             );
 
+        this.branch = ChildProcess.execSync(
+            'git rev-parse --abbrev-ref HEAD',
+            { cwd }
+        ).toString().trim();
+        this.commit = ChildProcess.execSync(
+            'git rev-parse --short HEAD',
+            { cwd }
+        ).toString().trim();
+        this.date = new Date();
+        this.description = npm.description;
+        this.name = (npm.name || '');
         this.path = path;
         this.program = TypeScript.createProgram(
             parsedCommandLine.fileNames,
             parsedCommandLine.options
         );
+        this.repository = (
+            typeof npm.repository === 'string' ?
+                npm.repository :
+                npm.repository && npm.repository.url
+        );
         this.resolvedPath = resolvedPath;
+        this.version = (npm.version || '');
     }
 
     /* *
@@ -73,19 +95,75 @@ export class Project {
      *
      * */
 
-    private readonly files: Record<string, Project.File> = {};
+    public readonly branch: string;
+
+    public readonly commit: string;
+
+    public readonly date: Date;
+
+    public readonly description: (string|undefined);
+
+    private files: (Record<string, Project.File>|undefined);
+
+    public readonly name: string;
 
     public readonly path: string;
 
     private readonly program: Program;
 
+    public readonly repository: string;
+
     public readonly resolvedPath: string;
+
+    public readonly version: string;
 
     /* *
      *
      *  Functions
      *
      * */
+
+    private getFiles(): Array<Project.File> {
+        const project = this;
+
+        if (!project.files) {
+            const projectFiles: typeof project.files = project.files = {},
+                resolvedPath = project.resolvedPath,
+                sourceFiles = project.program.getSourceFiles();
+
+            let sourceFile: TypeScript.SourceFile,
+                sourceNode: TypeScript.Node,
+                sourcePath: string;
+
+            for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
+                sourceFile = sourceFiles[i];
+
+                if (sourceFile.fileName.startsWith(resolvedPath)) {
+                    sourceNode = sourceFile.getChildAt(0, sourceFile);
+                    sourcePath = project.normalizePath(sourceFile.fileName);
+                    projectFiles[sourcePath] = {
+                        kind: 'file',
+                        path: sourcePath,
+                        comment: JSDoc.extractSimpleComment(
+                            sourceNode,
+                            sourceFile
+                        ),
+                        meta: Utilities.extractMeta(
+                            sourceFile,
+                            sourceFile
+                        ),
+                        children: Member.parseNodeChildren(
+                            sourceNode,
+                            sourceFile,
+                            project
+                        )
+                    };
+                }
+            }
+        }
+
+        return Object.values(project.files);
+    }
 
     public normalizePath(...paths: Array<string>): string {
         const project = this,
@@ -102,45 +180,27 @@ export class Project {
         return path;
     }
 
-    private parseFiles(): Array<Project.File> {
-        const project = this,
-            projectFiles = project.files,
-            resolvedPath = project.resolvedPath,
-            sourceFiles = project.program.getSourceFiles();
+    public toJSON(): JSON.Object {
+        const {
+            branch,
+            commit,
+            date,
+            description,
+            name,
+            repository,
+            version
+        } = this;
 
-        if (!Object.keys(projectFiles).length) {
-            let sourceFile: TypeScript.SourceFile,
-                sourceNode: TypeScript.Node,
-                sourcePath: string;
-
-            for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
-                sourceFile = sourceFiles[i];
-
-                if (sourceFile.fileName.startsWith(resolvedPath)) {
-                    sourceNode = sourceFile.getChildAt(0, sourceFile);
-                    sourcePath = project.normalizePath(sourceFile.fileName);
-                    projectFiles[sourcePath] = {
-                        kind: 'file',
-                        comment: JSDoc.extractSimpleComment(sourceNode, sourceFile),
-                        path: sourcePath,
-                        children: Member.parseNodeChildren(
-                            sourceNode,
-                            sourceFile,
-                            this
-                        )
-                    };
-                }
-            }
-        }
-
-        return Object.values(projectFiles);
-
-    }
-
-    public toJSON(): Array<Project.File> {
-        const project = this;
-
-        return project.parseFiles();
+        return {
+            name,
+            version,
+            repository,
+            branch,
+            commit,
+            date: date.toISOString(),
+            description,
+            files: this.getFiles()
+        };
     }
 
     public toString(): string {
@@ -171,6 +231,7 @@ export namespace Project {
     export interface Member extends JSON.Object {
         kind: string;
         comment?: string;
+        meta?: Utilities.Meta;
         children?: Array<Member>;
     }
 

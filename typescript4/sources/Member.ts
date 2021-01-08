@@ -18,6 +18,7 @@ import MemberUtilities from './MemberUtilities';
 import TypeScript, {
     SyntaxKind
 } from 'typescript';
+import Utilities from './Utilities';
 
 /* *
  *
@@ -101,6 +102,10 @@ namespace Member {
             kind: 'class',
             name: (classNode.name && classNode.name.text || '[anonymous]'),
             comment: JSDoc.extractComment(classNode, sourceFile),
+            meta: Utilities.extractMeta(
+                classNode,
+                sourceFile
+            ),
             children: parseNodeChildren(
                 classNode.members,
                 sourceFile,
@@ -124,7 +129,14 @@ namespace Member {
                     functionNode.name.getText(sourceFile) :
                     '[anonymous]'
             ),
-            comment: JSDoc.extractComment(functionNode, sourceFile),
+            comment: JSDoc.extractComment(
+                functionNode,
+                sourceFile
+            ),
+            meta: Utilities.extractMeta(
+                functionNode,
+                sourceFile
+            ),
             children: parseNodeChildren(
                 functionNode.parameters,
                 sourceFile,
@@ -142,6 +154,7 @@ namespace Member {
             kind: 'interface',
             name: interfaceNode.name.text,
             comment: JSDoc.extractComment(interfaceNode, sourceFile),
+            meta: Utilities.extractMeta(interfaceNode, sourceFile),
             children: parseNodeChildren(
                 interfaceNode.members,
                 sourceFile,
@@ -156,11 +169,26 @@ namespace Member {
         project: Project
     ): (Module|Namespace) {
         const children = moduleNode.getChildren(sourceFile),
-            isDeclaration = (
-                (MemberUtilities.extractSyntax(moduleNode, sourceFile) || []).includes('declare') ||
-                void 0
+            comment = JSDoc.extractComment(
+                moduleNode,
+                sourceFile
             ),
-            isNamespace = (MemberUtilities.extractKeyword(moduleNode, sourceFile) === 'namespace');
+            isDeclaration = (
+                (MemberUtilities.extractSyntax(
+                    moduleNode,
+                    sourceFile
+                ) || []).includes('declare') || void 0
+            ),
+            isNamespace = (
+                MemberUtilities.extractKeyword(
+                    moduleNode,
+                    sourceFile
+                ) === 'namespace' || void 0
+            ),
+            meta = Utilities.extractMeta(
+                moduleNode,
+                sourceFile
+            );
 
         let node: TypeScript.Node,
             block: (TypeScript.ModuleBlock|undefined),
@@ -190,8 +218,9 @@ namespace Member {
             return {
                 kind: 'namespace',
                 name: name || '[anonymous]',
-                comment: JSDoc.extractComment(moduleNode, sourceFile),
+                comment,
                 isDeclaration,
+                meta,
                 children: (
                     block ?
                         parseNodeChildren(
@@ -207,8 +236,9 @@ namespace Member {
                 kind: 'module',
                 path,
                 name,
-                comment: JSDoc.extractComment(moduleNode, sourceFile),
+                comment,
                 isDeclaration,
+                meta,
                 children: (
                     block ?
                         parseNodeChildren(
@@ -284,7 +314,8 @@ namespace Member {
                 parameterNode.type,
                 sourceFile,
                 project
-            )
+            ),
+            meta: Utilities.extractMeta(parameterNode, sourceFile)
         };
     }
 
@@ -306,34 +337,22 @@ namespace Member {
                 propertyNode.type,
                 sourceFile,
                 project
-            )
+            ),
+            meta: Utilities.extractMeta(propertyNode, sourceFile)
         };
     }
 
     function parseUnknown(
         unknownNode: TypeScript.Node,
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        _project: Project
     ): Unknown {
         const unknownMember: Member.Unknown = {
             kind: SyntaxKind[unknownNode.kind],
             kindID: unknownNode.kind,
-            syntax: MemberUtilities.extractSyntax(unknownNode, sourceFile)
+            syntax: MemberUtilities.extractSyntax(unknownNode, sourceFile),
+            meta: Utilities.extractMeta(unknownNode, sourceFile)
         };
-
-        if (
-            TypeScript.isInterfaceDeclaration(unknownNode)
-        ) {
-            const children = parseNodeChildren(
-                unknownNode,
-                sourceFile,
-                project
-            );
-
-            if (children.length) {
-                unknownMember.children = children;
-            }
-        }
 
         return unknownMember;
     }

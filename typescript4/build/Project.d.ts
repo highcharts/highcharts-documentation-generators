@@ -3,20 +3,28 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import JSON from './JSON';
+import type JSON from './JSON';
+import Utilities from './Utilities';
 /**
  * Project to document.
  */
 export declare class Project {
     static load(path: string): Project;
     private constructor();
-    private readonly files;
+    readonly branch: string;
+    readonly commit: string;
+    readonly date: Date;
+    readonly description: (string | undefined);
+    private files;
+    readonly name: string;
     readonly path: string;
     private readonly program;
+    readonly repository: string;
     readonly resolvedPath: string;
+    readonly version: string;
+    private getFiles;
     normalizePath(...paths: Array<string>): string;
-    private parseFiles;
-    toJSON(): Array<Project.File>;
+    toJSON(): JSON.Object;
     toString(): string;
 }
 export declare namespace Project {
@@ -27,6 +35,7 @@ export declare namespace Project {
     interface Member extends JSON.Object {
         kind: string;
         comment?: string;
+        meta?: Utilities.Meta;
         children?: Array<Member>;
     }
 }
