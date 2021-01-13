@@ -10,7 +10,7 @@
  *
  * */
 
-import type JSON from './JSON';
+import type ImportedJSON from './JSON';
 
 import ChildProcess from 'child_process';
 import JSDoc from './JSDoc';
@@ -31,7 +31,7 @@ import Utilities from './Utilities';
 /**
  * Project to document.
  */
-export class Project {
+export class ProjectDoc {
 
     /* *
      *
@@ -39,8 +39,8 @@ export class Project {
      *
      * */
 
-    public static load(path: string): Project {
-        return new Project(path);
+    public static load(path: string): ProjectDoc {
+        return new ProjectDoc(path);
     }
 
     /* *
@@ -75,6 +75,7 @@ export class Project {
         this.date = new Date();
         this.description = npm.description;
         this.name = (npm.name || '');
+        this.options = parsedCommandLine.options;
         this.path = path;
         this.program = TypeScript.createProgram(
             parsedCommandLine.fileNames,
@@ -103,9 +104,11 @@ export class Project {
 
     public readonly description: (string|undefined);
 
-    private files: (Record<string, Project.File>|undefined);
+    private readonly files: Array<TypeScript.SourceFile> = [];
 
     public readonly name: string;
+
+    public readonly options: Readonly<TypeScript.CompilerOptions>;
 
     public readonly path: string;
 
@@ -123,46 +126,64 @@ export class Project {
      *
      * */
 
-    private getFiles(): Array<Project.File> {
-        const project = this;
+    public getFileNames(): Array<string> {
+        return Object.keys(this.getJSONFiles());
+    }
 
-        if (!project.files) {
-            const projectFiles: typeof project.files = project.files = {},
-                resolvedPath = project.resolvedPath,
+    private getJSONFiles(): Record<string, ProjectDoc.FileJSON> {
+        const project = this,
+            jsonFiles: Record<string, ProjectDoc.FileJSON> = {},
+            projectFiles = project.getFiles();
+
+        let sourceFile: TypeScript.SourceFile,
+            sourceNode: TypeScript.Node,
+            sourcePath: string;
+
+        for (let i = 0, iEnd = projectFiles.length; i < iEnd; ++i) {
+            sourceFile = projectFiles[i];
+            sourceNode = sourceFile.getChildAt(0, sourceFile);
+            sourcePath = project.normalizePath(sourceFile.fileName);
+            jsonFiles[sourcePath] = {
+                kind: 'file',
+                path: sourcePath,
+                comment: JSDoc.extractSimpleComment(
+                    sourceNode,
+                    sourceFile
+                ),
+                meta: Utilities.extractMeta(
+                    sourceFile,
+                    sourceFile
+                ),
+                children: Member.parseNodeChildren(
+                    sourceNode,
+                    sourceFile,
+                    project
+                )
+            };
+        }
+
+        return jsonFiles;
+    }
+
+    public getFiles(): Array<TypeScript.SourceFile>{
+        const project = this,
+            projectFiles = project.files;
+
+        if (!projectFiles.length) {
+            const resolvedPath = project.resolvedPath,
                 sourceFiles = project.program.getSourceFiles();
 
-            let sourceFile: TypeScript.SourceFile,
-                sourceNode: TypeScript.Node,
-                sourcePath: string;
+            let sourceFile: TypeScript.SourceFile;
 
             for (let i = 0, iEnd = sourceFiles.length; i < iEnd; ++i) {
                 sourceFile = sourceFiles[i];
-
                 if (sourceFile.fileName.startsWith(resolvedPath)) {
-                    sourceNode = sourceFile.getChildAt(0, sourceFile);
-                    sourcePath = project.normalizePath(sourceFile.fileName);
-                    projectFiles[sourcePath] = {
-                        kind: 'file',
-                        path: sourcePath,
-                        comment: JSDoc.extractSimpleComment(
-                            sourceNode,
-                            sourceFile
-                        ),
-                        meta: Utilities.extractMeta(
-                            sourceFile,
-                            sourceFile
-                        ),
-                        children: Member.parseNodeChildren(
-                            sourceNode,
-                            sourceFile,
-                            project
-                        )
-                    };
+                    projectFiles.push(sourceFile);
                 }
             }
         }
 
-        return Object.values(project.files);
+        return projectFiles;
     }
 
     public normalizePath(...paths: Array<string>): string {
@@ -180,16 +201,19 @@ export class Project {
         return path;
     }
 
-    public toJSON(): JSON.Object {
-        const {
-            branch,
-            commit,
-            date,
-            description,
-            name,
-            repository,
-            version
-        } = this;
+    public toJSON(): ProjectDoc.JSON {
+        const project = this,
+            {
+                branch,
+                commit,
+                date,
+                description,
+                name,
+                repository,
+                version
+            } = project,
+            fileNames = project.getFileNames(),
+            jsonFiles = project.getJSONFiles();
 
         return {
             name,
@@ -199,7 +223,9 @@ export class Project {
             commit,
             date: date.toISOString(),
             description,
-            files: this.getFiles()
+            files: fileNames
+                .sort()
+                .map(fileName => jsonFiles[fileName])
         };
     }
 
@@ -215,7 +241,7 @@ export class Project {
  *
  * */
 
-export namespace Project {
+export namespace ProjectDoc {
 
     /* *
      *
@@ -223,16 +249,27 @@ export namespace Project {
      *
      * */
 
-    export interface File extends Member {
+    export interface FileJSON extends MemberJSON {
         kind: 'file';
         path: string;
     }
 
-    export interface Member extends JSON.Object {
+    export interface MemberJSON extends ImportedJSON.Object {
         kind: string;
         comment?: string;
         meta?: Utilities.Meta;
-        children?: Array<Member>;
+        children?: Array<MemberJSON>;
+    }
+
+    export interface JSON extends ImportedJSON.Object {
+        branch?: string;
+        commit?: string;
+        date?: string;
+        description?: string;
+        files: Array<FileJSON>;
+        name?: string;
+        repository?: string;
+        version?: string;
     }
 
 }
@@ -243,4 +280,4 @@ export namespace Project {
  *
  * */
 
-export default Project;
+export default ProjectDoc;

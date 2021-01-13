@@ -3,7 +3,7 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import type Project from './Project';
+import type ProjectDoc from './ProjectDoc';
 /**
  * Generate HTML documentation based on given templates.
  */
@@ -13,6 +13,6 @@ export declare class HTML {
      *
      * @todo implement
      */
-    generate(_projectFiles: Array<Project.File>): boolean;
+    generate(_projectFiles: Array<ProjectDoc.FileJSON>): boolean;
 }
 export default HTML;

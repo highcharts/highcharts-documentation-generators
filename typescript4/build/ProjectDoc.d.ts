@@ -9,8 +9,8 @@ import Utilities from './Utilities';
 /**
  * Project to document.
  */
-export declare class Project {
-    static load(path: string): Project;
+export declare class ProjectDoc {
+    static load(path: string): ProjectDoc;
     private constructor();
     readonly branch: string;
     readonly commit: string;
@@ -28,10 +28,10 @@ export declare class Project {
     private getJSONFiles;
     getFiles(): Array<TypeScript.SourceFile>;
     normalizePath(...paths: Array<string>): string;
-    toJSON(): Project.JSON;
+    toJSON(): ProjectDoc.JSON;
     toString(): string;
 }
-export declare namespace Project {
+export declare namespace ProjectDoc {
     interface FileJSON extends MemberJSON {
         kind: 'file';
         path: string;
@@ -53,4 +53,4 @@ export declare namespace Project {
         version?: string;
     }
 }
-export default Project;
+export default ProjectDoc;

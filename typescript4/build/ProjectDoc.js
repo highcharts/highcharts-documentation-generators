@@ -27,7 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Project = void 0;
+exports.ProjectDoc = void 0;
 const child_process_1 = __importDefault(require("child_process"));
 const JSDoc_1 = __importDefault(require("./JSDoc"));
 const Member_1 = __importDefault(require("./Member"));
@@ -42,7 +42,7 @@ const Utilities_1 = __importDefault(require("./Utilities"));
 /**
  * Project to document.
  */
-class Project {
+class ProjectDoc {
     /* *
      *
      *  Constructor
@@ -71,7 +71,7 @@ class Project {
      *
      * */
     static load(path) {
-        return new Project(path);
+        return new ProjectDoc(path);
     }
     /* *
      *
@@ -141,10 +141,10 @@ class Project {
         return '[object Project]';
     }
 }
-exports.Project = Project;
+exports.ProjectDoc = ProjectDoc;
 /* *
  *
  *  Default Export
  *
  * */
-exports.default = Project;
+exports.default = ProjectDoc;

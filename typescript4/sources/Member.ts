@@ -10,7 +10,7 @@
  *
  * */
 
-import type Project from './Project';
+import type ProjectDoc from './ProjectDoc';
 
 import JSDoc from './JSDoc';
 import Path from 'path';
@@ -34,24 +34,24 @@ namespace Member {
      *
      * */
 
-    export interface Class extends Project.Member {
+    export interface Class extends ProjectDoc.MemberJSON {
         kind: 'class';
         children?: Array<Type>;
     }
 
-    export interface Function extends Project.Member {
+    export interface Function extends ProjectDoc.MemberJSON {
         kind: 'function';
         name: string;
         children?: Array<Type>;
     }
 
-    export interface Interface extends Project.Member {
+    export interface Interface extends ProjectDoc.MemberJSON {
         kind: 'interface';
         name: string;
         children?: Array<Type>;
     }
 
-    export interface Module extends Project.Member {
+    export interface Module extends ProjectDoc.MemberJSON {
         kind: 'module';
         path?: string;
         name?: string;
@@ -59,20 +59,20 @@ namespace Member {
         children?: Array<Type>;
     }
 
-    export interface Namespace extends Project.Member {
+    export interface Namespace extends ProjectDoc.MemberJSON {
         kind: 'namespace';
         name: string;
         isDeclaration?: boolean;
         children?: Array<Type>;
     }
 
-    export interface Parameter extends Project.Member {
+    export interface Parameter extends ProjectDoc.MemberJSON {
         kind: 'parameter';
         name: string;
         type?: Array<Type>;
     }
 
-    export interface Property extends Project.Member {
+    export interface Property extends ProjectDoc.MemberJSON {
         kind: 'property';
         name: string;
         type?: Array<Type>;
@@ -82,7 +82,7 @@ namespace Member {
         Class|Function|Interface|Module|Namespace|Parameter|Property|Unknown
     );
 
-    export interface Unknown extends Project.Member {
+    export interface Unknown extends ProjectDoc.MemberJSON {
         kind: typeof TypeScript.SyntaxKind[0];
         kindID: TypeScript.SyntaxKind;
     }
@@ -96,7 +96,7 @@ namespace Member {
     function parseClass(
         classNode: TypeScript.ClassDeclaration,
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Class {
         return {
             kind: 'class',
@@ -120,7 +120,7 @@ namespace Member {
             TypeScript.MethodDeclaration
         ),
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Function {
         return {
             kind: 'function',
@@ -148,7 +148,7 @@ namespace Member {
     function parseInterface(
         interfaceNode: TypeScript.InterfaceDeclaration,
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Interface {
         return {
             kind: 'interface',
@@ -166,7 +166,7 @@ namespace Member {
     function parseModule(
         moduleNode: TypeScript.ModuleDeclaration,
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): (Module|Namespace) {
         const children = moduleNode.getChildren(sourceFile),
             comment = JSDoc.extractComment(
@@ -255,7 +255,7 @@ namespace Member {
     export function parseNode(
         node: TypeScript.Node,
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Type {
         if (TypeScript.isClassDeclaration(node)) {
             return parseClass(node, sourceFile, project);
@@ -289,7 +289,7 @@ namespace Member {
     export function parseNodeChildren(
         node: (TypeScript.Node|Readonly<Array<TypeScript.Node>>),
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Array<Type> {
         let children: Readonly<Array<TypeScript.Node>>;
 
@@ -305,7 +305,7 @@ namespace Member {
     function parseParameter(
         parameterNode: TypeScript.ParameterDeclaration,
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Parameter {
         return {
             kind: 'parameter',
@@ -325,7 +325,7 @@ namespace Member {
             TypeScript.PropertySignature
         ),
         sourceFile: TypeScript.SourceFile,
-        project: Project
+        project: ProjectDoc
     ): Property {
         return {
             kind: 'property',
@@ -345,7 +345,7 @@ namespace Member {
     function parseUnknown(
         unknownNode: TypeScript.Node,
         sourceFile: TypeScript.SourceFile,
-        _project: Project
+        _project: ProjectDoc
     ): Unknown {
         const unknownMember: Member.Unknown = {
             kind: SyntaxKind[unknownNode.kind],

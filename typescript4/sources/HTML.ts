@@ -10,7 +10,7 @@
  *
  * */
 
-import type Project from './Project';
+import type ProjectDoc from './ProjectDoc';
 
 /* *
  *
@@ -34,7 +34,7 @@ export class HTML {
      *
      * @todo implement
      */
-    public generate(_projectFiles: Array<Project.File>): boolean {
+    public generate(_projectFiles: Array<ProjectDoc.FileJSON>): boolean {
         // not implemented
         return false;
     }

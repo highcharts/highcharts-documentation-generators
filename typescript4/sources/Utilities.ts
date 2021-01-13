@@ -53,8 +53,17 @@ namespace Utilities {
         node: TypeScript.Node,
         sourceFile: TypeScript.SourceFile
     ): Meta {
-        const start = node.getStart(sourceFile),
-            end = node.getEnd(),
+        const isSourceFile = TypeScript.isSourceFile(node),
+            start = (
+                isSourceFile ?
+                    node.getFullStart() :
+                    node.getStart(sourceFile)
+            ),
+            end = (
+                isSourceFile ?
+                    node.getFullWidth() :
+                    node.getEnd()
+            ),
             sourceText = sourceFile.getFullText(),
             startLines = sourceText.substr(0, start).split('\n'),
             startLine = startLines.length,

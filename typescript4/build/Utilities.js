@@ -4,7 +4,11 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const typescript_1 = __importDefault(require("typescript"));
 /* *
  *
  *  Namespace
@@ -23,7 +27,11 @@ var Utilities;
      *
      * */
     function extractMeta(node, sourceFile) {
-        const start = node.getStart(sourceFile), end = node.getEnd(), sourceText = sourceFile.getFullText(), startLines = sourceText.substr(0, start).split('\n'), startLine = startLines.length, startColumn = (startLines.pop() || '').length + 1, endLines = sourceText.substr(0, end).split('\n'), endLine = endLines.length, endColumn = (endLines.pop() || '').length + 1;
+        const isSourceFile = typescript_1.default.isSourceFile(node), start = (isSourceFile ?
+            node.getFullStart() :
+            node.getStart(sourceFile)), end = (isSourceFile ?
+            node.getFullWidth() :
+            node.getEnd()), sourceText = sourceFile.getFullText(), startLines = sourceText.substr(0, start).split('\n'), startLine = startLines.length, startColumn = (startLines.pop() || '').length + 1, endLines = sourceText.substr(0, end).split('\n'), endLine = endLines.length, endColumn = (endLines.pop() || '').length + 1;
         return {
             start,
             startLine,
