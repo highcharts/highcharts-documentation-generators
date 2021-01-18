@@ -13,7 +13,9 @@
 import type ImportedJSON from './JSON';
 import type ProjectDoc from './ProjectDoc';
 
+import JSDoc from './JSDoc';
 import TypeScript from 'typescript';
+import Utilities from './Utilities';
 
 /* *
  *
@@ -41,7 +43,7 @@ class OptionDoc {
 
     public project: ProjectDoc;
 
-    public optionTree: OptionDoc.OptionTreeJSON = {};
+    public options: OptionDoc.OptionCollectionJSON = {};
 
     /* *
      *
@@ -51,14 +53,14 @@ class OptionDoc {
 
     private getOption(
         name: string,
-        tree: OptionDoc.OptionTreeJSON
+        options: OptionDoc.OptionCollectionJSON = this.options
     ): OptionDoc.OptionJSON {
         const optionDoc = this,
             nodePath = name.split('.');
 
         let node: OptionDoc.OptionJSON = {
                 name: '',
-                children: tree
+                children: options
             };
 
         for (let i = 0, iEnd = (nodePath.length - 1); i <= iEnd; ++i) {
@@ -66,7 +68,7 @@ class OptionDoc {
                 node.children = {};
             }
 
-            node = (
+            node = node.children[nodePath[i]] = (
                 node.children[nodePath[i]] ||
                 {
                     name: nodePath.slice(0, i).join('.')
@@ -77,43 +79,63 @@ class OptionDoc {
         return node;
     }
 
-    private getOptionsTree(): OptionDoc.OptionTreeJSON {
+    private getOptions(): OptionDoc.OptionCollectionJSON {
         const optionDoc = this,
-            optionTree = optionDoc.optionTree;
+            targetOptions = optionDoc.options;
 
-        if (!Object.keys(optionTree).length) {
+        if (!Object.keys(targetOptions).length) {
             const projectFiles = optionDoc.project.getFiles();
 
-            let sourceOptionTree: OptionDoc.OptionTreeJSON;
+            let sourceOptions: OptionDoc.OptionCollectionJSON;
 
             for (let i = 0, iEnd = projectFiles.length; i < iEnd; ++i) {
-                sourceOptionTree = optionDoc.produceOptions(projectFiles[i]);
-                Object
-                    .values(sourceOptionTree)
-                    .forEach(sourceOption => optionDoc.mergeOptions(
-                        sourceOption,
-                        optionTree
-                    ));
+                sourceOptions = optionDoc.produceOptions(projectFiles[i]);
+                optionDoc.mergeOptions(sourceOptions, targetOptions);
             }
         }
 
-        return optionTree;
+        return targetOptions;
     }
 
     private mergeOptions(
-        option: OptionDoc.OptionJSON,
-        tree: OptionDoc.OptionTreeJSON
+        sourceOptions: OptionDoc.OptionCollectionJSON,
+        targetOptions: OptionDoc.OptionCollectionJSON
     ): void {
+        const optionDoc = this,
+            names = Object.keys(sourceOptions);
 
+        let name: string,
+            sourceOption: OptionDoc.OptionJSON,
+            targetOption: OptionDoc.OptionJSON;
+
+        for (let i = 0, iEnd = names.length; i < iEnd; ++i) {
+            name = names[i];
+            sourceOption = sourceOptions[name];
+            targetOption = optionDoc.getOption(name, targetOptions);
+            Utilities.mergeObjects(
+                sourceOption,
+                targetOption,
+                [ 'children', 'name' ]
+            );
+            if (sourceOption.children) {
+                if (!targetOption.children) {
+                    targetOption.children = {};
+                }
+                optionDoc.mergeOptions(
+                    sourceOption.children,
+                    targetOption.children
+                );
+            }
+        }
     }
-
 
     private produceOptions(
         node: TypeScript.Node
-    ): OptionDoc.OptionTreeJSON {
-        const optionTree: OptionDoc.OptionTreeJSON = {};
+    ): OptionDoc.OptionCollectionJSON {
+        const optionTree: OptionDoc.OptionCollectionJSON = {};
 
         if (TypeScript.isJSDoc(node)) {
+
         }
 
         return optionTree;
@@ -139,7 +161,7 @@ class OptionDoc {
             commit,
             date: date.toISOString(),
             description,
-            options: optionDoc.getOptionsTree()
+            options: optionDoc.getOptions()
         };
     }
 }
@@ -164,17 +186,17 @@ namespace OptionDoc {
         date?: string;
         description?: string;
         name?: string;
-        options: OptionTreeJSON;
+        options: OptionCollectionJSON;
         repository?: string;
         version?: string;
     }
 
     export interface OptionJSON extends ImportedJSON.Object {
         name: string;
-        children?: OptionTreeJSON;
+        children?: OptionCollectionJSON;
     }
 
-    export interface OptionTreeJSON extends ImportedJSON.Object {
+    export interface OptionCollectionJSON extends ImportedJSON.Object {
         [key: string]: OptionJSON;
     }
 

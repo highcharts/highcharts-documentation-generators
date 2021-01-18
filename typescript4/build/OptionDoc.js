@@ -9,6 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typescript_1 = __importDefault(require("typescript"));
+const Utilities_1 = __importDefault(require("./Utilities"));
 /* *
  *
  *  Class
@@ -21,7 +22,7 @@ class OptionDoc {
      *
      * */
     constructor(project) {
-        this.optionTree = {};
+        this.options = {};
         this.project = project;
     }
     /* *
@@ -29,38 +30,50 @@ class OptionDoc {
      *  Functions
      *
      * */
-    getOption(name, tree) {
+    getOption(name, options = this.options) {
         const optionDoc = this, nodePath = name.split('.');
         let node = {
             name: '',
-            children: tree
+            children: options
         };
         for (let i = 0, iEnd = (nodePath.length - 1); i <= iEnd; ++i) {
             if (!node.children) {
                 node.children = {};
             }
-            node = (node.children[nodePath[i]] ||
+            node = node.children[nodePath[i]] = (node.children[nodePath[i]] ||
                 {
                     name: nodePath.slice(0, i).join('.')
                 });
         }
         return node;
     }
-    getOptionsTree() {
-        const optionDoc = this, optionTree = optionDoc.optionTree;
-        if (!Object.keys(optionTree).length) {
+    getOptions() {
+        const optionDoc = this, targetOptions = optionDoc.options;
+        if (!Object.keys(targetOptions).length) {
             const projectFiles = optionDoc.project.getFiles();
-            let sourceOptionTree;
+            let sourceOptions;
             for (let i = 0, iEnd = projectFiles.length; i < iEnd; ++i) {
-                sourceOptionTree = optionDoc.produceOptions(projectFiles[i]);
-                Object
-                    .values(sourceOptionTree)
-                    .forEach(sourceOption => optionDoc.mergeOptions(sourceOption, optionTree));
+                sourceOptions = optionDoc.produceOptions(projectFiles[i]);
+                optionDoc.mergeOptions(sourceOptions, targetOptions);
             }
         }
-        return optionTree;
+        return targetOptions;
     }
-    mergeOptions(option, tree) {
+    mergeOptions(sourceOptions, targetOptions) {
+        const optionDoc = this, names = Object.keys(sourceOptions);
+        let name, sourceOption, targetOption;
+        for (let i = 0, iEnd = names.length; i < iEnd; ++i) {
+            name = names[i];
+            sourceOption = sourceOptions[name];
+            targetOption = optionDoc.getOption(name, targetOptions);
+            Utilities_1.default.mergeObjects(sourceOption, targetOption, ['children', 'name']);
+            if (sourceOption.children) {
+                if (!targetOption.children) {
+                    targetOption.children = {};
+                }
+                optionDoc.mergeOptions(sourceOption.children, targetOption.children);
+            }
+        }
     }
     produceOptions(node) {
         const optionTree = {};
@@ -78,7 +91,7 @@ class OptionDoc {
             commit,
             date: date.toISOString(),
             description,
-            options: optionDoc.getOptionsTree()
+            options: optionDoc.getOptions()
         };
     }
 }

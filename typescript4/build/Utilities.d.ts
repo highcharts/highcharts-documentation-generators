@@ -17,6 +17,7 @@ declare namespace Utilities {
     }
     export function extractMeta(node: TypeScript.Node, sourceFile: TypeScript.SourceFile): Meta;
     export function extractInChildren<T>(node: TypeScript.Node, sourceFile: TypeScript.SourceFile, extractor: Extractor<T>): (T | undefined);
+    export function mergeObjects(source: JSON.Object, target: JSON.Object, propertiesToSkip?: Array<string>): void;
     export {};
 }
 export default Utilities;

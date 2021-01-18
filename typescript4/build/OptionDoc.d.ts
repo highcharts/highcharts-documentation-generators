@@ -8,9 +8,9 @@ import type ProjectDoc from './ProjectDoc';
 declare class OptionDoc {
     constructor(project: ProjectDoc);
     project: ProjectDoc;
-    optionTree: OptionDoc.OptionTreeJSON;
+    options: OptionDoc.OptionCollectionJSON;
     private getOption;
-    private getOptionsTree;
+    private getOptions;
     private mergeOptions;
     private produceOptions;
     toJSON(): OptionDoc.JSON;
@@ -22,15 +22,15 @@ declare namespace OptionDoc {
         date?: string;
         description?: string;
         name?: string;
-        options: OptionTreeJSON;
+        options: OptionCollectionJSON;
         repository?: string;
         version?: string;
     }
     interface OptionJSON extends ImportedJSON.Object {
         name: string;
-        children?: OptionTreeJSON;
+        children?: OptionCollectionJSON;
     }
-    interface OptionTreeJSON extends ImportedJSON.Object {
+    interface OptionCollectionJSON extends ImportedJSON.Object {
         [key: string]: OptionJSON;
     }
 }

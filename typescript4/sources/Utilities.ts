@@ -106,6 +106,55 @@ namespace Utilities {
         return void 0;
     }
 
+    export function mergeObjects(
+        source: JSON.Object,
+        target: JSON.Object,
+        propertiesToSkip?: Array<string>
+    ): void {
+        const properties = Object.keys(source);
+
+        let property: string,
+            value: (JSON.Collection|JSON.Primitive),
+            targetValue: (JSON.Collection|JSON.Primitive);
+ 
+        for (let i = 0, iEnd = properties.length; i < iEnd; ++i) {
+            property = properties[i];
+
+            if (
+                propertiesToSkip &&
+                propertiesToSkip.includes(property)
+            ) {
+                continue;
+            }
+
+            value = source[property];
+            targetValue = target[property];
+
+            if (value instanceof Array) {
+                if (targetValue instanceof Array) {
+                    targetValue.push(...value);
+                } else {
+                    target[property] = value.slice();
+                }
+            } else if (
+                typeof value === 'object' &&
+                typeof targetValue === 'object' &&
+                value !== null &&
+                targetValue !== null &&
+                !(targetValue instanceof Array)
+            ) {
+                mergeObjects(value, targetValue, propertiesToSkip);
+            } else if (
+                typeof value === 'string' &&
+                typeof targetValue === 'string'
+            ) {
+                target[property] = targetValue + '\n' + value;
+            } else if (typeof target[property] === 'undefined') {
+                target[property] = value;
+            }
+        }
+    }
+
 }
 
 /* *
