@@ -92,6 +92,36 @@ namespace JSDoc {
         return void 0;
     }
 
+    export function extractTag(
+        name: string,
+        node: TypeScript.JSDoc,
+        sourceFile: TypeScript.SourceFile
+    ): (TypeScript.JSDocTag|undefined) {
+        const tags = extractTags(node, sourceFile);
+
+        let tag: TypeScript.JSDocTag;
+
+        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
+            tag = tags[i];
+            if (tag.tagName.getText(sourceFile) === name) {
+                return tag;
+            }
+        }
+
+        return;
+    }
+
+    export function extractTags(
+        node: TypeScript.JSDoc,
+        sourceFile: TypeScript.SourceFile
+    ): Array<TypeScript.JSDocTag> {
+        const tags: Array<TypeScript.JSDocTag> = [];
+
+        console.log(JSON.stringify(node.getChildren(sourceFile).map(c => c.getText(sourceFile))));
+
+        return tags;
+    }
+
 }
 
 /* *

@@ -86,6 +86,24 @@ var JSDoc;
         return void 0;
     }
     JSDoc.extractSimpleComment = extractSimpleComment;
+    function extractTag(name, node, sourceFile) {
+        const tags = extractTags(node, sourceFile);
+        let tag;
+        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
+            tag = tags[i];
+            if (tag.tagName.getText(sourceFile) === name) {
+                return tag;
+            }
+        }
+        return;
+    }
+    JSDoc.extractTag = extractTag;
+    function extractTags(node, sourceFile) {
+        const tags = [];
+        console.log(JSON.stringify(node.getChildren(sourceFile).map(c => c.getText(sourceFile))));
+        return tags;
+    }
+    JSDoc.extractTags = extractTags;
 })(JSDoc || (JSDoc = {}));
 /* *
  *

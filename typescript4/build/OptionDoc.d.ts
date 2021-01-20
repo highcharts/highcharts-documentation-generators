@@ -9,10 +9,7 @@ declare class OptionDoc {
     constructor(project: ProjectDoc);
     project: ProjectDoc;
     options: OptionDoc.OptionCollectionJSON;
-    private getOption;
     private getOptions;
-    private mergeOptions;
-    private produceOptions;
     toJSON(): OptionDoc.JSON;
 }
 declare namespace OptionDoc {
@@ -26,7 +23,9 @@ declare namespace OptionDoc {
         repository?: string;
         version?: string;
     }
+    type JSONValueType = (string | Array<string> | OptionCollectionJSON | undefined);
     interface OptionJSON extends ImportedJSON.Object {
+        [key: string]: JSONValueType;
         name: string;
         children?: OptionCollectionJSON;
     }
