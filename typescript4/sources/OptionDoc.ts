@@ -11,9 +11,12 @@
  * */
 
 import type ImportedJSON from './JSON';
-import type ProjectDoc from './ProjectDoc';
 
+import JSDoc from './JSDoc';
 import OptionUtilities from './OptionUtilities';
+import ProjectDoc from './ProjectDoc';
+import TypeScript from 'typescript';
+import Utilities from './Utilities';
 
 /* *
  *
@@ -21,7 +24,25 @@ import OptionUtilities from './OptionUtilities';
  *
  * */
 
-class OptionDoc {
+export class OptionDoc {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static load(
+        path: string,
+        optionTag: string = 'option',
+        collectionTag: string = 'option-collection'
+    ): OptionDoc {
+        return new OptionDoc(
+            ProjectDoc.load(path),
+            optionTag,
+            collectionTag
+        );
+    }
 
     /* *
      *
@@ -29,7 +50,13 @@ class OptionDoc {
      *
      * */
 
-    public constructor (project: ProjectDoc) {
+    public constructor (
+        project: ProjectDoc,
+        optionTag: string,
+        collectionTag: string
+    ) {
+        this.collectionTag = collectionTag;
+        this.optionTag = optionTag;
         this.project = project;
     }
 
@@ -39,9 +66,13 @@ class OptionDoc {
      *
      * */
 
-    public project: ProjectDoc;
+    public readonly collectionTag: string;
 
-    public options: OptionDoc.OptionCollectionJSON = {};
+    public readonly project: ProjectDoc;
+
+    public readonly options: OptionDoc.OptionCollectionJSON = {};
+
+    public readonly optionTag: string;
 
     /* *
      *
@@ -49,23 +80,137 @@ class OptionDoc {
      *
      * */
 
+    private getMeta(
+        node: TypeScript.JSDoc,
+        sourceFile: TypeScript.SourceFile
+    ): OptionDoc.OptionMetaJSON {
+        return {
+            source: this.project.normalizePath(sourceFile.fileName),
+            ...Utilities.extractMeta(node, sourceFile)
+        }
+    }
 
-    private getOptions(): OptionDoc.OptionCollectionJSON {
+    public getOptions(): OptionDoc.OptionCollectionJSON {
         const optionDoc = this,
-            targetOptions = optionDoc.options;
+            options = optionDoc.options;
 
-        if (!Object.keys(targetOptions).length) {
+        if (!Object.keys(options).length) {
             const projectFiles = optionDoc.project.getFiles();
 
-            let sourceOptions: OptionDoc.OptionCollectionJSON;
+            let projectFile: TypeScript.SourceFile;
 
             for (let i = 0, iEnd = projectFiles.length; i < iEnd; ++i) {
-                sourceOptions = OptionUtilities.produceOptions(projectFiles[i]);
-                OptionUtilities.mergeOptions(sourceOptions, targetOptions);
+                projectFile = projectFiles[i];
+                optionDoc.parseOptions(
+                    projectFile,
+                    projectFile
+                );
             }
         }
 
-        return targetOptions;
+        return options;
+    }
+
+    private parseOption(
+        node: TypeScript.JSDoc,
+        sourceFile: TypeScript.SourceFile
+    ): (OptionDoc.OptionJSON|undefined) {
+        const optionDoc = this,
+            optionTag =  JSDoc.extractTags(
+                node,
+                sourceFile,
+                [optionDoc.optionTag, optionDoc.collectionTag]
+            )[0],
+            optionName = (optionTag && optionTag.comment);
+
+        if (
+            !optionTag ||
+            !optionName
+        ) {
+            return;
+        }
+
+        const option: OptionDoc.OptionJSON = {
+                name: optionName,
+            },
+            optionTags: OptionDoc.OptionTagsJSON = {},
+            tags = JSDoc.extractTags(
+                node,
+                sourceFile,
+                void 0,
+                [optionDoc.optionTag, optionDoc.collectionTag]
+            );
+
+        if (node.comment) {
+            option.description = node.comment;
+        }
+
+        let tag: TypeScript.JSDocTag,
+            tagName: string,
+            tagValue: string,
+            optionValue: (string|Array<string>);
+
+        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
+            tag = tags[i];
+            tagName = tag.tagName.text;
+            tagValue = tag.comment || tag.getText(sourceFile).split(/\s+/)[1];
+            optionValue = optionTags[tagName];
+            if (typeof optionValue === 'string') {
+                optionTags[tagName] = [ optionValue, tagValue ];
+            } else if (
+                optionValue instanceof Array
+            ) {
+                optionValue.push(tagValue);
+            } else {
+                optionTags[tagName] = tagValue;
+            }
+        }
+
+        if (Object.keys(optionTags).length) {
+            option.tags = optionTags;
+        }
+
+        option.meta = optionDoc.getMeta(node, sourceFile);
+
+        if (optionTag.tagName.getText(sourceFile) === optionDoc.collectionTag) {
+            console.log(
+                optionName,
+                node.parent.getChildren(sourceFile).map(child => TypeScript.SyntaxKind[child.kind])
+            );
+        }
+
+        return option;
+    }
+
+    private parseOptions(
+        node: TypeScript.Node,
+        sourceFile: TypeScript.SourceFile
+    ): OptionDoc.OptionCollectionJSON {
+        const optionDoc = this,
+            options = optionDoc.options,
+            children = node.getChildren(sourceFile);
+
+        if (TypeScript.isJSDoc(node)) {
+            const option = optionDoc.parseOption(node, sourceFile);
+            
+            if (option) {
+                OptionUtilities.mergeOption(
+                    option,
+                    OptionUtilities.getOption(option.name, options)
+                );
+            }
+        }
+
+        let child: TypeScript.Node;
+
+        for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
+            child = children[i];
+            if (child) {
+                optionDoc.parseOptions(child, sourceFile);
+            }
+        }
+
+        return options;
     }
 
     public toJSON(): OptionDoc.JSON {
@@ -99,7 +244,7 @@ class OptionDoc {
  *
  * */
 
-namespace OptionDoc {
+export namespace OptionDoc {
 
     /* *
      *
@@ -118,21 +263,24 @@ namespace OptionDoc {
         version?: string;
     }
 
-    export type JSONValueType = (
-        string|
-        Array<string>|
-        OptionCollectionJSON|
-        undefined
-    );
+    export interface OptionCollectionJSON extends ImportedJSON.Object {
+        [key: string]: OptionJSON;
+    }
 
     export interface OptionJSON extends ImportedJSON.Object {
-        [key: string]: JSONValueType;
         name: string;
+        description?: string;
+        tags?: OptionTagsJSON;
+        meta?: OptionMetaJSON;
         children?: OptionCollectionJSON;
     }
 
-    export interface OptionCollectionJSON extends ImportedJSON.Object {
-        [key: string]: OptionJSON;
+    export interface OptionMetaJSON extends Utilities.Meta {
+        source: string;
+    }
+
+    export interface OptionTagsJSON extends ImportedJSON.Object {
+        [key: string]: (string|Array<string>);
     }
 
 }

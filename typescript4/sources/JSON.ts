@@ -53,7 +53,7 @@ export namespace JSON {
                 }
                 return item;
             },
-            4
+            '\t'
         );
     }
 

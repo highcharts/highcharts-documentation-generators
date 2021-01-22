@@ -39,7 +39,7 @@ var JSON;
                 }
             }
             return item;
-        }, 4);
+        }, '\t');
     }
     JSON.stringify = stringify;
 })(JSON = exports.JSON || (exports.JSON = {}));

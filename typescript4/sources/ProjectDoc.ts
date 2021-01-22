@@ -190,9 +190,8 @@ export class ProjectDoc {
         const project = this,
             resolvedPath = project.resolvedPath;
 
-        let path = System
-            .resolvePath(Path.join(...paths))
-            .replace(/(?:\.d)?\.[jt]sx?$/, '');
+        let path = System.resolvePath(Path.join(...paths));
+        // .replace(/(?:\.d)?\.[jt]sx?$/, '');
 
         if (Path.isAbsolute(path)) {
             path = Path.relative(resolvedPath, path);

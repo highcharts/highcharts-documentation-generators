@@ -21,7 +21,7 @@ import Utilities from './Utilities';
  *
  * */
 
-namespace JSDoc {
+export namespace JSDoc {
 
     export function extractComment(
         node: TypeScript.Node,
@@ -97,29 +97,34 @@ namespace JSDoc {
         node: TypeScript.JSDoc,
         sourceFile: TypeScript.SourceFile
     ): (TypeScript.JSDocTag|undefined) {
-        const tags = extractTags(node, sourceFile);
-
-        let tag: TypeScript.JSDocTag;
-
-        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
-            tag = tags[i];
-            if (tag.tagName.getText(sourceFile) === name) {
-                return tag;
-            }
-        }
-
-        return;
+        return extractTags(node, sourceFile, [name])[0];
     }
 
     export function extractTags(
         node: TypeScript.JSDoc,
-        sourceFile: TypeScript.SourceFile
+        sourceFile: TypeScript.SourceFile,
+        include: Array<string> = [],
+        exclude: Array<string> = []
     ): Array<TypeScript.JSDocTag> {
-        const tags: Array<TypeScript.JSDocTag> = [];
+        const tags = (node.tags || []),
+            extractedTags: Array<TypeScript.JSDocTag> = [];
 
-        console.log(JSON.stringify(node.getChildren(sourceFile).map(c => c.getText(sourceFile))));
+        let tag: TypeScript.JSDocTag,
+            tagName: string;
 
-        return tags;
+        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
+            tag = tags[i];
+            tagName = tag.tagName.getText(sourceFile);
+            if (
+                (include.length && !include.includes(tagName)) ||
+                (exclude.length && exclude.includes(tagName))
+            ) {
+                continue
+            }
+            extractedTags.push(tag);
+        }
+
+        return extractedTags;
     }
 
 }

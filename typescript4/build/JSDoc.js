@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JSDoc = void 0;
 /* *
  *
  *  Imports
@@ -87,24 +88,25 @@ var JSDoc;
     }
     JSDoc.extractSimpleComment = extractSimpleComment;
     function extractTag(name, node, sourceFile) {
-        const tags = extractTags(node, sourceFile);
-        let tag;
-        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
-            tag = tags[i];
-            if (tag.tagName.getText(sourceFile) === name) {
-                return tag;
-            }
-        }
-        return;
+        return extractTags(node, sourceFile, [name])[0];
     }
     JSDoc.extractTag = extractTag;
-    function extractTags(node, sourceFile) {
-        const tags = [];
-        console.log(JSON.stringify(node.getChildren(sourceFile).map(c => c.getText(sourceFile))));
-        return tags;
+    function extractTags(node, sourceFile, include = [], exclude = []) {
+        const tags = (node.tags || []), extractedTags = [];
+        let tag, tagName;
+        for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
+            tag = tags[i];
+            tagName = tag.tagName.getText(sourceFile);
+            if ((include.length && !include.includes(tagName)) ||
+                (exclude.length && exclude.includes(tagName))) {
+                continue;
+            }
+            extractedTags.push(tag);
+        }
+        return extractedTags;
     }
     JSDoc.extractTags = extractTags;
-})(JSDoc || (JSDoc = {}));
+})(JSDoc = exports.JSDoc || (exports.JSDoc = {}));
 /* *
  *
  *  Export Default

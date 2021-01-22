@@ -114,9 +114,8 @@ class ProjectDoc {
     }
     normalizePath(...paths) {
         const project = this, resolvedPath = project.resolvedPath;
-        let path = typescript_1.sys
-            .resolvePath(path_1.default.join(...paths))
-            .replace(/(?:\.d)?\.[jt]sx?$/, '');
+        let path = typescript_1.sys.resolvePath(path_1.default.join(...paths));
+        // .replace(/(?:\.d)?\.[jt]sx?$/, '');
         if (path_1.default.isAbsolute(path)) {
             path = path_1.default.relative(resolvedPath, path);
         }

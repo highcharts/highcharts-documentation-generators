@@ -4,15 +4,22 @@
  *
  * */
 import type ImportedJSON from './JSON';
-import type ProjectDoc from './ProjectDoc';
-declare class OptionDoc {
-    constructor(project: ProjectDoc);
-    project: ProjectDoc;
-    options: OptionDoc.OptionCollectionJSON;
-    private getOptions;
+import ProjectDoc from './ProjectDoc';
+import Utilities from './Utilities';
+export declare class OptionDoc {
+    static load(path: string, optionTag?: string, collectionTag?: string): OptionDoc;
+    constructor(project: ProjectDoc, optionTag: string, collectionTag: string);
+    readonly collectionTag: string;
+    readonly project: ProjectDoc;
+    readonly options: OptionDoc.OptionCollectionJSON;
+    readonly optionTag: string;
+    private getMeta;
+    getOptions(): OptionDoc.OptionCollectionJSON;
+    private parseOption;
+    private parseOptions;
     toJSON(): OptionDoc.JSON;
 }
-declare namespace OptionDoc {
+export declare namespace OptionDoc {
     interface JSON extends ImportedJSON.Object {
         branch?: string;
         commit?: string;
@@ -23,14 +30,21 @@ declare namespace OptionDoc {
         repository?: string;
         version?: string;
     }
-    type JSONValueType = (string | Array<string> | OptionCollectionJSON | undefined);
-    interface OptionJSON extends ImportedJSON.Object {
-        [key: string]: JSONValueType;
-        name: string;
-        children?: OptionCollectionJSON;
-    }
     interface OptionCollectionJSON extends ImportedJSON.Object {
         [key: string]: OptionJSON;
+    }
+    interface OptionJSON extends ImportedJSON.Object {
+        name: string;
+        description?: string;
+        tags?: OptionTagsJSON;
+        meta?: OptionMetaJSON;
+        children?: OptionCollectionJSON;
+    }
+    interface OptionMetaJSON extends Utilities.Meta {
+        source: string;
+    }
+    interface OptionTagsJSON extends ImportedJSON.Object {
+        [key: string]: (string | Array<string>);
     }
 }
 export default OptionDoc;
