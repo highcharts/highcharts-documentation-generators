@@ -18,7 +18,7 @@
         "fast-deep-equal": "^3.1.3",
         "handlebars": "^4.7.6",
         "highcharts-assembler": "github:highcharts/highcharts-assembler",
-        "marked": "^1.2.9",
+        "marked": "^2.0.0",
         "mkdirp": "^1.0.4",
         "moment": "^2.29.1",
         "sanitize-html": "^2.3.2",
