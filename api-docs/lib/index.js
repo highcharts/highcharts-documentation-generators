@@ -545,15 +545,12 @@ module.exports = function (input, outputPath, currentOnly, fn) {
     }
 
     function getProductName(product) {
-        return (
-            ({
-                'highcharts': 'Highcharts',
-                'highstock': 'Highcharts Stock',
-                'highmaps': 'Highcharts Maps',
-                'gantt': 'Highcharts Gantt'
-            })[product] ||
-            (product[0].toUpperCase() + product.substr(1))
-        );
+        return {
+            'highcharts': 'Highcharts',
+            'highstock': 'Highcharts Stock',
+            'highmaps': 'Highcharts Maps',
+            'gantt': 'Highcharts Gantt'
+        }[product];
     }
 
     function sortAndArrayify(node) {
@@ -1146,6 +1143,9 @@ module.exports = function (input, outputPath, currentOnly, fn) {
     templates.load(function () {
         const sitemapIndex = [];
         const promisesProducts = Object.keys(products).map(function (product) {
+            if (!getProductName(product)) {
+                return Promise.reject(new Error(`Unknown product: ${product}`));
+            }
             return mkdirp(outputPath + product)
             .then(function () {
 
@@ -1281,7 +1281,7 @@ module.exports = function (input, outputPath, currentOnly, fn) {
                 });
                 return Promise.all(promisesVersions)
                 .then(() => {
-                    console.info(('Created ' + product + ' API reference').green);
+                    console.info((`Created ${product} API reference`).green);
                 });
             });
         });
