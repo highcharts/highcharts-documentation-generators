@@ -980,6 +980,10 @@ function addClass (doclet) {
 
     let node = updateNodeFor(doclet);
 
+    if (!node.doclet.types) {
+        node.doclet.types = getTypes(doclet);
+    }
+
     if (doclet.params) {
         addConstructor(doclet);
     }
