@@ -396,7 +396,7 @@ const copyDir = (from, to) => {
         });
 };
 
-module.exports = function (input, outputPath, currentOnly, fn) {
+module.exports = function (input, outputPath, selectedProducts, fn) {
     // work around #8260
     function filterUndefined(node, name) {
         if (node.children) {
@@ -712,10 +712,6 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         node.meta.branch = input._meta.branch;
         node.meta.date = input._meta.date;
         node.meta.version = input._meta.version;
-
-        if (!currentOnly && node.doclet && node.doclet.since && node.doclet.since.length > 0) {
-            v = node.doclet.since;
-        }
 
         // Make product impact children unless overridden
         if (parent && parent.doclet && parent.doclet.products && node.doclet && !node.doclet.products) {
@@ -1145,6 +1141,12 @@ module.exports = function (input, outputPath, currentOnly, fn) {
         const promisesProducts = Object.keys(products).map(function (product) {
             if (!getProductName(product)) {
                 return Promise.reject(new Error(`Unknown product: ${product}`));
+            }
+            if (
+                selectedProducts instanceof Array &&
+                selectedProducts.indexOf(product) === -1
+            ) {
+                return Promise.resolve();
             }
             return mkdirp(outputPath + product)
             .then(function () {
