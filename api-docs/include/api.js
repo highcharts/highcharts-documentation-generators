@@ -680,16 +680,17 @@ hapi.ajax = function(p) {
     }
 
     if (def.filename) {
+      var fileName = def.filename;
+      fileName = fileName.substr(3, fileName.length - 6);
+      fileName = 'ts/' + fileName + '.ts';
       editLink = cr('a', 'edit', '<i class="fa fa-edit"></i>', true);
       editLink.setAttribute(
         'title',
-        'Defined in ' + def.filename + ':' + def.line
+        'Defined in ' + fileName
       )
       editLink.href = 'https://github.com/highcharts/highcharts/blob/' +
         def.version + '/' + // TODO: version (see dumpNav() version param in index.js)
-        def.filename + '#L' +
-        def.line +
-        (def.lineEnd ? '-#L' + def.lineEnd : '');
+        fileName;
     }
 
 
