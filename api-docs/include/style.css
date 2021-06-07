@@ -811,37 +811,42 @@ a:hover {
 }
 
 @media (prefers-color-scheme: dark) {
+    :root {
+        --DC1: #222;
+        --DC2: #47475C;
+        --DC3: #656570;
+    }
     html {
         color: #EEEAEA;
     }
     body, .body, .navigation, .wrapper {
         background-color: #373648;
-        border-color: #47475C;
+        border-color: var(--DC2);
     }
     h3,
     h4 {
         color: #BBB7B7;
     }
     pre {
-        border-color: #222;
+        border-color: var(--DC1);
         background-color: #111;
     }
     .search-wrapper {
-        border-color: #656570;
+        border-color: var(--DC3);
     }
     .search-wrapper button {
-        background-color: #656570;
-        border-left-color: #656570;
+        background-color: var(--DC3);
+        border-left-color: var(--DC3);
     }
     .results {
         background-color: inherit;
-        border-color: #222;
+        border-color: var(--DC1);
     }
     .results .match {
-        border-bottom-color: #222;
+        border-bottom-color: var(--DC1);
     }
     .results .match a:hover {
-        background-color: #222;
+        background-color: #333;
     }
     .results .match a:focus {
         background-color: #444;
@@ -851,26 +856,26 @@ a:hover {
         color: #DDD9D9;
     }
     .results .match .sub-match {
-        background: #EEEAEA;
+        background-color: #EEEAEA;
     }
     .node a.title,
     .search-wrapper input {
         color: #CCC8C8;
     }
     .option {
-        border-top-color: #47475C;
+        border-top-color: var(--DC2);
     }
     .option p {
         color: #CCC;
     }
     .option.deprecated {
-        color: #966 !important
+        color: #966 !important;
     }
     .option.highlighted {
-        background-color: #47475C;
+        background-color: var(--DC2);
     }
     .options-tree .code {
-        color: #6074e8;
+        color: #6074E8;
     }
     .option .default,
     .options-tree .default {
