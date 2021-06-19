@@ -815,9 +815,10 @@ a:hover {
         --DC1: #222;
         --DC2: #47475C;
         --DC3: #656570;
+        --DC9: #EEEAEA;
     }
     html {
-        color: #EEEAEA;
+        color: var(--DC9);
     }
     body, .body, .navigation, .wrapper {
         background-color: #373648;
@@ -839,11 +840,12 @@ a:hover {
         border-left-color: var(--DC3);
     }
     .results {
-        background-color: inherit;
-        border-color: var(--DC1);
+        background-color: var(--DC2);
+        border-color: var(--DC3);
+        color: var(--DC9);
     }
     .results .match {
-        border-bottom-color: var(--DC1);
+        border-bottom-color: var(--DC3);
     }
     .results .match a:hover {
         background-color: #333;
@@ -855,8 +857,10 @@ a:hover {
     .results .match *:hover {
         color: #DDD9D9;
     }
+    .node.highlighted>.title ,
     .results .match .sub-match {
-        background-color: #EEEAEA;
+        background-color: var(--DC3);
+        color: var(--DC9);
     }
     .node a.title,
     .search-wrapper input {
