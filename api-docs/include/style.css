@@ -10,10 +10,6 @@
     |____O____|
 */
 
-html {
-  background: #373648;
-}
-
 body {
   background: #fff;
 }
@@ -74,10 +70,10 @@ pre code {
 }
 
 pre {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #DDD;
   padding: 5px;
   overflow-x: auto;
-  background: #fcfcfc;
+  background: #EEE;
 }
 
 a:hover {
@@ -107,13 +103,13 @@ a:hover {
 .navigation {
   background: #fff;
   height: calc(100vh - 87px);
-  border-right: 1px solid silver;
+  border-right: 1px solid #CCC;
   margin-top: 108px;
 }
 
 .body {
   background: #fff;
-  border-left: 1px solid silver;
+  border-left: 1px solid #CCC;
   min-height: calc(100vh - 187px);
 }
 
@@ -450,7 +446,7 @@ a:hover {
 }
 
 .node.indicator .title, .node.indicator .title i {
-  color: silver;
+  color: #CCC;
 }
 
 .children {
@@ -512,7 +508,7 @@ a:hover {
 }
 
 .options-tree .default {
-  color: silver;
+  color: #CCC;
   white-space: nowrap;
   margin: 1px;
   font-family: "Courier New", Courier, monospace;
@@ -632,7 +628,7 @@ a:hover {
 
 .option {
   overflow-y: hidden;
-  border-top: 1px solid silver;
+  border-top: 1px solid #CCC;
 }
 
 .option.deprecated * {
@@ -685,7 +681,7 @@ a:hover {
 .option .edit {
   float: right;
   font-size: 0.8em;
-  color: silver;
+  color: #CCC;
   padding-left: 0.6em;
 }
 
@@ -812,4 +808,102 @@ a:hover {
   .options-tree {
     overflow-x: auto;
   }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --DC1: #222;
+        --DC2: #47475C;
+        --DC3: #656570;
+        --DC9: #EEEAEA;
+    }
+    html {
+        color: var(--DC9);
+    }
+    body, .body, .navigation, .wrapper {
+        background-color: #373648;
+        border-color: var(--DC2);
+    }
+    h3,
+    h4 {
+        color: #BBB7B7;
+    }
+    pre {
+        border-color: var(--DC1);
+        background-color: #111;
+    }
+    .search-wrapper {
+        border-color: var(--DC3);
+    }
+    .search-wrapper button {
+        background-color: var(--DC3);
+        border-left-color: var(--DC3);
+    }
+    .results {
+        background-color: var(--DC2);
+        border-color: var(--DC3);
+        color: var(--DC9);
+    }
+    .results .match {
+        border-bottom-color: var(--DC3);
+    }
+    .results .match a:hover {
+        background-color: #333;
+    }
+    .results .match a:focus {
+        background-color: #444;
+    }
+    .results .match *,
+    .results .match *:hover {
+        color: #DDD9D9;
+    }
+    .node.highlighted>.title ,
+    .results .match .sub-match {
+        background-color: var(--DC3);
+        color: var(--DC9);
+    }
+    .node a.title,
+    .search-wrapper input {
+        color: #CCC8C8;
+    }
+    .option {
+        border-top-color: var(--DC2);
+    }
+    .option p {
+        color: #CCC;
+    }
+    .option.deprecated {
+        color: #966 !important;
+    }
+    .option.highlighted {
+        background-color: var(--DC2);
+    }
+    .options-tree .code {
+        color: #6074E8;
+    }
+    .option .default,
+    .options-tree .default {
+        color: #AAA;
+    }
+    .options-tree .default.type-string,
+    .options-tree .default.type-array-string-,
+    .options-tree .default.type-highcharts-colorstring,
+    .options-tree .default.type-array-highcharts-colorstring- {
+        color: #49C842;
+    }
+    .options-tree .default.type-number {
+        color: #499EC8;
+    }
+    .options-tree .default.type-boolean {
+        color: #CE59E8;
+    }
+    .description code {
+        color: #AAA;
+    }
+    a {
+        color: #A0A5F0;
+    }
+    a:hover {
+        color: #70CC5C;
+    }
 }
