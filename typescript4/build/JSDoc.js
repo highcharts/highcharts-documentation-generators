@@ -48,7 +48,9 @@ var JSDoc;
         for (let i = 0, iEnd = doclets.length; i < iEnd; ++i) {
             doclet = doclets[i];
             if (doclet.comment) {
-                comments.push(doclet.comment);
+                comments.push(typeof doclet.comment === 'string' ?
+                    doclet.comment :
+                    doclet.comment.map(node => extractComment(node, sourceFile)).join());
             }
         }
         return (comments.join('\n') || void 0);

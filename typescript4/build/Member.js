@@ -79,7 +79,7 @@ var Member;
         };
     }
     function parseModule(moduleNode, sourceFile, project) {
-        const children = moduleNode.getChildren(sourceFile), comment = JSDoc_1.default.extractComment(moduleNode, sourceFile), isDeclaration = ((MemberUtilities_1.default.extractSyntax(moduleNode, sourceFile) || []).includes('declare') || void 0), isNamespace = (MemberUtilities_1.default.extractKeyword(moduleNode, sourceFile) === 'namespace' || void 0), meta = Utilities_1.default.extractMeta(moduleNode, sourceFile);
+        const children = moduleNode.getChildren(sourceFile), comment = JSDoc_1.default.extractComment(moduleNode, sourceFile), isDeclaration = ((MemberUtilities_1.default.extractSyntax(moduleNode, sourceFile, true) || []).includes('declare') || void 0), isNamespace = (MemberUtilities_1.default.extractKeyword(moduleNode, sourceFile) === 'namespace' || void 0), meta = Utilities_1.default.extractMeta(moduleNode, sourceFile);
         let node, block, name, path;
         for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
             node = children[i];

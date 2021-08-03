@@ -176,7 +176,8 @@ namespace Member {
             isDeclaration = (
                 (MemberUtilities.extractSyntax(
                     moduleNode,
-                    sourceFile
+                    sourceFile,
+                    true
                 ) || []).includes('declare') || void 0
             ),
             isNamespace = (

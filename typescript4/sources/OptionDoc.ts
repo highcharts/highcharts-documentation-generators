@@ -121,17 +121,14 @@ export class OptionDoc {
                 sourceFile,
                 [optionDoc.optionTag, optionDoc.collectionTag]
             )[0],
-            optionName = (optionTag && optionTag.comment);
+            optionName = (typeof optionTag.comment === 'string' && optionTag.comment);
 
-        if (
-            !optionTag ||
-            !optionName
-        ) {
+        if (!optionTag || !optionName) {
             return;
         }
 
         const option: OptionDoc.OptionJSON = {
-                name: optionName,
+                name: optionName
             },
             optionTags: OptionDoc.OptionTagsJSON = {},
             tags = JSDoc.extractTags(
@@ -141,7 +138,7 @@ export class OptionDoc {
                 [optionDoc.optionTag, optionDoc.collectionTag]
             );
 
-        if (node.comment) {
+        if (typeof node.comment === 'string') {
             option.description = node.comment;
         }
 
@@ -153,7 +150,11 @@ export class OptionDoc {
         for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
             tag = tags[i];
             tagName = tag.tagName.text;
-            tagValue = tag.comment || tag.getText(sourceFile).split(/\s+/)[1];
+            tagValue = (
+                typeof tag.comment === 'string' ?
+                    tag.comment :
+                    tag.getText(sourceFile).split(/\s+/)[1]
+            );
             optionValue = optionTags[tagName];
             if (typeof optionValue === 'string') {
                 optionTags[tagName] = [ optionValue, tagValue ];

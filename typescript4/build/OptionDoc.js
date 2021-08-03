@@ -60,22 +60,23 @@ class OptionDoc {
         return options;
     }
     parseOption(node, sourceFile) {
-        const optionDoc = this, optionTag = JSDoc_1.default.extractTags(node, sourceFile, [optionDoc.optionTag, optionDoc.collectionTag])[0], optionName = (optionTag && optionTag.comment);
-        if (!optionTag ||
-            !optionName) {
+        const optionDoc = this, optionTag = JSDoc_1.default.extractTags(node, sourceFile, [optionDoc.optionTag, optionDoc.collectionTag])[0], optionName = (typeof optionTag.comment === 'string' && optionTag.comment);
+        if (!optionTag || !optionName) {
             return;
         }
         const option = {
-            name: optionName,
+            name: optionName
         }, optionTags = {}, tags = JSDoc_1.default.extractTags(node, sourceFile, void 0, [optionDoc.optionTag, optionDoc.collectionTag]);
-        if (node.comment) {
+        if (typeof node.comment === 'string') {
             option.description = node.comment;
         }
         let tag, tagName, tagValue, optionValue;
         for (let i = 0, iEnd = tags.length; i < iEnd; ++i) {
             tag = tags[i];
             tagName = tag.tagName.text;
-            tagValue = tag.comment || tag.getText(sourceFile).split(/\s+/)[1];
+            tagValue = (typeof tag.comment === 'string' ?
+                tag.comment :
+                tag.getText(sourceFile).split(/\s+/)[1]);
             optionValue = optionTags[tagName];
             if (typeof optionValue === 'string') {
                 optionTags[tagName] = [optionValue, tagValue];
