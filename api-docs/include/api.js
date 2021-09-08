@@ -594,6 +594,7 @@ hapi.ajax = function(p) {
       if (def.typeList) {
         def.typeList.names.forEach(function(type) {
           typeHTMLPath = getClassReferenceUrl(type);
+          console.log(type, typeHTMLPath)
           if (typeHTMLPath) {
             def.see = (def.see || []);
             def.see.push(cr('a', { href: typeHTMLPath }, type));
@@ -611,6 +612,7 @@ hapi.ajax = function(p) {
             'type type-' + type.toLowerCase().replace(/[\.\<\>]+/g, '-')
           );
           typeHTMLPath = getClassReferenceUrl(type);
+          console.log(type, typeHTMLPath)
           if (typeHTMLPath) {
               typeHTML = cr('a', { 'class': typeHTMLClass, href: typeHTMLPath }, type);
           } else {

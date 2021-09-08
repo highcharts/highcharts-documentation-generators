@@ -44,19 +44,38 @@ function getLocation(option) {
 }
 
 const getPalette = () => {
-    const filePath = [hcRoot, 'js', 'Core'];
+    const palette1Path = fsPath.join(hcRoot, 'js', 'Core', 'Palette.js');
+    const palette2Path = fsPath.join(hcRoot, 'js', 'Core', 'Color', 'Palette.js');
+    const palette3Path = fsPath.join(hcRoot, 'ts', 'Core', 'Color', 'Palettes.ts');
 
-    if (fs.existsSync(fsPath.join(...filePath, 'Color', 'Palette.js'))) {
-        filePath.push('Color');
+    if (fs.existsSync(palette3Path)) {
+        return (new Function(
+            'const ' +
+            fs
+                .readFileSync(palette3Path)
+                .toString()
+                .match(/Palette {[^}]*}/g)[0]
+                .replace(/=/g, ':')
+                .replace('{', '= {') +
+            '; return Palette;'
+        )());
     }
 
-    const file = fs
-        .readFileSync(fsPath.join(...filePath, 'Palette.js'), 'utf-8')
-        .replace('export default palette;', '');
+    if (fs.existsSync(palette2Path)) {
+        return (new Function(fs
+            .readFileSync(palette2Path)
+            .toString()
+            .replace('export default palette;', '') +
+            '; return palette;'
+        )());
+    }
 
-    const palette = (new Function(`${file}; return palette;`)());
-
-    return palette;
+    return (new Function(fs
+        .readFileSync(palette1Path)
+        .toString()
+        .replace('export default palette;', '') +
+        '; return palette;'
+    )());
 }
 
 function dumpOptions() {
