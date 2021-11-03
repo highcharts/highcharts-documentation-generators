@@ -10,40 +10,40 @@
     |____O____|
 */
 
-body {
-  background: #f0f0f0;
-  color: #2f2b38;
+html, body {
+    font-family: sans-serif;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
 }
 
-html, body {
-  font-family: sans-serif;
-  padding: 0px;
-  margin: 0px;
-  width: 100%;
-  height: 100%;
+body {
+    background: #f0f0f0;
+    color: #2f2b38;
 }
 
 * {
-  font-family: "IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;
+    font-family: "IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;
 }
 
 h1 {
-  font-weight: 100;
+     font-weight: 100;
 }
 
 h2 {
-  font-size: 1.2em;
+    font-size: 1.2em;
 }
 
 h3 {
-  text-transform: uppercase;
-  margin-bottom: 3px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
 }
 
 h4 {
-  color: #555;
-  font-style: italic;
-  font-size: 0.9em;
+    color: #555;
+    font-style: italic;
+    font-size: 0.9em;
 }
 
 p {
@@ -71,10 +71,10 @@ pre code {
 }
 
 pre {
-  border: 1px solid #DDD;
-  padding: 5px;
-  overflow-x: auto;
-  background: #EEE;
+    border: 1px solid #DDD;
+    padding: 5px;
+    overflow-x: auto;
+    background: #EEE;
 }
 
 a:hover {
@@ -82,46 +82,46 @@ a:hover {
 }
 
 #option-trees-wrapper code {
-  background: none;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 100%;
+    background: none;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 100%;
 }
 
 .header {
-  z-index: 999999;
-  width: 100%;
-  color: #eeeaea;
-  font-size: 14px;
-  position: fixed;
-  top: 0;
+    z-index: 999999;
+    width: 100%;
+    color: #eeeaea;
+    font-size: 14px;
+    position: fixed;
+    top: 0;
 }
 
 .wrapper {
-  background: #fff;
-  margin-top: 68px;
+    background: #fff;
+    margin-top: 84px;
 }
 
 .navigation {
-  background: #fff;
-  height: calc(100vh - 96px);
-  border-right: 1px solid #CCC;
-  margin-top: 96px;
+    background: #fff;
+    height: calc(100vh - 96px);
+    border-right: 1px solid #CCC;
+    margin-top: 84px;
 }
 
 .body {
-  background: #fff;
-  border-left: 1px solid #CCC;
-  min-height: calc(100vh - 96px);
+    background: #fff;
+    border-left: 1px solid #CCC;
+    min-height: calc(100vh - 96px);
 }
 
 .footer {
-  padding: 10px 0;
-  width: 100%;
-  background: #373648;
-  color: #eeeaea;
-  display: inline-block;
-  text-align: center;
-  font-size: 10px;
+    padding: 10px 0;
+    width: 100%;
+    background: #373648;
+    color: #eeeaea;
+    display: inline-block;
+    text-align: center;
+    font-size: 10px;
 }
 
 .footer p {
@@ -146,103 +146,108 @@ a:hover {
   overflow: hidden;
 }
 .header .row-1 {
-  background: #46465c;
-  color: #fff;
-  line-height: 40px;
-  padding: 0 10px;
+    background: #46465c;
+    color: #fff;
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    padding: 0 10px;
 }
 .header .row-1 .cell {
-  display: inline-block;
-  vertical-align: top;
+    display: inline-block;
+    vertical-align: top;
 }
 
 #sidebar-link {
-  float: right;
+    float: right;
 }
 #sidebar-link a {
-  width: 40px;
-  height: 40px;
-  display: block;
-  text-align: center;
-  margin: 0;
+    width: 40px;
+    height: 40px;
+    display: block;
+    text-align: center;
+    margin: 0;
 }
 #sidebar-link i {
-  font-size: 24px;
-  line-height: 40px;
+    font-size: 24px;
+    line-height: 40px;
 }
 
 #highcharts-logo {
-  line-height: 1em;
+    line-height: 1em;
 }
 #highcharts-logo a {
-  display: inline-block;
+    display: inline-block;
 }
 #highcharts-logo img {
-  height: 40px;
-  vertical-align: top;
+    height: 40px;
+    vertical-align: top;
 }
 
 #page-title {
-  float: right;
-  margin-right: 10px;
+    float: right;
+    margin-right: 10px;
 }
 #page-title h1 {
-  color: #fff;
-  margin: 0;
-  font-size: 18px;
-  font-weight: 400;
+    color: #fff;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
 }
 
 .header .row-2 {
-  background: #2f2b38;
-  color: #fff;
+    background: #2f2b38;
+    color: #fff;
+    height: 44px;
+    overflow: hidden;
 }
 
 .header .row-2 .menu {
-  float: left;
+    float: left;
 }
 
 .header .row-2 .menu a {
-  line-height: 2em;
-  padding: 0 20px;
+    display: inline-block;
+    line-height: 2em;
+    padding: 8px 16px;
 }
 
 .dropdown-link {
-  display: inline-block;
+    display: inline-block;
 }
 
 .dropdown-link i {
-  font-size: 0.8em;
-  transition: all 0.1s ease;
-  margin-left: 7px;
+    font-size: 0.8em;
+    transition: all .1s ease;
+    margin-left: 7px;
 }
 
 .dropdown-menu {
-  position: absolute;
-  z-index: 999999999;
-  display: block;
-  width: 33.33%;
+    position: absolute;
+    z-index: 999999999;
+    display: block;
+    width: 33.33%;
 }
 .dropdown-menu ul {
-  box-shadow: 0 6px 12px rgba(0,0,0,.2);
-  display: inline-block;
-  margin: -1px 2px 2px -1px;
-  padding: 5px 0;
-  background: #2f2b38;
-  border: 1px solid rgba(0, 0, 0, .2);
-  font-size: 14px;
-  min-width: 100px;
-  text-align: left;
+    box-shadow: 0 6px 12px rgba(0,0,0,.2);
+    display: inline-block;
+    margin: -1px 2px 2px -1px;
+    padding: 5px 0;
+    background: #2f2b38;
+    border: 1px solid rgba(0, 0, 0, .2);
+    font-size: 14px;
+    min-width: 100px;
+    text-align: left;
 }
 .dropdown-menu li {
-  list-style-type: none;
+    list-style-type: none;
 }
 .dropdown-menu li a {
-  padding: 10px 20px;
-  display: block;
-  line-height: 20px;
-  color: #fff;
-  transition: color 100ms ease-in-out;
+    padding: 8px 16px;
+    display: block;
+    line-height: 2em;
+    color: #fff;
+    transition: color .1s ease-in-out;
 }
 .dropdown-menu li.highlighted a {
   font-weight: bold;
@@ -256,7 +261,7 @@ a:hover {
   color: #a3edba;
 }
 .dropdown-menu li.group p {
-  padding: 10px 20px;
+  padding: 8px 16px;
   display: block;
   margin: 0;
 }
@@ -678,73 +683,72 @@ a:hover {
 */
 
 @media screen and (min-width: 767px) {
-  .wrapper {
-      margin-top: 96px;
-  }
-  /* Hide the sidebar-link */
-  #sidebar-link {
-    display: none;
-  }
-  .header .row-1 {
-    line-height: 60px;
-    padding: 4px 17px;
-  }
-  #highcharts-logo {
-    width: 25%;
-  }
-  #highcharts-logo img {
-    height: 60px;
-  }
-  #page-title {
-    float: none;
-    margin: 0;
-    text-align: center;
-    width: 50%;
-  }
-  /* Make navigation and wrapper share width 30/70 */
-  .navigation, .body {
-    float: left;
-    padding: 0;
-    margin-right: 0;
-    margin-left: -1px;
-    /* Couteract border */
-  }
-  .navigation {
-    width: 30%;
-  }
-  .body {
-    width: 70%;
-    margin-left: calc(30% - 1px);
-  }
-  .sidebar[expanded="false"] {
-    left: 0;
-  }
-  /* Left-align splash page title */
-  #splashText h1 {
-    text-align: left;
-  }
-  .footer {
-    padding-left: 30%;
-    width: 70%;
-  }
-  .options-tree {
-    overflow-x: auto;
-  }
+    .wrapper {
+        margin-top: 112px;
+    }
+    /* Hide the sidebar-link */
+    #sidebar-link {
+        display: none;
+    }
+    .header .row-1 {
+        height: 60px;
+        line-height: 60px;
+        padding: 4px 17px;
+    }
+    #highcharts-logo {
+        width: 25%;
+    }
+    #highcharts-logo img {
+        height: 60px;
+    }
+    #page-title {
+        float: none;
+        margin: 0;
+        text-align: center;
+        width: 50%;
+    }
+    /* Make navigation and wrapper share width 30/70 */
+    .navigation, .body {
+        float: left;
+        padding: 0;
+        margin-right: 0;
+        margin-left: -1px;
+        /* Couteract border */
+    }
+    .navigation {
+        width: 30%;
+    }
+    .body {
+        width: 70%;
+        margin-left: calc(30% - 1px);
+    }
+    .sidebar[expanded="false"] {
+        left: 0;
+    }
+    /* Left-align splash page title */
+    #splashText h1 {
+        text-align: left;
+    }
+    .footer {
+        padding-left: 30%;
+        width: 70%;
+    }
+    .options-tree {
+        overflow-x: auto;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --DC1: #222;
-        --DC2: #47475C;
-        --DC3: #656570;
-        --DC9: #EEEAEA;
-    }
-    html {
-        color: var(--DC9);
+        --DC2: #56566c;
+        --DC3: #757580;
+        --DC9: #fff;
     }
     body, .body, .navigation, .wrapper {
-        background-color: #373648;
+        background: #36364c;
         border-color: var(--DC2);
+        color: var(--DC9);
     }
     h3,
     h4 {
@@ -823,9 +827,10 @@ a:hover {
         color: #AAA;
     }
     a {
-        color: #A0A5F0;
+        color: #b3cafd;
     }
     a:hover {
-        color: #70CC5C;
+        color: #a3edba;
+        text-decoration: underline;
     }
 }
