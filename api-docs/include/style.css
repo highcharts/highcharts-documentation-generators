@@ -11,7 +11,8 @@
 */
 
 body {
-  background: #fff;
+  background: #f0f0f0;
+  color: #2f2b38;
 }
 
 html, body {
@@ -23,7 +24,7 @@ html, body {
 }
 
 * {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: "IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;
 }
 
 h1 {
@@ -97,20 +98,20 @@ a:hover {
 
 .wrapper {
   background: #fff;
-  margin-top: 108px;
+  margin-top: 68px;
 }
 
 .navigation {
   background: #fff;
-  height: calc(100vh - 87px);
+  height: calc(100vh - 96px);
   border-right: 1px solid #CCC;
-  margin-top: 108px;
+  margin-top: 96px;
 }
 
 .body {
   background: #fff;
   border-left: 1px solid #CCC;
-  min-height: calc(100vh - 187px);
+  min-height: calc(100vh - 96px);
 }
 
 .footer {
@@ -134,98 +135,77 @@ a:hover {
 
 /* Header styling */
 
+.header a {
+  color: #fff;
+  font-weight: inherit;
+}
+.header a:hover {
+  color: #a3edba;
+}
 .header .row {
   overflow: hidden;
 }
-
-.header a {
-  color: #eeeaea;
-  font-weight: 300;
-}
-
-.header .row a:hover {
-  color: #90ee7e;
-}
-
 .header .row-1 {
-  background: #47475C;
-  height: 50px;
+  background: #46465c;
+  color: #fff;
+  line-height: 40px;
+  padding: 0 10px;
 }
-
 .header .row-1 .cell {
-  vertical-align: middle;
   display: inline-block;
-  height: 50px;
-  line-height: 50px;
+  vertical-align: top;
 }
 
 #sidebar-link {
   float: right;
 }
-
 #sidebar-link a {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: block;
   text-align: center;
   margin: 0;
 }
-
 #sidebar-link i {
-  font-size: 30px;
-  line-height: 50px;
+  font-size: 24px;
+  line-height: 40px;
 }
 
+#highcharts-logo {
+  line-height: 1em;
+}
 #highcharts-logo a {
   display: inline-block;
-  height: 50px;
-  width: auto;
 }
-
 #highcharts-logo img {
-  height: 150%;
-  margin-top: -7px;
-  width: auto;
+  height: 40px;
+  vertical-align: top;
 }
 
 #page-title {
   float: right;
-  padding: 5px 15px 0 15px;
+  margin-right: 10px;
 }
-
 #page-title h1 {
-  color: #eeeaea;
+  color: #fff;
   margin: 0;
-  font-weight: 300;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 400;
 }
 
 .header .row-2 {
-  height: 58px;
-  background: #373648;
+  background: #2f2b38;
+  color: #fff;
 }
 
 .header .row-2 .menu {
-  height: 58px;
-  line-height: 58px;
   float: left;
 }
 
 .header .row-2 .menu a {
+  line-height: 2em;
   padding: 0 20px;
 }
-
-/* .header .row-2 .menu#product-selector {
-  text-align: left;
-}
-
-.header .row-2 .menu#version-selector {
-  text-align: center;
-}
-
-.header .row-2 .menu#prog-lang-selector {
-  text-align: right;
-} */
 
 .dropdown-link {
   display: inline-block;
@@ -243,54 +223,46 @@ a:hover {
   display: block;
   width: 33.33%;
 }
-
 .dropdown-menu ul {
+  box-shadow: 0 6px 12px rgba(0,0,0,.2);
   display: inline-block;
   margin: -1px 2px 2px -1px;
   padding: 5px 0;
-  background: #373648;
-  border: 1px solid rgba(0, 0, 0, .15);
+  background: #2f2b38;
+  border: 1px solid rgba(0, 0, 0, .2);
   font-size: 14px;
   min-width: 100px;
   text-align: left;
 }
-
 .dropdown-menu li {
   list-style-type: none;
 }
-
 .dropdown-menu li a {
   padding: 10px 20px;
   display: block;
   line-height: 20px;
-  color: #a09fb4;
+  color: #fff;
   transition: color 100ms ease-in-out;
 }
-
 .dropdown-menu li.highlighted a {
   font-weight: bold;
-  color: #eeeaea;
+  color: #a3edba;
 }
-
 .dropdown-menu li.highlighted a:hover {
-  color: #90ee7e;
+  color: #a3edba;
 }
-
-.dropdown-menu li.highlighted a, .dropdown-menu li a:hover {
-  color: #eeeaea;
+.dropdown-menu li.highlighted a,
+.dropdown-menu li a:hover {
+  color: #a3edba;
 }
-
 .dropdown-menu li.group p {
   padding: 10px 20px;
   display: block;
-  line-height: 20px;
   margin: 0;
 }
-
 .dropdown-menu ul.group-list {
   padding: 0;
 }
-
 .dropdown-menu ul.group-list li a {
   padding-left: 35px;
 }
@@ -700,84 +672,34 @@ a:hover {
 
 
 /*
-        Scale up
-           /\
-          /  \
-         /    \
-        /      \
-       /        \
-*/
-
-
-/*
-==================================================
-=== Fablets / Vertical tablets / Horizontal phones
-==================================================
-*/
-/*
-@media screen and (min-width: 550px) {
-  #page-title h1 {
-    font-size: 20px;
-  }
-  #product-selector, #product-selector .dropdown-menu {
-    width: 60%;
-  }
-  #version-selector, #version-selector .dropdown-menu, #prog-lang-selector, #prog-lang-selector .dropdown-menu {
-    width: 20%;
-  }
-  #product-selector .dropdown-link {
-    display: none;
-  }
-  #product-selector .dropdown-menu {
-    display: block;
-  }
-  #product-selector .dropdown-menu ul {
-    padding: 0;
-    background: none;
-    border: 0;
-    margin: 0;
-  }
-  #product-selector .dropdown-menu ul li {
-    display: inline-block;
-  }
-}
-*/
-
-/*
 ==============================
 === Larger tablets / Computers
 ==============================
 */
 
 @media screen and (min-width: 767px) {
+  .wrapper {
+      margin-top: 96px;
+  }
   /* Hide the sidebar-link */
   #sidebar-link {
     display: none;
   }
-  /* If sidr sidebar is visible while scaling up,
-    the page breaks. To avoid this, we counteract
-    the effects sidr is having on the body element: */
-  /*body {
-        left: 0 !important;
-        width: 100% !important;
-    }*/
   .header .row-1 {
-    padding: 0 15px;
+    line-height: 60px;
+    padding: 4px 17px;
   }
   #highcharts-logo {
     width: 25%;
   }
-  #highcharts-logo a {
-    margin: 0;
-  }
   #highcharts-logo img {
-    height: 130%;
+    height: 60px;
   }
   #page-title {
-    width: 50%;
-    text-align: center;
     float: none;
-    padding: 0;
+    margin: 0;
+    text-align: center;
+    width: 50%;
   }
   /* Make navigation and wrapper share width 30/70 */
   .navigation, .body {
@@ -802,8 +724,8 @@ a:hover {
     text-align: left;
   }
   .footer {
-    padding-left: 15%;
-    width: 85%;
+    padding-left: 30%;
+    width: 70%;
   }
   .options-tree {
     overflow-x: auto;

@@ -2,38 +2,38 @@
 <html prefix="og: http://ogp.me/ns#">
     <head>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{{#if node.meta.fullname}}{{node.meta.fullname}} | {{/if}}{{productName}} {{platform}} API Reference</title>
-        <link rel="stylesheet" href="style.css" type="text/css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="style.css" type="text/css" />
 
-        <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
-        <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
-        <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160">
-        <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
-        <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+        <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png" />
+        <link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192" />
+        <link rel="icon" type="image/png" href="favicon-160x160.png" sizes="160x160" />
+        <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
+        <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
 
-        <meta property="og:description" content="{{opengraph.description}}">
-        <meta property="og:determiner" content="{{opengraph.determiner}}">
-        <meta property="og:image" content="{{opengraph.image}}">
-        <meta property="og:site_name" content="{{opengraph.sitename}}">
-        <meta property="og:title" content="{{opengraph.title}}">
-        <meta property="og:type" content="{{opengraph.type}}">
-        <meta property="og:url" content="{{opengraph.url}}">
-        <meta name="searchboost" content="{{searchBoost}}">
-        <meta name="searchtitle" content="{{searchTitle}}">
-        <meta name="twitter:card" content="{{twitter.card}}">
-        <meta name="twitter:creator" content="{{twitter.creator}}">
-        <meta name="twitter:site" content="{{twitter.site}}">
+        <meta property="og:description" content="{{opengraph.description}}" />
+        <meta property="og:determiner" content="{{opengraph.determiner}}" />
+        <meta property="og:image" content="{{opengraph.image}}" />
+        <meta property="og:site_name" content="{{opengraph.sitename}}" />
+        <meta property="og:title" content="{{opengraph.title}}" />
+        <meta property="og:type" content="{{opengraph.type}}" />
+        <meta property="og:url" content="{{opengraph.url}}" />
+        <meta name="searchboost" content="{{searchBoost}}" />
+        <meta name="searchtitle" content="{{searchTitle}}" />
+        <meta name="twitter:card" content="{{twitter.card}}" />
+        <meta name="twitter:creator" content="{{twitter.creator}}" />
+        <meta name="twitter:site" content="{{twitter.site}}" />
 
         <script type="text/javascript" src="api.js"></script>
         <script type="text/javascript" src="/websearch/highsoft-websearch.js"></script>
@@ -41,18 +41,22 @@
     </head>
     <body>
 
-        <div class="header">
+        <header class="header">
             <div class="row row-1">
                 <div id="sidebar-link" class="cell sidebar-link">
                     <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
                 </div>
                 <div id="highcharts-logo" class="cell">
-                    <a href="https://www.highcharts.com" title="Highcharts Home Page">
+                    <a href="https://www.highcharts.com/" title="Highcharts Home Page">
                         <img alt="Highcharts Home Page" src="highcharts.svg" border="0">
                     </a>
                 </div>
                 <div id="page-title" class="cell">
-                    <h1>{{platform}} API Reference</h1>
+                    <h1>
+                        <a href="/{{productModule}}/">
+                            {{platform}} API Reference
+                        </a>
+                    </h1>
                 </div>
             </div>
             <div class="row row-2">
@@ -77,7 +81,7 @@
                                 <li class="group">
                                     <ul class="group-list">
                                         {{#each platforms }}
-                                        <li class="version">
+                                        <li class="version {{#if active}}highlighted{{/if}}">
                                             <a href="{{@this}}">{{@key}}</a>
                                         </li>
                                         {{/each}}
@@ -87,27 +91,6 @@
                             </div>
                         </div>
                     {{/if}}
-                    {{!--
-                    <div id="version-selector" class="menu" expanded="false">
-                        <a href="#" class="dropdown-link">v{{version}} <i class="fa fa-chevron-down" aria-hidden="true"></i></a>
-                        <div class="dropdown-menu">
-                            <ul id="version-selector-body">
-                                {{#each toc}}
-                                <li class="group">
-                                    <p>{{displayName}}</p>
-                                    <ul class="group-list">
-                                        {{#each versions}}
-                                        <li class="version">
-                                            <a href="{{@this}}" onclick="hapi.switchVersion(this);">{{@key}}</a>
-                                        </li>
-                                        {{/each}}
-                                    </ul>
-                                </li>
-                                {{/each}}
-                            </ul>
-                        </div>
-                    </div>
-                    --}}
                     <div id="version" class="menu">
                         <a href="https://www.highcharts.com/changelog/" target="_blank">v{{version}}</a>
                     </div>
@@ -123,22 +106,9 @@
                         </div>
                     {{/if}}
                 {{/if}}
-                {{#if progLangs}}
-                    <div id="prog-lang-selector" class="menu" expanded="false">
-                        <a href="#" class="dropdown-link">Language: {{language}} <i class="fa fa-chevron-down" aria-hidden="true"></i></a>
-                        <div class="dropdown-menu">
-                            <ul>
-                                {{#each progLangs}}
-                                <li class="prog-lang">
-                                    <a id="{{@key}}-link" href="{{#if current}}{{current}}{{else}}#{{/if}}">{{@key}}</a>
-                                </li>
-                                {{/each}}
-                            </ul>
-                        </div>
-                    </div>
-                {{/if}}
             </div>
-        </div>
+            </div>
+        </header>
 
         <div class="wrapper">
             <div id="sidebar" class="navigation sidebar" expanded="false">
@@ -238,7 +208,7 @@
             </div>
 
             <p>
-                {{product}} v{{version}} -
+                {{productName}} v{{version}} -
                 Generated from branch <a href="https://github.com/highcharts/highcharts/tree/{{versionProps.branch}}">{{versionProps.branch}}</a> (commit <a href="https://github.com/highcharts/highcharts/commit/{{versionProps.commit}}">{{versionProps.commit}}</a>), on {{date}}
             </p>
         </div>
