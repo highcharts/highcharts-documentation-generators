@@ -716,6 +716,7 @@ a:hover {
         /* Couteract border */
     }
     .navigation {
+        margin-top: 112px;
         width: 30%;
     }
     .body {
