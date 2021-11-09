@@ -77,16 +77,12 @@
                         <div id="platform-selector" class="menu" expanded="false">
                             <a href="#" class="dropdown-link">{{platform}}<i class="fa fa-chevron-down" aria-hidden="true"></i></a>
                             <div class="dropdown-menu">
-                                <ul>
-                                <li class="group">
-                                    <ul class="group-list">
-                                        {{#each platforms }}
-                                        <li class="version {{#if active}}highlighted{{/if}}">
-                                            <a href="{{@this}}">{{@key}}</a>
-                                        </li>
-                                        {{/each}}
-                                    </ul>
-                                </li>
+                                <ul class="group-list">
+                                    {{#each platforms }}
+                                    <li class="group {{#if active}}highlighted{{/if}}">
+                                        <a href="{{@this}}">{{@key}}</a>
+                                    </li>
+                                    {{/each}}
                                 </ul>
                             </div>
                         </div>
@@ -119,7 +115,7 @@
                 </div>
                 <div id="option-trees-wrapper">
                     <h3 id="options-header">Configuration options</h3>
-                    <p>For initial declarative chart setup. Download this <a href="{{downloadUrl}}">API</a>.</p>
+                    <p>For initial declarative chart setup. Download as <a href="{{downloadUrl}}">ZIP</a> or <a href="tree.json">JSON</a>.</p>
                     <div class="global-options options-tree">
                         <code>Highcharts.setOptions({</code>
                         <div id="global-options" class="tree"></div>
@@ -166,7 +162,6 @@
                         </div>
                         <code>});</code>
                     </div>
-                    <p>View configuration options as <a href="tree.json">JSON</a>.</p>
                 </div>
                 {{#if includeClassReference }}
                     <div id="members-wrapper">
