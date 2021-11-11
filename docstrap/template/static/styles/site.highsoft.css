@@ -3,7 +3,7 @@
 
 body {
   font-size: 16px;
-  background: #f0f0f0;
+  background: #fff;
   color: #2f2b38;
 }
 
@@ -48,13 +48,15 @@ h4 span.type-signature {
 	padding: 0;
 }
 
+#toc ,
+#main {
+    background: #fff;
+    margin: 0;
+	padding: 40px 0;
+}
 
 #toc {
-    position: fixed;
-    padding: 0;
-    top: 0;
-    left: 0;
-    max-height: calc(100% - 92px);
+    max-height: calc(100% - 40px);
 }
 #toc a.list-group-item {
     width: 100%;
@@ -76,16 +78,15 @@ h4 span.type-signature {
 	padding-left: 0.5em;
 }
 
-#main {
-	border-left: 1px solid silver;
-	margin-top: 55px;
-}
-
 .main-column {
 	box-sizing: border-box;
-	padding-left: 5px;
-	padding-right: 0;
+	padding: 0;
 }
+
+#main {
+	border-left: 1px solid silver;
+}
+
 div.container-overview {
 	margin: 0 40px;
 }
@@ -371,7 +372,11 @@ img.branding-logo {
 	#toc,
     #main {
         background: #fff;
-        margin-top: 112px;
+        padding-top: 112px;
+    }
+    #toc {
+        left: 0;
+        top: 0;
     }
     .dropdown-menu {
         max-height: calc(100vh - 108px);
