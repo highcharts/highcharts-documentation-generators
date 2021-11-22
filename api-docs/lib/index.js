@@ -1025,6 +1025,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
     function generateDetails(name, node, opath, product, version, toc, constr) {
         name = templateize(name);
+        version = (version === 'current' ? versionProps.version : version);
 
         // work around #8260:
         if (name.indexOf('undefined') > 0) {
@@ -1041,8 +1042,9 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             return;
         }
 
-        var filename = (name || 'index') + '.html',
+        const filename = (name || 'index') + '.html',
             productName = getProductName(product),
+            downloadUrl = '../zips/' + productName.replace(/\s+/gu, '-') + '-' + version + '-API.zip',
             opengraph = {
                 description: 'Interactive charts for your web pages.',
                 determiner: '',
@@ -1106,6 +1108,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
         templates.dump('main', (opath || outputPath) + filename, {
             date: new Date(),
+            downloadUrl,
             includeClassReference: (platform === 'JS'),
             initial: false,
             name: name,
@@ -1120,7 +1123,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             searchTitle: getSearchTitle(node),
             toc: toc,
             twitter: twitter,
-            version: version === 'current' ? versionProps.version : version,
+            version,
             versionProps: versionProps,
             year: (new Date()).getFullYear(),
             constr
