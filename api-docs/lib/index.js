@@ -16,7 +16,7 @@ const {
     writeFile
 } = fs.promises;
 const join = require('path').join;
-const marked = require('marked'); // markdown parser
+const { marked } = require('marked'); // markdown parser
 const mkdirp = require('mkdirp');
 const templates = require('./templates');
 
