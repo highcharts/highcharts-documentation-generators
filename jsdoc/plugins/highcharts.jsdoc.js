@@ -145,7 +145,11 @@ function decorateOptions(parent, target, option, filename) {
         comment &&
         (
             comment.indexOf('@ignore') !== -1 ||
-            comment.indexOf('@apioption') !== -1 // has manual decoration
+            (
+                // has manual decoration
+                comment.indexOf('@apioption') !== -1 &&
+                comment.indexOf('@type') !== -1
+            )
         )
     ) {
         return;
@@ -159,7 +163,7 @@ function decorateOptions(parent, target, option, filename) {
 
     target[index] = target[index] || {
         doclet: {},
-      //  type: option.key.type,
+        // type: option.key.type,
         children: {}
     };
 
