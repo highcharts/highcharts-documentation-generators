@@ -2,7 +2,7 @@ var hapi = {
   versionLocation: '/versions.json'
 };
 
-var htmlExtension = ''; // Use .html for local filesystem access
+var htmlExtension = '.html';
 var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
@@ -11,7 +11,7 @@ if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
 
   // Options: https://api.highcharts.com/highcharts#title.text
   if (/^[a-z]/.test(hash)) {
-    location.href = '/' + (window.product || 'highcharts').toLowerCase() + '/' + hash;
+    location.href = '/' + (window.product || 'highcharts').toLowerCase() + '/' + hash + htmlExtension;
 
   // Object members: https://api.highcharts.com/highcharts#Series.update()
   } else if (/^[A-Z]/.test(hash)) {
@@ -19,8 +19,19 @@ if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
       .replace('Highcharts.', '')
       .replace('.', '#')
       .replace('()', '');
-    location.href = '/class-reference/Highcharts.' + hash;
+    location.href = '/class-reference/Highcharts.' + hash + htmlExtension;
   }
+}
+
+// Only have one index
+if (
+    !isLocal &&
+    location.pathname.indexOf('index.html') === location.pathname.length - 10
+) {
+    location.href = (
+        location.pathname.substring(0, location.pathname.length - 10) +
+        (location.hash.length > 1 ? location.hash : '')
+    );
 }
 
 hapi.ajax = function(p) {
@@ -594,7 +605,6 @@ hapi.ajax = function(p) {
       if (def.typeList) {
         def.typeList.names.forEach(function(type) {
           typeHTMLPath = getClassReferenceUrl(type);
-          console.log(type, typeHTMLPath)
           if (typeHTMLPath) {
             def.see = (def.see || []);
             def.see.push(cr('a', { href: typeHTMLPath }, type));
@@ -612,7 +622,6 @@ hapi.ajax = function(p) {
             'type type-' + type.toLowerCase().replace(/[\.\<\>]+/g, '-')
           );
           typeHTMLPath = getClassReferenceUrl(type);
-          console.log(type, typeHTMLPath)
           if (typeHTMLPath) {
               typeHTML = cr('a', { 'class': typeHTMLClass, href: typeHTMLPath }, type);
           } else {
@@ -1027,7 +1036,8 @@ hapi.ajax = function(p) {
         .then(function (entries) {
           return entries.filter(function (entry) {
             return (
-              entry.url.indexOf('.html') === -1 && (
+              entry.url.indexOf('index.html') === -1 &&
+              (
                 entry.url.indexOf('/class-reference/') !== -1 ||
                 entry.url.indexOf(productPath) !== -1
               )

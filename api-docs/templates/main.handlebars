@@ -92,13 +92,13 @@
                     </div>
                     {{#if includeClassReference }}
                         <div id="namespaces" class="menu">
-                            <a href="../class-reference/Highcharts">Namespaces</a>
+                            <a href="../class-reference/Highcharts.html">Namespaces</a>
                         </div>
                         <div id="classes" class="menu">
-                            <a href="../class-reference/classes.list">Classes</a>
+                            <a href="../class-reference/classes.list.html">Classes</a>
                         </div>
                         <div id="interfaces" class="menu">
-                            <a href="../class-reference/interfaces.list">Interfaces</a>
+                            <a href="../class-reference/interfaces.list.html">Interfaces</a>
                         </div>
                     {{/if}}
                 {{/if}}
@@ -137,7 +137,7 @@
                             {{#if node.children}}
                                 {{#each node.children}}
                                     <div class="node collapsed option-{{this.shortName}} {{#if node.meta.name}}leaf{{else}}parent{{/if}}">
-                                        <a class="title" href="{{this.name}}">
+                                        <a class="title" href="{{this.name}}.html">
                                             {{this.shortName}}:{{#if this.node.children}}<i class="fa fa-caret-right"></i>{{/if}}
                                         </a>
                                         {{#if this.node.children}}
@@ -166,7 +166,7 @@
                 {{#if includeClassReference }}
                     <div id="members-wrapper">
                         <h3>Members and properties</h3>
-                        <p>For modifying the chart at runtime. See the <a href="/class-reference/classes.list">class reference</a>.</p>
+                        <p>For modifying the chart at runtime. See the <a href="/class-reference/classes.list.html">class reference</a>.</p>
                     </div>
                 {{/if}}
             </div>
