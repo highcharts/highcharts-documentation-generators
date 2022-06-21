@@ -19,10 +19,10 @@ var template = require('jsdoc/template'),
   htmlsafe = helper.htmlsafe,
   sanitizeHtml = require('sanitize-html'),
 
-  // Highsoft's override to remove .html extensions
   linkto = function () {
-    var s = helper.linkto.apply(this, arguments);
+    return helper.linkto.apply(this, arguments);
 
+    // Highsoft's override to remove .html extensions
     s = s.replace(/\.html(#|")/g, '$1');
     return s;
   },
