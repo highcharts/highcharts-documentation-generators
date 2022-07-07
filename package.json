@@ -20,7 +20,7 @@
         "highcharts-assembler": "github:highcharts/highcharts-assembler",
         "marked": "^4.0.12",
         "mkdirp": "^1.0.4",
-        "moment": "^2.29.1",
+        "moment": "^2.29.4",
         "sanitize-html": "^2.7.0",
         "semver": "^7.3.5",
         "taffydb": "^2.7.3",
