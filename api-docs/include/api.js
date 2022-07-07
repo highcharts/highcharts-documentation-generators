@@ -2,7 +2,7 @@ var hapi = {
   versionLocation: '/versions.json'
 };
 
-var htmlExtension = '.html';
+var htmlExtension = '';
 var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
@@ -699,7 +699,7 @@ hapi.ajax = function(p) {
         'title',
         'Defined in ' + fileName
       )
-      editLink.href = 'https://github.com/highcharts/highcharts/blob/' +
+      editLink.href = 'https://github.com/highcharts/highcharts/blob/v' +
         def.version + '/' + // TODO: version (see dumpNav() version param in index.js)
         fileName;
     }
