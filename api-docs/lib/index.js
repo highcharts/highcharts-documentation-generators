@@ -303,74 +303,96 @@ function toSitemap(product, flatListKeys) {
 
 function mergeNode(achildren, bchildren, fullExclude) {
 
-  let valid = {
-    meta: {
-      default: 1,
-      fullname: 1,
-      name: 1,
-      line: 1,
-      lineEnd: 1,
-      columnd: 1,
-      filename: 1
-    },
-    doclet: {
-      defaultByProduct: 1,
-      defaultvalue: 1,
-      deprecated: 1,
-      description: 1,
-      productdesc: 1,
-      samples: 1,
-      extends: 1,
-      excludes: 1,
-      products: 1,
-      requires: 1,
-      since: 1,
-      type: 1,
-      values: 1
+    let valid = {
+        meta: [
+            'default',
+            'fullname',
+            'name',
+            'line',
+            'lineEnd',
+            'columnd',
+            'filename'
+        ],
+        doclet: [
+            'defaultByProduct',
+            'defaultvalue',
+            'deprecated',
+            'description',
+            'productdesc',
+            'samples',
+            'extends',
+            'excludes',
+            'products',
+            'requires',
+            'since',
+            'type',
+            'values'
+        ]
+    };
+
+    for (const bk of Object.keys(bchildren)) {
+
+        let bchild = bchildren[bk];
+        let achild = achildren[bk];
+
+        // for (const tag of (achild?.doclet?.tags) || [])) {
+        //   if (tag.title === 'excluding' || tag.title === 'exclude') {
+        //     for (const p of tag.value.split(',')) {
+        //       fullExclude[p.trim()] = true;
+        //     });
+        //   }
+        // }
+
+        if (fullExclude && fullExclude[bk]) {
+            continue;
+        }
+
+        if (!achild) {
+            achild = achildren[bk] = {};
+        }
+
+        achild.meta = achild.meta || {};
+        achild.doclet = achild.doclet || {};
+
+        if (
+            typeof achild.meta.default !== 'undefined' &&
+            typeof achild.doclet.defaultvalue === 'undefined'
+        ) {
+            achild.doclet.defaultvalue = achild.meta.default;
+        }
+
+        for (const key of valid.meta) {
+            achild.meta[key] = (
+                typeof achild.meta[key] !== 'undefined' ?
+                    achild.meta[key] :
+                    bchild.meta[key]
+            );
+        }
+
+        for (const key of valid.doclet) {
+            if (
+                key === 'defaultByProduct' &&
+                (
+                    typeof achild.doclet.default !== 'undefined' ||
+                    typeof achild.doclet.defaultvalue !== 'undefined'
+                )
+            ) {
+                // local default wins over product inheritance
+                continue;
+            }
+
+            achild.doclet[key] = (
+                typeof achild.doclet[key] !== 'undefined' ?
+                    achild.doclet[key] :
+                    bchild.doclet[key]
+            );
+        }
+
+        if (bchild.children) {
+            achild.children = achild.children || {};
+            mergeNode(achild.children, bchild.children);
+        }
     }
-  };
-
-  Object.keys(bchildren).forEach((bk) => {
-
-    let bchild = bchildren[bk];
-    let achild = achildren[bk];
-
-    // ((achild && achild.doclet && achild.doclet.tags) || []).forEach(function (tag) {
-    //   if (tag.title === 'excluding' || tag.title === 'exclude') {
-    //       tag.value.split(',').forEach(function (p) {
-    //       fullExclude[p.trim()] = true;
-    //     });
-    //   }
-    // });
-
-    if (fullExclude && fullExclude[bk]) {
-      return;
-    }
-
-    if (!achild) {
-      achild = achildren[bk] = {};
-    }
-
-    achild.meta = achild.meta || {};
-    achild.doclet = achild.doclet || {};
-
-    if (typeof achild.meta.default !== 'undefined' && typeof achild.doclet.defaultvalue === 'undefined') {
-      achild.doclet.defaultvalue = achild.meta.default;
-    }
-
-    Object.keys(valid.meta).forEach((key) => {
-      achild.meta[key] = typeof achild.meta[key] !== 'undefined' ? achild.meta[key] : bchild.meta[key];
-    });
-
-    Object.keys(valid.doclet).forEach((key) => {
-      achild.doclet[key] = typeof achild.doclet[key] !== 'undefined' ? achild.doclet[key] : bchild.doclet[key];
-    });
-
-    if (bchild.children) {
-      achild.children = achild.children || {};
-      mergeNode(achild.children, bchild.children);
-    }
-  });
 }
 
 const copyFile = (from, to) => {
@@ -438,26 +460,27 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
     }
 
     // Start series hack
-    Object.keys(input.series.children).forEach(function (child) {
+    for (const child of Object.keys(input.series.children)) {
         var node = input.series.children[child];
 
-        if ((node.doclet.extends || []).length === 0 &&
+        if (
+            (node.doclet.extends || []).length === 0 &&
             Object.keys(node.children).length === 0
         ) {
             commonSeries[child] = mergeObj({}, node);
             delete input.series.children[child];
         }
-    });
+    }
 
-    Object.keys(input.series.children).forEach(function (k) {
+    for (const k of Object.keys(input.series.children)) {
         var node = input.series.children[k];
 
-        Object.keys(commonSeries).forEach(function (c) {
+        for (const c of Object.keys(commonSeries)) {
             if (c !== 'data') {
                 node.children[c] = mergeObj({}, commonSeries[c]);
             }
-        });
-    });
+        }
+    }
 
     // End series hack
 
@@ -484,21 +507,21 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         //   doclet: Object.assign({}, target.doclet)
         // };
 
-        (target.doclet.tags || []).forEach(function (tag) {
+        for (const tag of (target.doclet.tags || [])) {
             if (tag.title === 'excluding' || tag.title === 'exclude') {
-                tag.value.split(',').forEach(function (p) {
-                  exclude[p.trim()] = true;
-                });
+                for (const p of tag.value.split(',')) {
+                    exclude[p.trim()] = true;
+                }
             }
-        });
-
-        if (target.doclet.exclude) {
-          (target.doclet.exclude || []).forEach(function (name) {
-            exclude[name] = true;
-          });
         }
 
-        //We need to do a deep merge because we have to rewrite the fullname
+        if (target.doclet.exclude) {
+            for (const name of (target.doclet.exclude || [])) {
+                exclude[name] = true;
+            }
+        }
+
+        // We need to do a deep merge because we have to rewrite the fullname
         if (!path) {
             return false;
         }
@@ -511,7 +534,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
         path = path.split('.');
 
-        path.some(function (p) {
+        for (const p of path) {
             if (current.children[p]) {
                 current = current.children[p];
             } else {
@@ -522,10 +545,10 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                     trigger
                 );
 
-                current = false;
-                return true;
+                current = undefined;
+                break;
             }
-        });
+        }
 
         if (current) {
             merge(current);
@@ -541,6 +564,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
             return true;
         }
+
         return false;
     }
 
@@ -557,7 +581,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         var children = [];
 
         if (node.children) {
-            Object.keys(node.children).forEach(function (child) {
+            for (const child of Object.keys(node.children)) {
                 // node.children[child].meta = node.children[child].meta || {};
                 // node.children[child].doclet = node.children[child].doclet || {};
 
@@ -567,12 +591,12 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                     node: node.children[child],
                     version: versionProps
                 });
-            });
+            }
         }
 
-        children.sort(function (a, b) {
-            return a.shortName.toLowerCase().localeCompare(b.shortName.toLowerCase());
-        })
+        children.sort((a, b) =>
+            a.shortName.toLowerCase().localeCompare(b.shortName.toLowerCase())
+        );
 
         node.children = children;
     }
@@ -580,20 +604,20 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
     function merge(node, fullname) {
         fullname = fullname || '';
 
-        var exclude = {
+        node.doclet = node.doclet || {};
+        node.meta = node.meta || {};
+
+        const exclude = {
             // 'default': true,
             'defaultvalue': true,
             // 'samples': true,
             products: true
         };
 
-        node.doclet = node.doclet || {};
-        node.meta = node.meta || {};
-
         if (node.doclet && node.doclet.exclude) {
-            (node.doclet.exclude || []).forEach(function (name) {
+            for (const name of (node.doclet.exclude || [])) {
                 exclude[name] = true;
-            });
+            }
         }
 
         // Take care of extensions
@@ -614,31 +638,30 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 .split(',');
 
             // Should always extend plotOptions.series last
-            ext.sort((a, b) => {
-                if (a === 'plotOptions.series') return 1;
-                if (b === 'plotOptions.series') return -1;
-                return 0;
-            });
+            ext.sort((a, b) => (
+                a === 'plotOptions.series' ? 1 :
+                    b === 'plotOptions.series' ? -1 :
+                    0
+            ));
 
-            ext.forEach(function (parent) {
-                //Duplicate children
+            for (const parent of ext) {
+                // Duplicate children
                 if (parent && parent.length > 0) {
-                    //console.log('Merging', parent, 'into', fullname);
                     node.children = node.children || {};
                     cloneChildren(node, parent, fullname);
                 }
-            });
+            }
         }
 
         if (node.children) {
-            Object.keys(node.children).forEach(function (c) {
+            for (const c of Object.keys(node.children)) {
                 if (exclude[c]) {
                     node.children[c] = undefined;
                     delete node.children[c];
-                    return;
+                    continue;
                 }
                 merge(node.children[c], (fullname.length > 0 ? fullname + '.' : '') + c);
-            });
+            }
         }
     }
 
@@ -658,7 +681,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         return 'object';
     }
 
-    //Do some transformations
+    // Do some transformations
     function transform(name, node, parentName, parent) {
         var s, v = false;
 
@@ -675,15 +698,16 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
         if (node.doclet && node.doclet.see) {
           if (node.doclet.see.forEach) {
-            node.doclet.see = node.doclet.see.map(function (t) {
-              return markdown(t);
-            });
+            node.doclet.see = node.doclet.see.map(t => markdown(t));
           }
         }
 
         // Inherit the since tag from parent
-        if (typeof node.doclet.since === 'undefined' && parent && parent.doclet && typeof parent.doclet.since !== 'undefined') {
-          node.doclet.since = parent.doclet.since;
+        if (
+            typeof node.doclet.since === 'undefined' &&
+            typeof parent?.doclet?.since !== 'undefined'
+        ) {
+            node.doclet.since = parent.doclet.since;
         }
 
         if (!node.meta.name) {
@@ -729,7 +753,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 s = node.doclet.products.split(' ');
             }
 
-            s.forEach(function (p) {
+            for (const p of s) {
                 products[p] = products[p] || {
                     current: true
                 };
@@ -738,11 +762,14 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 } else {
                     products[p].current = products[p].current || true;
                 }
-            });
+            }
         }
 
         // Guess types from default values
-        if (node.doclet && !node.doclet.type) {
+        if (
+            node.doclet &&
+            !node.doclet.type
+        ) {
             let defaultvalueForType = node.doclet.defaultvalue;
             if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
                 defaultvalueForType = node.meta.default;
@@ -763,13 +790,13 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         if (node.doclet && node.doclet.type) {
             node.doclet.types = {};
 
-            node.doclet.type.names.forEach(function (t) {
+            for (const t of node.doclet.type.names) {
                 if (t.toLowerCase().trim().indexOf('array') === 0) {
                     node.doclet.types['array'] = extractArrayType(t).toLowerCase();
                 } else {
                     node.doclet.types[t] = 1;
                 }
-            });
+            }
         }
 
 
@@ -779,11 +806,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
             name = parentName ? parentName + '.' + name : name;
 
-            Object.keys(node.children).forEach(function (child) {
+            for (const child of Object.keys(node.children)) {
                 if (child !== '_meta' && child) {
                     transform(child, node.children[child], name, node);
                 }
-            });
+            }
         }
     }
 
@@ -844,14 +871,14 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             // }
 
             if (ns.children) {
-                Object.keys(ns.children).forEach(function (child) {
+                for (const child of Object.keys(ns.children)) {
                     if (isAllowed(ns.children[child])) {
                         flatList[ns.children[child].meta.fullname] = 1;
                         res.children[child] = filterChildren(
                             ns.children[child]
                         );
                     }
-                });
+                }
             }
 
             return res;
@@ -1094,7 +1121,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
         sortAndArrayify(node);
 
-        node.children.forEach(function (child) {
+        for (const child of node.children) {
             generateDetails(
                 child.name,
                 child.node,
@@ -1104,7 +1131,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 toc,
                 constr
             );
-        });
+        }
 
         templates.dump('main', (opath || outputPath) + filename, {
             date: new Date(),
