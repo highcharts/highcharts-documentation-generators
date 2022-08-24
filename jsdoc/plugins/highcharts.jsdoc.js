@@ -597,15 +597,20 @@ function _inferType(node) {
 
     node.doclet.type = { names: [] };
 
-    if (isBool(defVal)) {
+    if (
+        isBool(defVal) ||
+        defVal === 'false' ||
+        defVal === 'true'
+    ) {
         node.doclet.type.names.push('boolean');
-    }
-
-    if (isNum(defVal)) {
+    } else if (
+        isNum(defVal) ||
+        /^\d+(\.\d+)?/.test(defVal)
+    ) {
         node.doclet.type.names.push('number');
-    }
-
-    if (isStr(defVal)) {
+    } else if (
+        isStr(defVal)
+    ) {
         node.doclet.type.names.push('string');
     }
 
