@@ -316,7 +316,7 @@ hapi.ajax = function(p) {
       children = cr('div', 'children');
       dots = cr('span', 'dots', '...');
 
-      if (def.typeMap && def.typeMap.array) {
+      if (def.supportsArray) {
         startBracket = cr('span', 'bracket start', '[{');
         endBracket1 = cr('span', 'bracket end first', '}]');
         endBracket2 = cr('span', 'bracket end second', '}]');

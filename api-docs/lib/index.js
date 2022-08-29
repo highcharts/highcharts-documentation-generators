@@ -788,13 +788,9 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         }
 
         if (node.doclet && node.doclet.type) {
-            node.doclet.types = {};
-
             for (const t of node.doclet.type.names) {
                 if (t.toLowerCase().trim().indexOf('array') === 0) {
-                    node.doclet.types['array'] = extractArrayType(t).toLowerCase();
-                } else {
-                    node.doclet.types[t] = 1;
+                    node.doclet.supportsArray = true;
                 }
             }
         }
@@ -1029,8 +1025,8 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                         isLeaf: !child.node.children || child.node.children.length === 0,
                         context: child.node.doclet.context,
                         default: resolveDefaultByProduct(child.node, product),
-                        typeMap: child.node.doclet.types,
                         typeList: child.node.doclet.type,
+                        supportsArray: child.node.doclet.supportsArray,
                         description: child.node.doclet.description,
                         productdesc: productFilter(child.node.doclet, 'productdesc', product),
                         extends: child.node.doclet.extends,
