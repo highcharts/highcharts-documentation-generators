@@ -661,7 +661,9 @@ hapi.ajax = function(p) {
     }
 
     if (def.deprecated) {
-      deprecated = cr('p', 'deprecated', 'Deprecated');
+      deprecated = cr('p', 'deprecated', 'Deprecated' + (
+        def.until ? ' since ' + def.until : ''
+      ));
       option.setAttribute(
         'class', option.getAttribute('class') + ' deprecated'
       );
@@ -807,7 +809,9 @@ hapi.ajax = function(p) {
           typeHTMLPath;
 
         if (data.deprecated) {
-          deprecated = cr('p', 'deprecated', 'Deprecated');
+          deprecated = cr('p', 'deprecated', 'Deprecated' + (
+            data.until ? ' since ' + data.until : ''
+          ));
           option.setAttribute(
             'class', option.getAttribute('class') + ' deprecated'
           );

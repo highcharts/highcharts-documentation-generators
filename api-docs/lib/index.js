@@ -247,10 +247,11 @@ function toFlatDump(input) {
           return '<a href="https://jsfiddle.net/gh/library/pure/highcharts/highcharts/tree/master/samples/' + e.value + '">' + e.name + '</a>';
         }).join('\n'),
         since: node.doclet.since,
+        until: node.doclet.until,
+        deprecated: !!node.doclet.deprecated,
         isParent: Object.keys(node.children).length > 0,
         context: node.doclet.context,
         defaults: node.doclet.defaultvalue || node.meta.default,
-        deprecated: node.doclet.deprecated === true,
         returnType: node.doclet.type ? node.doclet.type.names.join('|') : undefined,
         seeAlso: (node.doclet.see || []).join('\n'),
         products: node.doclet.products,
@@ -1018,6 +1019,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 samples: productFilter(node.doclet, 'samples', product),
                 see: node.doclet.see,
                 typeList: node.doclet.type,
+                until: node.doclet.until,
                 children: node.children.map(function (child) {
                     return {
                         name: child.node.meta.name,
@@ -1031,8 +1033,9 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                         productdesc: productFilter(child.node.doclet, 'productdesc', product),
                         extends: child.node.doclet.extends,
                         inheritedFrom: child.node.meta.inheritedFrom,
-                        deprecated: child.node.doclet.deprecated,
                         since: child.node.doclet.since,
+                        until: child.node.doclet.until,
+                        deprecated: child.node.doclet.deprecated,
                         requires: requiresFilter(child.node.doclet, product),
                         samples: productFilter(child.node.doclet, 'samples', product),
                         see: child.node.doclet.see,
