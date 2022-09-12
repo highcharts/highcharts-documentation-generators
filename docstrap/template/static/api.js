@@ -662,7 +662,7 @@ hapi.ajax = function(p) {
 
     if (def.deprecated) {
       deprecated = cr('p', 'deprecated', 'Deprecated' + (
-        def.until ? ' since ' + def.until : ''
+        def.until ? ' after ' + def.until : ''
       ));
       option.setAttribute(
         'class', option.getAttribute('class') + ' deprecated'
@@ -810,7 +810,7 @@ hapi.ajax = function(p) {
 
         if (data.deprecated) {
           deprecated = cr('p', 'deprecated', 'Deprecated' + (
-            data.until ? ' since ' + data.until : ''
+            data.until ? ' after ' + data.until : ''
           ));
           option.setAttribute(
             'class', option.getAttribute('class') + ' deprecated'
