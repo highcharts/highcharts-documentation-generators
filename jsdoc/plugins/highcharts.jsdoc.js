@@ -452,12 +452,13 @@ function improveDescription(node) {
     }
 }
 
-function _inferVersion(node, version) {
+function _inferVersion(node, parentDeprecated, parentSince) {
     if (!node.doclet ||
         !node.doclet.description
     ) {
         return;
     }
+
     if (node.doclet.since &&
         !semver.valid(node.doclet.since)
     ) {
@@ -466,27 +467,36 @@ function _inferVersion(node, version) {
             delete node.doclet.since;
         }
     }
-    if (node.doclet.until &&
-        !semver.valid(node.doclet.until)
+    if (semver.valid(parentSince) &&
+        (
+            !node.doclet.since ||
+            semver.compare(node.doclet.since, parentSince) < 0
+        )
     ) {
-        node.doclet.until += '.0';
-        if (!semver.valid(node.doclet.until)) {
-            delete node.doclet.until;
+        node.doclet.since = parentSince;
+    }
+
+    if (typeof node.doclet.deprecated === 'string' &&
+        !semver.valid(node.doclet.deprecated)
+    ) {
+        node.doclet.deprecated += '.0';
+        if (!semver.valid(node.doclet.deprecated)) {
+            delete node.doclet.deprecated;
         }
     }
-    if (!semver.valid(version)) {
-        return;
-    }
-    if (!node.doclet.since ||
-        semver.compare(node.doclet.since, version) < 0
+    if (semver.valid(parentDeprecated) &&
+        (
+            !node.doclet.deprecated ||
+            semver.compare(node.doclet.deprecated, parentDeprecated) < 0
+        )
     ) {
-        node.doclet.since = version;
+        node.doclet.deprecated = parentDeprecated;
     }
 }
 
-function inferVersion(node, version) {
+function inferVersion(node, parentDeprecated, parentSince) {
 
-    _inferVersion(node, version);
+    _inferVersion(node, parentDeprecated, parentSince);
 
     const children = node.children;
 
@@ -498,7 +508,9 @@ function inferVersion(node, version) {
         .keys(children)
         .map(key => children[key])
         .forEach(child => inferVersion(
-            child, node.doclet && node.doclet.since
+            child,
+            node.doclet?.deprecated,
+            node.doclet?.since
         ));
 }
 
@@ -831,6 +843,7 @@ function sortNodes (node) {
 ////////////////////////////////////////////////////////////////////////////////
 
 exports.defineTags = function (dictionary) {
+
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
             if (doclet.ignored) removeOption(tagObj.value);
@@ -849,6 +862,12 @@ exports.defineTags = function (dictionary) {
         mustNotHaveDescription: true,
         onTagged: function (doclet, tag) {
             doclet.declare = tag.value;
+        }
+    });
+
+    dictionary.defineTag('deprecated', {
+        onTagged: function (doclet, tag) {
+            doclet.deprecated = tag.value || true;
         }
     });
 
@@ -987,12 +1006,6 @@ exports.defineTags = function (dictionary) {
                 value: value,
                 products: valueObj.products
             });
-        }
-    });
-
-    dictionary.defineTag('until', {
-        onTagged: function (doclet, tagObj) {
-            doclet.until = tagObj.value;
         }
     });
 
