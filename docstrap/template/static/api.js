@@ -662,7 +662,7 @@ hapi.ajax = function(p) {
 
     if (def.deprecated) {
       deprecated = cr('p', 'deprecated', 'Deprecated' + (
-        def.until ? ' after ' + def.until : ''
+        def.deprecated === true ? '' : ' ' + def.deprecated
       ));
       option.setAttribute(
         'class', option.getAttribute('class') + ' deprecated'
@@ -793,24 +793,24 @@ hapi.ajax = function(p) {
         }
       }
 
-      function build(data) {
+      function build(def) {
         var optionList = document.getElementById('option-list'),
           option = cr('div', 'option option-header ' + toClassName(state)),
           title = cr('h1', 'title'),
           deprecated,
-          description = data.description && cr(
+          description = def.description && cr(
             'p',
             'description',
-            autolinks(data.description + (data.productdesc ? data.productdesc.value : '')),
+            autolinks(def.description + (def.productdesc ? def.productdesc.value : '')),
             true
           ),
           see,
           seeList,
           typeHTMLPath;
 
-        if (data.deprecated) {
+        if (def.deprecated) {
           deprecated = cr('p', 'deprecated', 'Deprecated' + (
-            data.until ? ' after ' + data.until : ''
+            def.deprecated === true ? '' : ' ' + def.deprecated
           ));
           option.setAttribute(
             'class', option.getAttribute('class') + ' deprecated'
@@ -827,24 +827,24 @@ hapi.ajax = function(p) {
         clearSearch();
         addClass(target, 'loaded');
 
-        if (data.typeList) {
-          data.typeList.names.forEach(function(type) {
+        if (def.typeList) {
+          def.typeList.names.forEach(function(type) {
             typeHTMLPath = getClassReferenceUrl(type);
             if (hasChildren && typeHTMLPath) {
-                data.see = (data.see || []);
-                data.see.push(cr('a', { href: typeHTMLPath }, type));
+                def.see = (def.see || []);
+                def.see.push(cr('a', { href: typeHTMLPath }, type));
             }
           });
         }
 
-        if (data.see) {
+        if (def.see) {
           see = cr('div', 'see');
           seeList = cr('ul');
           ap(see,
             cr('h4', null, 'See also:'),
             seeList
           );
-          data.see.forEach(function (seeItem) {
+          def.see.forEach(function (seeItem) {
             if (typeof seeItem === 'object') {
               ap(seeList,
                 ap(cr('li', 'see-item'), seeItem)
@@ -861,15 +861,15 @@ hapi.ajax = function(p) {
               title,
               deprecated,
               description,
-              getRequireList(data),
-              getSampleList(data),
+              getRequireList(def),
+              getSampleList(def),
               see
             )
           )
         );
 
-        data.children.forEach(function(def) {
-          createOption(optionList, def, data, state, origState);
+        def.children.forEach(function(def) {
+          createOption(optionList, def, def, state, origState);
         });
         if (typeof callback === 'function') {
           callback();
@@ -1186,7 +1186,7 @@ hapi.ajax = function(p) {
           name = 'Option: ' + name;
         }
         var snippet = cr('p');
-        webSearch.preview(entry).then(text => {
+        webSearch.preview(entry).then(function (text) {
             if (text.indexOf('Welcome') === 0 ||
                 text.indexOf('<b>') === -1
             ) {

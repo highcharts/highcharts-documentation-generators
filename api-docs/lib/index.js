@@ -247,8 +247,7 @@ function toFlatDump(input) {
           return '<a href="https://jsfiddle.net/gh/library/pure/highcharts/highcharts/tree/master/samples/' + e.value + '">' + e.name + '</a>';
         }).join('\n'),
         since: node.doclet.since,
-        until: node.doclet.until,
-        deprecated: !!node.doclet.deprecated,
+        deprecated: node.doclet.deprecated,
         isParent: Object.keys(node.children).length > 0,
         context: node.doclet.context,
         defaults: node.doclet.defaultvalue || node.meta.default,
@@ -1019,32 +1018,28 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 samples: productFilter(node.doclet, 'samples', product),
                 see: node.doclet.see,
                 typeList: node.doclet.type,
-                until: node.doclet.until,
-                children: node.children.map(function (child) {
-                    return {
-                        name: child.node.meta.name,
-                        fullname: child.node.meta.fullname,
-                        isLeaf: !child.node.children || child.node.children.length === 0,
-                        context: child.node.doclet.context,
-                        default: resolveDefaultByProduct(child.node, product),
-                        typeList: child.node.doclet.type,
-                        supportsArray: child.node.doclet.supportsArray,
-                        description: child.node.doclet.description,
-                        productdesc: productFilter(child.node.doclet, 'productdesc', product),
-                        extends: child.node.doclet.extends,
-                        inheritedFrom: child.node.meta.inheritedFrom,
-                        since: child.node.doclet.since,
-                        until: child.node.doclet.until,
-                        deprecated: child.node.doclet.deprecated,
-                        requires: requiresFilter(child.node.doclet, product),
-                        samples: productFilter(child.node.doclet, 'samples', product),
-                        see: child.node.doclet.see,
-                        filename: (child.node.meta.filename || ''),
-                        line: child.node.meta.line,
-                        lineEnd: child.node.meta.lineEnd,
-                        version: version
-                    };
-                })
+                children: node.children.map(child => ({
+                    context: child.node.doclet.context,
+                    default: resolveDefaultByProduct(child.node, product),
+                    deprecated: child.node.doclet.deprecated,
+                    description: child.node.doclet.description,
+                    extends: child.node.doclet.extends,
+                    filename: (child.node.meta.filename || ''),
+                    fullname: child.node.meta.fullname,
+                    isLeaf: !child.node.children || child.node.children.length === 0,
+                    inheritedFrom: child.node.meta.inheritedFrom,
+                    line: child.node.meta.line,
+                    lineEnd: child.node.meta.lineEnd,
+                    name: child.node.meta.name,
+                    productdesc: productFilter(child.node.doclet, 'productdesc', product),
+                    requires: requiresFilter(child.node.doclet, product),
+                    samples: productFilter(child.node.doclet, 'samples', product),
+                    see: child.node.doclet.see,
+                    since: child.node.doclet.since,
+                    supportsArray: child.node.doclet.supportsArray,
+                    typeList: child.node.doclet.type,
+                    version: version
+                }))
             })
         );
     }
