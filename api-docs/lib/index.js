@@ -301,39 +301,44 @@ function toSitemap(product, flatListKeys) {
     );
 }
 
-function mergeNode(achildren, bchildren, fullExclude) {
+function mergeNode(achildren, bchildren, fullExclude, bpath) {
 
     let valid = {
-        meta: [
-            'default',
-            'fullname',
-            'name',
-            'line',
-            'lineEnd',
-            'columnd',
-            'filename'
-        ],
-        doclet: [
-            'defaultByProduct',
-            'defaultvalue',
-            'deprecated',
-            'description',
-            'productdesc',
-            'samples',
-            'extends',
-            'excludes',
-            'products',
-            'requires',
-            'since',
-            'type',
-            'values'
-        ]
-    };
+            meta: [
+                'default',
+                'fullname',
+                'name',
+                'line',
+                'lineEnd',
+                'columnd',
+                'filename'
+            ],
+            doclet: [
+                'defaultByProduct',
+                'defaultvalue',
+                'deprecated',
+                'description',
+                'productdesc',
+                'samples',
+                'extends',
+                'excludes',
+                'products',
+                'requires',
+                'see',
+                'since',
+                'type',
+                'values'
+            ]
+        },
+        achild,
+        bchild,
+        avalue,
+        bvalue;
 
-    for (const bk of Object.keys(bchildren)) {
+    for (const bname of Object.keys(bchildren)) {
 
-        let bchild = bchildren[bk];
-        let achild = achildren[bk];
+        achild = achildren[bname];
+        bchild = bchildren[bname];
 
         // for (const tag of (achild?.doclet?.tags) || [])) {
         //   if (tag.title === 'excluding' || tag.title === 'exclude') {
@@ -343,12 +348,12 @@ function mergeNode(achildren, bchildren, fullExclude) {
         //   }
         // }
 
-        if (fullExclude && fullExclude[bk]) {
+        if (fullExclude && fullExclude[bname]) {
             continue;
         }
 
         if (!achild) {
-            achild = achildren[bk] = {};
+            achild = achildren[bname] = {};
         }
 
         achild.meta = achild.meta || {};
@@ -370,6 +375,7 @@ function mergeNode(achildren, bchildren, fullExclude) {
         }
 
         for (const key of valid.doclet) {
+
             if (
                 key === 'defaultByProduct' &&
                 (
@@ -381,16 +387,32 @@ function mergeNode(achildren, bchildren, fullExclude) {
                 continue;
             }
 
-            achild.doclet[key] = (
-                typeof achild.doclet[key] !== 'undefined' ?
-                    achild.doclet[key] :
-                    bchild.doclet[key]
-            );
+            avalue = achild.doclet[key];
+            bvalue = bchild.doclet[key];
+
+            if (
+                typeof avalue !== 'undefined' ||
+                typeof bvalue === 'undefined'
+            ) {
+                continue;
+            }
+
+            switch (key) {
+                case 'see':
+                    if (bpath.startsWith('plotOptions.')) {
+                        achild.doclet[key] = bvalue.map(bitem => bitem.replace(/plotOptions\./g, 'series.'));
+                    } // otherwise do not merge see
+                    break;
+                default:
+                    achild.doclet[key] = bvalue;
+                    break;
+            }
+
         }
 
         if (bchild.children) {
             achild.children = achild.children || {};
-            mergeNode(achild.children, bchild.children);
+            mergeNode(achild.children, bchild.children, {}, bpath);
         }
     }
 }
@@ -532,15 +554,13 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
         target.doclet.extends = target.doclet.extends.replace(path, '');
 
-        path = path.split('.');
-
-        for (const p of path) {
+        for (const p of path.split('.')) {
             if (current.children[p]) {
                 current = current.children[p];
             } else {
                 console.info(
                     'Unable to resolve path for merge:'.red,
-                    path.join('.'),
+                    path,
                     '->',
                     trigger
                 );
@@ -558,7 +578,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             }
 
             // mergeObj(target.children, current.children, false, exclude, true);
-            mergeNode(target.children, current.children, exclude);
+            mergeNode(target.children, current.children, exclude, path);
 
             // target.doclet.defaultvalue = old.doclet.defaultvalue || target.doclet.defaultvalue;
 
