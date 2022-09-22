@@ -301,7 +301,7 @@ function toSitemap(product, flatListKeys) {
     );
 }
 
-function mergeNode(achildren, bchildren, fullExclude, bpath) {
+function mergeNode(achildren, bchildren, fullExclude, apath, bpath) {
 
     let valid = {
             meta: [
@@ -399,8 +399,14 @@ function mergeNode(achildren, bchildren, fullExclude, bpath) {
 
             switch (key) {
                 case 'see':
-                    if (bpath.startsWith('plotOptions.')) {
-                        achild.doclet[key] = bvalue.map(bitem => bitem.replace(/plotOptions\./g, 'series.'));
+                    if (
+                        apath.startsWith('series.') ||
+                        bpath.startsWith('plotOptions')
+                    ) {
+                        const replacement = apath.split('.').slice(0, 2).join('.');
+                        achild.doclet[key] = bvalue.map(bitem =>
+                            bitem.replace(/plotOptions\.[^\.]+/g, replacement)
+                        );
                     } // otherwise do not merge see
                     break;
                 default:
@@ -412,7 +418,7 @@ function mergeNode(achildren, bchildren, fullExclude, bpath) {
 
         if (bchild.children) {
             achild.children = achild.children || {};
-            mergeNode(achild.children, bchild.children, {}, bpath);
+            mergeNode(achild.children, bchild.children, {}, apath, bpath);
         }
     }
 }
@@ -506,7 +512,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
     // End series hack
 
-    function cloneChildren(target, path, trigger) {
+    function cloneChildren(target, extPath, fullname) {
 
         var exclude = {
            // 'default': true,
@@ -544,7 +550,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         }
 
         // We need to do a deep merge because we have to rewrite the fullname
-        if (!path) {
+        if (!extPath) {
             return false;
         }
 
@@ -552,17 +558,17 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             children: input
         };
 
-        target.doclet.extends = target.doclet.extends.replace(path, '');
+        target.doclet.extends = target.doclet.extends.replace(extPath, '');
 
-        for (const p of path.split('.')) {
+        for (const p of extPath.split('.')) {
             if (current.children[p]) {
                 current = current.children[p];
             } else {
                 console.info(
                     'Unable to resolve path for merge:'.red,
-                    path,
+                    extPath,
                     '->',
-                    trigger
+                    fullname
                 );
 
                 current = undefined;
@@ -571,14 +577,14 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         }
 
         if (current) {
-            merge(current);
+            merge(current, extPath);
 
             if (!current.children) {
                 current.children = {};
             }
 
             // mergeObj(target.children, current.children, false, exclude, true);
-            mergeNode(target.children, current.children, exclude, path);
+            mergeNode(target.children, current.children, exclude, fullname, extPath);
 
             // target.doclet.defaultvalue = old.doclet.defaultvalue || target.doclet.defaultvalue;
 
@@ -664,11 +670,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                     0
             ));
 
-            for (const parent of ext) {
+            for (const extPath of ext) {
                 // Duplicate children
-                if (parent && parent.length > 0) {
+                if (extPath && extPath.length > 0) {
                     node.children = node.children || {};
-                    cloneChildren(node, parent, fullname);
+                    cloneChildren(node, extPath, fullname);
                 }
             }
         }
