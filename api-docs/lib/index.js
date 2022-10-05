@@ -356,12 +356,15 @@ function mergeNode(achildren, bchildren, fullExclude, apath, bpath) {
             achild = achildren[bname] = {};
         }
 
-        achild.meta = achild.meta || {};
         achild.doclet = achild.doclet || {};
+        achild.meta = achild.meta || {};
 
+        if (bname === 'showLastLabel') {
+            console.log(achild.doclet, achild.meta);
+        }
         if (
-            typeof achild.meta.default !== 'undefined' &&
-            typeof achild.doclet.defaultvalue === 'undefined'
+            typeof achild.doclet.defaultvalue === 'undefined' &&
+            typeof achild.meta.default !== 'undefined'
         ) {
             achild.doclet.defaultvalue = achild.meta.default;
         }
@@ -719,7 +722,9 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             node.doclet.description = markdown(node.doclet.description);
         }
         if (node.doclet && node.doclet.productdesc) {
-            node.doclet.productdesc.value = markdown(node.doclet.productdesc.value);
+            for (const productdesc of node.doclet.productdesc) {
+                productdesc.value = markdown(productdesc.value);
+            }
         }
 
         if (node.doclet && node.doclet.see) {
@@ -1039,7 +1044,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             JSON.stringify({
                 deprecated: node.doclet.deprecated,
                 description: node.doclet.description,
-                productdesc: productFilter(node.doclet, 'productdesc', product),
+                productdesc: (productFilter(node.doclet, 'productdesc', product) || [])[0],
                 requires: requiresFilter(node.doclet, product),
                 samples: productFilter(node.doclet, 'samples', product),
                 see: node.doclet.see,
@@ -1057,7 +1062,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                     line: child.node.meta.line,
                     lineEnd: child.node.meta.lineEnd,
                     name: child.node.meta.name,
-                    productdesc: productFilter(child.node.doclet, 'productdesc', product),
+                    productdesc: (productFilter(child.node.doclet, 'productdesc', product) || [])[0],
                     requires: requiresFilter(child.node.doclet, product),
                     samples: productFilter(child.node.doclet, 'samples', product),
                     see: child.node.doclet.see,
