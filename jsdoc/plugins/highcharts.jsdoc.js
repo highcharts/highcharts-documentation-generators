@@ -556,11 +556,10 @@ function inferValue(obj) {
 
         const types = obj.doclet.type.names;
 
-        if (typeof obj.meta.default !== 'undefined') {
-            obj.doclet.default = _inferValue(obj.meta.default, types);
-        }
-
-        if (typeof obj.meta.defaultvalue !== 'undefined') {
+        if (
+            typeof obj.doclet.defaultvalue === 'undefined' &&
+            typeof obj.meta.default !== 'undefined'
+        ) {
             obj.doclet.defaultvalue = _inferValue(obj.meta.default, types);
         }
 
@@ -798,7 +797,7 @@ function resolveProductTypes(doclet, tagObj) {
         products = match[0].replace('{', '').replace('}', '').split('|');
     }
 
-    return doclet[tagObj.originalTitle] = {
+    return {
         value: value.trim(),
         products: products
     };
@@ -966,7 +965,11 @@ exports.defineTags = function (dictionary) {
     });
 
     dictionary.defineTag('productdesc', {
-        onTagged: resolveProductTypes
+        onTagged: function (doclet, tag) {
+            var valueObj = resolveProductTypes(doclet, tag);
+            doclet.productdesc = (doclet.productdesc || []);
+            doclet.productdesc.push(valueObj);
+        }
     });
 
     dictionary.defineTag('requires', {
