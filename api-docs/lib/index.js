@@ -359,9 +359,6 @@ function mergeNode(achildren, bchildren, fullExclude, apath, bpath) {
         achild.doclet = achild.doclet || {};
         achild.meta = achild.meta || {};
 
-        if (bname === 'showLastLabel') {
-            console.log(achild.doclet, achild.meta);
-        }
         if (
             typeof achild.doclet.defaultvalue === 'undefined' &&
             typeof achild.meta.default !== 'undefined'
