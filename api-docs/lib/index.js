@@ -16,7 +16,7 @@ const {
     writeFile
 } = fs.promises;
 const join = require('path').join;
-const marked = require('marked'); // markdown parser
+const { marked } = require('marked'); // markdown parser
 const mkdirp = require('mkdirp');
 const templates = require('./templates');
 
@@ -247,10 +247,10 @@ function toFlatDump(input) {
           return '<a href="https://jsfiddle.net/gh/library/pure/highcharts/highcharts/tree/master/samples/' + e.value + '">' + e.name + '</a>';
         }).join('\n'),
         since: node.doclet.since,
+        deprecated: node.doclet.deprecated,
         isParent: Object.keys(node.children).length > 0,
         context: node.doclet.context,
         defaults: node.doclet.defaultvalue || node.meta.default,
-        deprecated: node.doclet.deprecated === true,
         returnType: node.doclet.type ? node.doclet.type.names.join('|') : undefined,
         seeAlso: (node.doclet.see || []).join('\n'),
         products: node.doclet.products,
@@ -301,76 +301,126 @@ function toSitemap(product, flatListKeys) {
     );
 }
 
-function mergeNode(achildren, bchildren, fullExclude) {
+function mergeNode(achildren, bchildren, fullExclude, apath, bpath) {
 
-  let valid = {
-    meta: {
-      default: 1,
-      fullname: 1,
-      name: 1,
-      line: 1,
-      lineEnd: 1,
-      columnd: 1,
-      filename: 1
-    },
-    doclet: {
-      defaultByProduct: 1,
-      defaultvalue: 1,
-      deprecated: 1,
-      description: 1,
-      productdesc: 1,
-      samples: 1,
-      extends: 1,
-      excludes: 1,
-      products: 1,
-      requires: 1,
-      since: 1,
-      type: 1,
-      values: 1
+    let valid = {
+            meta: [
+                'default',
+                'fullname',
+                'name',
+                'line',
+                'lineEnd',
+                'columnd',
+                'filename'
+            ],
+            doclet: [
+                'defaultByProduct',
+                'defaultvalue',
+                'deprecated',
+                'description',
+                'productdesc',
+                'samples',
+                'extends',
+                'excludes',
+                'products',
+                'requires',
+                'see',
+                'since',
+                'type',
+                'values'
+            ]
+        },
+        achild,
+        bchild,
+        avalue,
+        bvalue;
+
+    for (const bname of Object.keys(bchildren)) {
+
+        achild = achildren[bname];
+        bchild = bchildren[bname];
+
+        // for (const tag of (achild?.doclet?.tags) || [])) {
+        //   if (tag.title === 'excluding' || tag.title === 'exclude') {
+        //     for (const p of tag.value.split(',')) {
+        //       fullExclude[p.trim()] = true;
+        //     });
+        //   }
+        // }
+
+        if (fullExclude && fullExclude[bname]) {
+            continue;
+        }
+
+        if (!achild) {
+            achild = achildren[bname] = {};
+        }
+
+        achild.doclet = achild.doclet || {};
+        achild.meta = achild.meta || {};
+
+        if (
+            typeof achild.doclet.defaultvalue === 'undefined' &&
+            typeof achild.meta.default !== 'undefined'
+        ) {
+            achild.doclet.defaultvalue = achild.meta.default;
+        }
+
+        for (const key of valid.meta) {
+            achild.meta[key] = (
+                typeof achild.meta[key] !== 'undefined' ?
+                    achild.meta[key] :
+                    bchild.meta[key]
+            );
+        }
+
+        for (const key of valid.doclet) {
+
+            if (
+                key === 'defaultByProduct' &&
+                (
+                    typeof achild.doclet.default !== 'undefined' ||
+                    typeof achild.doclet.defaultvalue !== 'undefined'
+                )
+            ) {
+                // local default wins over product inheritance
+                continue;
+            }
+
+            avalue = achild.doclet[key];
+            bvalue = bchild.doclet[key];
+
+            if (
+                typeof avalue !== 'undefined' ||
+                typeof bvalue === 'undefined'
+            ) {
+                continue;
+            }
+
+            switch (key) {
+                case 'see':
+                    if (
+                        apath.startsWith('series.') ||
+                        bpath.startsWith('plotOptions')
+                    ) {
+                        const replacement = apath.split('.').slice(0, 2).join('.');
+                        achild.doclet[key] = bvalue.map(bitem =>
+                            bitem.replace(/plotOptions\.[^\.]+/g, replacement)
+                        );
+                    } // otherwise do not merge see
+                    break;
+                default:
+                    achild.doclet[key] = bvalue;
+                    break;
+            }
+
+        }
+
+        if (bchild.children) {
+            achild.children = achild.children || {};
+            mergeNode(achild.children, bchild.children, {}, apath, bpath);
+        }
     }
-  };
-
-  Object.keys(bchildren).forEach((bk) => {
-
-    let bchild = bchildren[bk];
-    let achild = achildren[bk];
-
-    // ((achild && achild.doclet && achild.doclet.tags) || []).forEach(function (tag) {
-    //   if (tag.title === 'excluding' || tag.title === 'exclude') {
-    //       tag.value.split(',').forEach(function (p) {
-    //       fullExclude[p.trim()] = true;
-    //     });
-    //   }
-    // });
-
-    if (fullExclude && fullExclude[bk]) {
-      return;
-    }
-
-    if (!achild) {
-      achild = achildren[bk] = {};
-    }
-
-    achild.meta = achild.meta || {};
-    achild.doclet = achild.doclet || {};
-
-    if (typeof achild.meta.default !== 'undefined' && typeof achild.doclet.defaultvalue === 'undefined') {
-      achild.doclet.defaultvalue = achild.meta.default;
-    }
-
-    Object.keys(valid.meta).forEach((key) => {
-      achild.meta[key] = typeof achild.meta[key] !== 'undefined' ? achild.meta[key] : bchild.meta[key];
-    });
-
-    Object.keys(valid.doclet).forEach((key) => {
-      achild.doclet[key] = typeof achild.doclet[key] !== 'undefined' ? achild.doclet[key] : bchild.doclet[key];
-    });
-
-    if (bchild.children) {
-      achild.children = achild.children || {};
-      mergeNode(achild.children, bchild.children);
-    }
-  });
 }
 
 const copyFile = (from, to) => {
@@ -438,30 +488,31 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
     }
 
     // Start series hack
-    Object.keys(input.series.children).forEach(function (child) {
+    for (const child of Object.keys(input.series.children)) {
         var node = input.series.children[child];
 
-        if ((node.doclet.extends || []).length === 0 &&
+        if (
+            (node.doclet.extends || []).length === 0 &&
             Object.keys(node.children).length === 0
         ) {
             commonSeries[child] = mergeObj({}, node);
             delete input.series.children[child];
         }
-    });
+    }
 
-    Object.keys(input.series.children).forEach(function (k) {
+    for (const k of Object.keys(input.series.children)) {
         var node = input.series.children[k];
 
-        Object.keys(commonSeries).forEach(function (c) {
+        for (const c of Object.keys(commonSeries)) {
             if (c !== 'data') {
                 node.children[c] = mergeObj({}, commonSeries[c]);
             }
-        });
-    });
+        }
+    }
 
     // End series hack
 
-    function cloneChildren(target, path, trigger) {
+    function cloneChildren(target, extPath, fullname) {
 
         var exclude = {
            // 'default': true,
@@ -484,22 +535,22 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         //   doclet: Object.assign({}, target.doclet)
         // };
 
-        (target.doclet.tags || []).forEach(function (tag) {
+        for (const tag of (target.doclet.tags || [])) {
             if (tag.title === 'excluding' || tag.title === 'exclude') {
-                tag.value.split(',').forEach(function (p) {
-                  exclude[p.trim()] = true;
-                });
+                for (const p of tag.value.split(',')) {
+                    exclude[p.trim()] = true;
+                }
             }
-        });
-
-        if (target.doclet.exclude) {
-          (target.doclet.exclude || []).forEach(function (name) {
-            exclude[name] = true;
-          });
         }
 
-        //We need to do a deep merge because we have to rewrite the fullname
-        if (!path) {
+        if (target.doclet.exclude) {
+            for (const name of (target.doclet.exclude || [])) {
+                exclude[name] = true;
+            }
+        }
+
+        // We need to do a deep merge because we have to rewrite the fullname
+        if (!extPath) {
             return false;
         }
 
@@ -507,40 +558,39 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             children: input
         };
 
-        target.doclet.extends = target.doclet.extends.replace(path, '');
+        target.doclet.extends = target.doclet.extends.replace(extPath, '');
 
-        path = path.split('.');
-
-        path.some(function (p) {
+        for (const p of extPath.split('.')) {
             if (current.children[p]) {
                 current = current.children[p];
             } else {
                 console.info(
                     'Unable to resolve path for merge:'.red,
-                    path.join('.'),
+                    extPath,
                     '->',
-                    trigger
+                    fullname
                 );
 
-                current = false;
-                return true;
+                current = undefined;
+                break;
             }
-        });
+        }
 
         if (current) {
-            merge(current);
+            merge(current, extPath);
 
             if (!current.children) {
                 current.children = {};
             }
 
             // mergeObj(target.children, current.children, false, exclude, true);
-            mergeNode(target.children, current.children, exclude);
+            mergeNode(target.children, current.children, exclude, fullname, extPath);
 
             // target.doclet.defaultvalue = old.doclet.defaultvalue || target.doclet.defaultvalue;
 
             return true;
         }
+
         return false;
     }
 
@@ -557,7 +607,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         var children = [];
 
         if (node.children) {
-            Object.keys(node.children).forEach(function (child) {
+            for (const child of Object.keys(node.children)) {
                 // node.children[child].meta = node.children[child].meta || {};
                 // node.children[child].doclet = node.children[child].doclet || {};
 
@@ -567,12 +617,12 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                     node: node.children[child],
                     version: versionProps
                 });
-            });
+            }
         }
 
-        children.sort(function (a, b) {
-            return a.shortName.toLowerCase().localeCompare(b.shortName.toLowerCase());
-        })
+        children.sort((a, b) =>
+            a.shortName.toLowerCase().localeCompare(b.shortName.toLowerCase())
+        );
 
         node.children = children;
     }
@@ -580,20 +630,20 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
     function merge(node, fullname) {
         fullname = fullname || '';
 
-        var exclude = {
+        node.doclet = node.doclet || {};
+        node.meta = node.meta || {};
+
+        const exclude = {
             // 'default': true,
             'defaultvalue': true,
             // 'samples': true,
             products: true
         };
 
-        node.doclet = node.doclet || {};
-        node.meta = node.meta || {};
-
         if (node.doclet && node.doclet.exclude) {
-            (node.doclet.exclude || []).forEach(function (name) {
+            for (const name of (node.doclet.exclude || [])) {
                 exclude[name] = true;
-            });
+            }
         }
 
         // Take care of extensions
@@ -614,31 +664,30 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 .split(',');
 
             // Should always extend plotOptions.series last
-            ext.sort((a, b) => {
-                if (a === 'plotOptions.series') return 1;
-                if (b === 'plotOptions.series') return -1;
-                return 0;
-            });
+            ext.sort((a, b) => (
+                a === 'plotOptions.series' ? 1 :
+                    b === 'plotOptions.series' ? -1 :
+                    0
+            ));
 
-            ext.forEach(function (parent) {
-                //Duplicate children
-                if (parent && parent.length > 0) {
-                    //console.log('Merging', parent, 'into', fullname);
+            for (const extPath of ext) {
+                // Duplicate children
+                if (extPath && extPath.length > 0) {
                     node.children = node.children || {};
-                    cloneChildren(node, parent, fullname);
+                    cloneChildren(node, extPath, fullname);
                 }
-            });
+            }
         }
 
         if (node.children) {
-            Object.keys(node.children).forEach(function (c) {
+            for (const c of Object.keys(node.children)) {
                 if (exclude[c]) {
                     node.children[c] = undefined;
                     delete node.children[c];
-                    return;
+                    continue;
                 }
                 merge(node.children[c], (fullname.length > 0 ? fullname + '.' : '') + c);
-            });
+            }
         }
     }
 
@@ -658,7 +707,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         return 'object';
     }
 
-    //Do some transformations
+    // Do some transformations
     function transform(name, node, parentName, parent) {
         var s, v = false;
 
@@ -670,20 +719,23 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             node.doclet.description = markdown(node.doclet.description);
         }
         if (node.doclet && node.doclet.productdesc) {
-            node.doclet.productdesc.value = markdown(node.doclet.productdesc.value);
+            for (const productdesc of node.doclet.productdesc) {
+                productdesc.value = markdown(productdesc.value);
+            }
         }
 
         if (node.doclet && node.doclet.see) {
           if (node.doclet.see.forEach) {
-            node.doclet.see = node.doclet.see.map(function (t) {
-              return markdown(t);
-            });
+            node.doclet.see = node.doclet.see.map(t => markdown(t));
           }
         }
 
         // Inherit the since tag from parent
-        if (typeof node.doclet.since === 'undefined' && parent && parent.doclet && typeof parent.doclet.since !== 'undefined') {
-          node.doclet.since = parent.doclet.since;
+        if (
+            typeof node.doclet.since === 'undefined' &&
+            typeof parent?.doclet?.since !== 'undefined'
+        ) {
+            node.doclet.since = parent.doclet.since;
         }
 
         if (!node.meta.name) {
@@ -729,7 +781,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 s = node.doclet.products.split(' ');
             }
 
-            s.forEach(function (p) {
+            for (const p of s) {
                 products[p] = products[p] || {
                     current: true
                 };
@@ -738,11 +790,14 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 } else {
                     products[p].current = products[p].current || true;
                 }
-            });
+            }
         }
 
         // Guess types from default values
-        if (node.doclet && !node.doclet.type) {
+        if (
+            node.doclet &&
+            !node.doclet.type
+        ) {
             let defaultvalueForType = node.doclet.defaultvalue;
             if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
                 defaultvalueForType = node.meta.default;
@@ -761,15 +816,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         }
 
         if (node.doclet && node.doclet.type) {
-            node.doclet.types = {};
-
-            node.doclet.type.names.forEach(function (t) {
+            for (const t of node.doclet.type.names) {
                 if (t.toLowerCase().trim().indexOf('array') === 0) {
-                    node.doclet.types['array'] = extractArrayType(t).toLowerCase();
-                } else {
-                    node.doclet.types[t] = 1;
+                    node.doclet.supportsArray = true;
                 }
-            });
+            }
         }
 
 
@@ -779,11 +830,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
             name = parentName ? parentName + '.' + name : name;
 
-            Object.keys(node.children).forEach(function (child) {
+            for (const child of Object.keys(node.children)) {
                 if (child !== '_meta' && child) {
                     transform(child, node.children[child], name, node);
                 }
-            });
+            }
         }
     }
 
@@ -844,14 +895,14 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             // }
 
             if (ns.children) {
-                Object.keys(ns.children).forEach(function (child) {
+                for (const child of Object.keys(ns.children)) {
                     if (isAllowed(ns.children[child])) {
                         flatList[ns.children[child].meta.fullname] = 1;
                         res.children[child] = filterChildren(
                             ns.children[child]
                         );
                     }
-                });
+                }
             }
 
             return res;
@@ -990,41 +1041,40 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             JSON.stringify({
                 deprecated: node.doclet.deprecated,
                 description: node.doclet.description,
-                productdesc: productFilter(node.doclet, 'productdesc', product),
+                productdesc: (productFilter(node.doclet, 'productdesc', product) || [])[0],
                 requires: requiresFilter(node.doclet, product),
                 samples: productFilter(node.doclet, 'samples', product),
                 see: node.doclet.see,
                 typeList: node.doclet.type,
-                children: node.children.map(function (child) {
-                    return {
-                        name: child.node.meta.name,
-                        fullname: child.node.meta.fullname,
-                        isLeaf: !child.node.children || child.node.children.length === 0,
-                        context: child.node.doclet.context,
-                        default: resolveDefaultByProduct(child.node, product),
-                        typeMap: child.node.doclet.types,
-                        typeList: child.node.doclet.type,
-                        description: child.node.doclet.description,
-                        productdesc: productFilter(child.node.doclet, 'productdesc', product),
-                        extends: child.node.doclet.extends,
-                        inheritedFrom: child.node.meta.inheritedFrom,
-                        deprecated: child.node.doclet.deprecated,
-                        since: child.node.doclet.since,
-                        requires: requiresFilter(child.node.doclet, product),
-                        samples: productFilter(child.node.doclet, 'samples', product),
-                        see: child.node.doclet.see,
-                        filename: (child.node.meta.filename || ''),
-                        line: child.node.meta.line,
-                        lineEnd: child.node.meta.lineEnd,
-                        version: version
-                    };
-                })
+                children: node.children.map(child => ({
+                    context: child.node.doclet.context,
+                    default: resolveDefaultByProduct(child.node, product),
+                    deprecated: child.node.doclet.deprecated,
+                    description: child.node.doclet.description,
+                    extends: child.node.doclet.extends,
+                    filename: (child.node.meta.filename || ''),
+                    fullname: child.node.meta.fullname,
+                    isLeaf: !child.node.children || child.node.children.length === 0,
+                    inheritedFrom: child.node.meta.inheritedFrom,
+                    line: child.node.meta.line,
+                    lineEnd: child.node.meta.lineEnd,
+                    name: child.node.meta.name,
+                    productdesc: (productFilter(child.node.doclet, 'productdesc', product) || [])[0],
+                    requires: requiresFilter(child.node.doclet, product),
+                    samples: productFilter(child.node.doclet, 'samples', product),
+                    see: child.node.doclet.see,
+                    since: child.node.doclet.since,
+                    supportsArray: child.node.doclet.supportsArray,
+                    typeList: child.node.doclet.type,
+                    version: version
+                }))
             })
         );
     }
 
     function generateDetails(name, node, opath, product, version, toc, constr) {
         name = templateize(name);
+        version = (version === 'current' ? versionProps.version : version);
 
         // work around #8260:
         if (name.indexOf('undefined') > 0) {
@@ -1041,8 +1091,9 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             return;
         }
 
-        var filename = (name || 'index') + '.html',
+        const filename = (name || 'index') + '.html',
             productName = getProductName(product),
+            downloadUrl = '../zips/' + productName.replace(/\s+/gu, '-') + '-' + version + '-API.zip',
             opengraph = {
                 description: 'Interactive charts for your web pages.',
                 determiner: '',
@@ -1092,7 +1143,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
         sortAndArrayify(node);
 
-        node.children.forEach(function (child) {
+        for (const child of node.children) {
             generateDetails(
                 child.name,
                 child.node,
@@ -1102,10 +1153,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
                 toc,
                 constr
             );
-        });
+        }
 
         templates.dump('main', (opath || outputPath) + filename, {
             date: new Date(),
+            downloadUrl,
             includeClassReference: (platform === 'JS'),
             initial: false,
             name: name,
@@ -1120,7 +1172,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             searchTitle: getSearchTitle(node),
             toc: toc,
             twitter: twitter,
-            version: version === 'current' ? versionProps.version : version,
+            version,
             versionProps: versionProps,
             year: (new Date()).getFullYear(),
             constr

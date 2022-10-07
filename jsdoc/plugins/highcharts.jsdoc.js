@@ -44,19 +44,38 @@ function getLocation(option) {
 }
 
 const getPalette = () => {
-    const filePath = [hcRoot, 'js', 'Core'];
+    const palette1Path = fsPath.join(hcRoot, 'js', 'Core', 'Palette.js');
+    const palette2Path = fsPath.join(hcRoot, 'js', 'Core', 'Color', 'Palette.js');
+    const palette3Path = fsPath.join(hcRoot, 'ts', 'Core', 'Color', 'Palettes.ts');
 
-    if (fs.existsSync(fsPath.join(...filePath, 'Color', 'Palette.js'))) {
-        filePath.push('Color');
+    if (fs.existsSync(palette3Path)) {
+        return (new Function(
+            'const ' +
+            fs
+                .readFileSync(palette3Path)
+                .toString()
+                .match(/Palette {[^}]*}/g)[0]
+                .replace(/=/g, ':')
+                .replace('{', '= {') +
+            '; return Palette;'
+        )());
     }
 
-    const file = fs
-        .readFileSync(fsPath.join(...filePath, 'Palette.js'), 'utf-8')
-        .replace('export default palette;', '');
+    if (fs.existsSync(palette2Path)) {
+        return (new Function(fs
+            .readFileSync(palette2Path)
+            .toString()
+            .replace('export default palette;', '') +
+            '; return palette;'
+        )());
+    }
 
-    const palette = (new Function(`${file}; return palette;`)());
-
-    return palette;
+    return (new Function(fs
+        .readFileSync(palette1Path)
+        .toString()
+        .replace('export default palette;', '') +
+        '; return palette;'
+    )());
 }
 
 function dumpOptions() {
@@ -126,7 +145,11 @@ function decorateOptions(parent, target, option, filename) {
         comment &&
         (
             comment.indexOf('@ignore') !== -1 ||
-            comment.indexOf('@apioption') !== -1 // has manual decoration
+            (
+                // has manual decoration
+                comment.indexOf('@apioption') !== -1 &&
+                comment.indexOf('@type') !== -1
+            )
         )
     ) {
         return;
@@ -140,7 +163,7 @@ function decorateOptions(parent, target, option, filename) {
 
     target[index] = target[index] || {
         doclet: {},
-      //  type: option.key.type,
+        // type: option.key.type,
         children: {}
     };
 
@@ -429,12 +452,13 @@ function improveDescription(node) {
     }
 }
 
-function _inferVersion(node, version) {
+function _inferVersion(node, parentDeprecated, parentSince) {
     if (!node.doclet ||
         !node.doclet.description
     ) {
         return;
     }
+
     if (node.doclet.since &&
         !semver.valid(node.doclet.since)
     ) {
@@ -443,19 +467,36 @@ function _inferVersion(node, version) {
             delete node.doclet.since;
         }
     }
-    if (!semver.valid(version)) {
-        return;
-    }
-    if (!node.doclet.since ||
-        semver.compare(node.doclet.since, version) < 0
+    if (semver.valid(parentSince) &&
+        (
+            !node.doclet.since ||
+            semver.compare(node.doclet.since, parentSince) < 0
+        )
     ) {
-        node.doclet.since = version;
+        node.doclet.since = parentSince;
+    }
+
+    if (typeof node.doclet.deprecated === 'string' &&
+        !semver.valid(node.doclet.deprecated)
+    ) {
+        node.doclet.deprecated += '.0';
+        if (!semver.valid(node.doclet.deprecated)) {
+            delete node.doclet.deprecated;
+        }
+    }
+    if (semver.valid(parentDeprecated) &&
+        (
+            !node.doclet.deprecated ||
+            semver.compare(node.doclet.deprecated, parentDeprecated) < 0
+        )
+    ) {
+        node.doclet.deprecated = parentDeprecated;
     }
 }
 
-function inferVersion(node, version) {
+function inferVersion(node, parentDeprecated, parentSince) {
 
-    _inferVersion(node, version);
+    _inferVersion(node, parentDeprecated, parentSince);
 
     const children = node.children;
 
@@ -467,7 +508,9 @@ function inferVersion(node, version) {
         .keys(children)
         .map(key => children[key])
         .forEach(child => inferVersion(
-            child, node.doclet && node.doclet.since
+            child,
+            node.doclet?.deprecated,
+            node.doclet?.since
         ));
 }
 
@@ -513,11 +556,10 @@ function inferValue(obj) {
 
         const types = obj.doclet.type.names;
 
-        if (typeof obj.meta.default !== 'undefined') {
-            obj.doclet.default = _inferValue(obj.meta.default, types);
-        }
-
-        if (typeof obj.meta.defaultvalue !== 'undefined') {
+        if (
+            typeof obj.doclet.defaultvalue === 'undefined' &&
+            typeof obj.meta.default !== 'undefined'
+        ) {
             obj.doclet.defaultvalue = _inferValue(obj.meta.default, types);
         }
 
@@ -574,15 +616,20 @@ function _inferType(node) {
 
     node.doclet.type = { names: [] };
 
-    if (isBool(defVal)) {
+    if (
+        isBool(defVal) ||
+        defVal === 'false' ||
+        defVal === 'true'
+    ) {
         node.doclet.type.names.push('boolean');
-    }
-
-    if (isNum(defVal)) {
+    } else if (
+        isNum(defVal) ||
+        /^\d+(\.\d+)?/.test(defVal)
+    ) {
         node.doclet.type.names.push('number');
-    }
-
-    if (isStr(defVal)) {
+    } else if (
+        isStr(defVal)
+    ) {
         node.doclet.type.names.push('string');
     }
 
@@ -750,7 +797,7 @@ function resolveProductTypes(doclet, tagObj) {
         products = match[0].replace('{', '').replace('}', '').split('|');
     }
 
-    return doclet[tagObj.originalTitle] = {
+    return {
         value: value.trim(),
         products: products
     };
@@ -795,36 +842,11 @@ function sortNodes (node) {
 ////////////////////////////////////////////////////////////////////////////////
 
 exports.defineTags = function (dictionary) {
+
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
             if (doclet.ignored) removeOption(tagObj.value);
             augmentOption(tagObj.value, doclet);
-        }
-    });
-
-    dictionary.defineTag('sample', {
-        onTagged: function (doclet, tagObj) {
-
-            var valueObj = resolveProductTypes(doclet, tagObj);
-
-            var text = valueObj.value;
-
-            var del = text.search(/\s/),
-                name = text.substr(del).trim().replace(/\s\s+/g, ' '),
-                value = text.substr(0, del).trim(),
-                folder = hcRoot + /samples/ + value
-            ;
-
-            doclet.samples = doclet.samples || [];
-
-            if (!fs.existsSync(folder)) {
-                console.error('@sample does not exist: ' + value);
-            }
-            doclet.samples.push({
-                name: name,
-                value: value,
-                products: valueObj.products
-            });
         }
     });
 
@@ -834,6 +856,80 @@ exports.defineTags = function (dictionary) {
       }
     });
 
+    dictionary.defineTag('declare', {
+        mustHaveValue: true,
+        mustNotHaveDescription: true,
+        onTagged: function (doclet, tag) {
+            doclet.declare = tag.value;
+        }
+    });
+
+    dictionary.defineTag('deprecated', {
+        onTagged: function (doclet, tag) {
+            doclet.deprecated = tag.value || true;
+        }
+    });
+
+    dictionary.defineTag('exclude', {
+        synonyms: ['excluding'],
+        onTagged: function (doclet, tagObj) {
+            var items = tagObj.text.split(',');
+
+            doclet.exclude = doclet.exclude || [];
+
+            items.forEach(function (entry) {
+                doclet.exclude.push(entry.trim());
+            });
+        }
+    });
+
+    dictionary.defineTag('extends', {
+        onTagged: function (doclet, tagObj) {
+            doclet.extends = tagObj.value;
+        }
+    });
+
+    dictionary.defineTag('ignore-option', {
+        onTagged: function (doclet) {
+            doclet.ignored = true;
+        }
+    });
+
+    dictionary.defineTag('internal', {
+        onTagged: function (doclet) {
+            doclet.internal = true;
+        }
+    });
+
+    dictionary.defineTag('default', {
+        onTagged: function (doclet, tagObj) {
+
+            if (typeof tagObj.value === 'undefined') {
+                return;
+            }
+
+            if (
+                tagObj.value.indexOf('highcharts') < 0 &&
+                tagObj.value.indexOf('highmaps') < 0 &&
+                tagObj.value.indexOf('highstock') < 0 &&
+                tagObj.value.indexOf('gantt') < 0
+            ) {
+                doclet.defaultvalue = tagObj.text;
+                return;
+            }
+
+            var valueObj = resolveProductTypes(doclet, tagObj);
+
+            doclet.defaultByProduct = doclet.defaultByProduct || {};
+
+            (valueObj.products || []).forEach(function (p) {
+                doclet.defaultByProduct[p] = valueObj.value;
+            });
+
+            //var parsed = parseTag(tagObj.value, true, true);
+            //doclet.defaultvalue = parsed;
+        }
+    });
     dictionary.defineTag('optionparent', {
         onTagged: function (doclet, tagObj) {
             if (doclet.ignored) return removeOption(tagObj.value);
@@ -868,102 +964,11 @@ exports.defineTags = function (dictionary) {
         }
     });
 
-    function handleExclude (doclet, tagObj) {
-        var items = tagObj.text.split(',');
-
-        doclet.exclude = doclet.exclude || [];
-
-        items.forEach(function (entry) {
-            doclet.exclude.push(entry.trim());
-        });
-    }
-
-    dictionary.defineTag('exclude', {
-        onTagged: handleExclude
-    });
-
-    dictionary.defineTag('excluding', {
-        onTagged: handleExclude
-    });
-
-    dictionary.defineTag('ignore-option', {
-        onTagged: function (doclet) {
-            doclet.ignored = true;
-        }
-    });
-
-    dictionary.defineTag('default', {
-        onTagged: function (doclet, tagObj) {
-
-            if (typeof tagObj.value === 'undefined') {
-                return;
-            }
-
-            if (
-                tagObj.value.indexOf('highcharts') < 0 &&
-                tagObj.value.indexOf('highmaps') < 0 &&
-                tagObj.value.indexOf('highstock') < 0 &&
-                tagObj.value.indexOf('gantt') < 0
-            ) {
-                doclet.defaultvalue = tagObj.text;
-                return;
-            }
-
-            var valueObj = resolveProductTypes(doclet, tagObj);
-
-            doclet.defaultByProduct = doclet.defaultByProduct || {};
-
-            (valueObj.products || []).forEach(function (p) {
-                doclet.defaultByProduct[p] = valueObj.value;
-            });
-
-            //var parsed = parseTag(tagObj.value, true, true);
-            //doclet.defaultvalue = parsed;
-        }
-    });
-
-    function handleValue(doclet, tagObj) {
-        doclet.values = tagObj.value;
-    }
-
-    dictionary.defineTag('validvalue', {
-        onTagged: handleValue
-    });
-
-    dictionary.defineTag('values', {
-        onTagged: handleValue
-    });
-
-    dictionary.defineTag('extends', {
-        onTagged: function (doclet, tagObj) {
-            doclet.extends = tagObj.value;
-        }
-    });
-
-    dictionary.defineTag('internal', {
-        onTagged: function (doclet) {
-            doclet.internal = true;
-        }
-    });
-
     dictionary.defineTag('productdesc', {
-        onTagged: resolveProductTypes
-    });
-
-    dictionary.defineTag('typedesc', {
-        onTagged: function (doclet, tagObj) {
-            if (!doclet.type) {
-                doclet.type = {};
-            }
-            doclet.type.description = tagObj.value;
-        }
-    });
-
-    dictionary.defineTag('declare', {
-        mustHaveValue: true,
-        mustNotHaveDescription: true,
         onTagged: function (doclet, tag) {
-            doclet.declare = tag.value;
+            var valueObj = resolveProductTypes(doclet, tag);
+            doclet.productdesc = (doclet.productdesc || []);
+            doclet.productdesc.push(valueObj);
         }
     });
 
@@ -978,6 +983,48 @@ exports.defineTags = function (dictionary) {
                     'module:' + require :
                     require
             );
+        }
+    });
+
+    dictionary.defineTag('sample', {
+        onTagged: function (doclet, tagObj) {
+
+            var valueObj = resolveProductTypes(doclet, tagObj);
+
+            var text = valueObj.value;
+
+            var del = text.search(/\s/),
+                name = text.substr(del).trim().replace(/\s\s+/g, ' '),
+                value = text.substr(0, del).trim(),
+                folder = hcRoot + /samples/ + value
+            ;
+
+            doclet.samples = doclet.samples || [];
+
+            if (!fs.existsSync(folder)) {
+                console.error('@sample does not exist: ' + value);
+            }
+            doclet.samples.push({
+                name: name,
+                value: value,
+                products: valueObj.products
+            });
+        }
+    });
+
+    dictionary.defineTag('values', {
+        synonyms: ['validvalue'],
+        onTagged: function (doclet, tagObj) {
+            doclet.values = tagObj.value;
+        }
+    });
+
+    dictionary.defineTag('typedesc', {
+        onTagged: function (doclet, tagObj) {
+            if (!doclet.type) {
+                doclet.type = {};
+            }
+            doclet.type.description = tagObj.value;
         }
     });
 };

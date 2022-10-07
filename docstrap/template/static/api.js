@@ -2,7 +2,7 @@ var hapi = {
   versionLocation: '/versions.json'
 };
 
-var htmlExtension = ''; // Use .html for local filesystem access
+var htmlExtension = '';
 var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
@@ -11,7 +11,7 @@ if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
 
   // Options: https://api.highcharts.com/highcharts#title.text
   if (/^[a-z]/.test(hash)) {
-    location.href = '/' + (window.product || 'highcharts').toLowerCase() + '/' + hash;
+    location.href = '/' + (window.product || 'highcharts').toLowerCase() + '/' + hash + htmlExtension;
 
   // Object members: https://api.highcharts.com/highcharts#Series.update()
   } else if (/^[A-Z]/.test(hash)) {
@@ -19,8 +19,19 @@ if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
       .replace('Highcharts.', '')
       .replace('.', '#')
       .replace('()', '');
-    location.href = '/class-reference/Highcharts.' + hash;
+    location.href = '/class-reference/Highcharts.' + hash + htmlExtension;
   }
+}
+
+// Only have one index
+if (
+    !isLocal &&
+    location.pathname.indexOf('index.html') === location.pathname.length - 10
+) {
+    location.href = (
+        location.pathname.substring(0, location.pathname.length - 10) +
+        (location.hash.length > 1 ? location.hash : '')
+    );
 }
 
 hapi.ajax = function(p) {
@@ -305,7 +316,7 @@ hapi.ajax = function(p) {
       children = cr('div', 'children');
       dots = cr('span', 'dots', '...');
 
-      if (def.typeMap && def.typeMap.array) {
+      if (def.supportsArray) {
         startBracket = cr('span', 'bracket start', '[{');
         endBracket1 = cr('span', 'bracket end first', '}]');
         endBracket2 = cr('span', 'bracket end second', '}]');
@@ -650,7 +661,9 @@ hapi.ajax = function(p) {
     }
 
     if (def.deprecated) {
-      deprecated = cr('p', 'deprecated', 'Deprecated');
+      deprecated = cr('p', 'deprecated', 'Deprecated' + (
+        def.deprecated === true ? '' : ' ' + def.deprecated
+      ));
       option.setAttribute(
         'class', option.getAttribute('class') + ' deprecated'
       );
@@ -688,7 +701,7 @@ hapi.ajax = function(p) {
         'title',
         'Defined in ' + fileName
       )
-      editLink.href = 'https://github.com/highcharts/highcharts/blob/' +
+      editLink.href = 'https://github.com/highcharts/highcharts/blob/v' +
         def.version + '/' + // TODO: version (see dumpNav() version param in index.js)
         fileName;
     }
@@ -780,23 +793,25 @@ hapi.ajax = function(p) {
         }
       }
 
-      function build(data) {
+      function build(def) {
         var optionList = document.getElementById('option-list'),
           option = cr('div', 'option option-header ' + toClassName(state)),
           title = cr('h1', 'title'),
           deprecated,
-          description = data.description && cr(
+          description = def.description && cr(
             'p',
             'description',
-            autolinks(data.description + (data.productdesc ? data.productdesc.value : '')),
+            autolinks(def.description + (def.productdesc ? def.productdesc.value : '')),
             true
           ),
           see,
           seeList,
           typeHTMLPath;
 
-        if (data.deprecated) {
-          deprecated = cr('p', 'deprecated', 'Deprecated');
+        if (def.deprecated) {
+          deprecated = cr('p', 'deprecated', 'Deprecated' + (
+            def.deprecated === true ? '' : ' ' + def.deprecated
+          ));
           option.setAttribute(
             'class', option.getAttribute('class') + ' deprecated'
           );
@@ -812,24 +827,24 @@ hapi.ajax = function(p) {
         clearSearch();
         addClass(target, 'loaded');
 
-        if (data.typeList) {
-          data.typeList.names.forEach(function(type) {
+        if (def.typeList) {
+          def.typeList.names.forEach(function(type) {
             typeHTMLPath = getClassReferenceUrl(type);
             if (hasChildren && typeHTMLPath) {
-                data.see = (data.see || []);
-                data.see.push(cr('a', { href: typeHTMLPath }, type));
+                def.see = (def.see || []);
+                def.see.push(cr('a', { href: typeHTMLPath }, type));
             }
           });
         }
 
-        if (data.see) {
+        if (def.see) {
           see = cr('div', 'see');
           seeList = cr('ul');
           ap(see,
             cr('h4', null, 'See also:'),
             seeList
           );
-          data.see.forEach(function (seeItem) {
+          def.see.forEach(function (seeItem) {
             if (typeof seeItem === 'object') {
               ap(seeList,
                 ap(cr('li', 'see-item'), seeItem)
@@ -846,15 +861,15 @@ hapi.ajax = function(p) {
               title,
               deprecated,
               description,
-              getRequireList(data),
-              getSampleList(data),
+              getRequireList(def),
+              getSampleList(def),
               see
             )
           )
         );
 
-        data.children.forEach(function(def) {
-          createOption(optionList, def, data, state, origState);
+        def.children.forEach(function(def) {
+          createOption(optionList, def, def, state, origState);
         });
         if (typeof callback === 'function') {
           callback();
@@ -1025,7 +1040,8 @@ hapi.ajax = function(p) {
         .then(function (entries) {
           return entries.filter(function (entry) {
             return (
-              entry.url.indexOf('.html') === -1 && (
+              entry.url.indexOf('index.html') === -1 &&
+              (
                 entry.url.indexOf('/class-reference/') !== -1 ||
                 entry.url.indexOf(productPath) !== -1
               )
@@ -1170,7 +1186,7 @@ hapi.ajax = function(p) {
           name = 'Option: ' + name;
         }
         var snippet = cr('p');
-        webSearch.preview(entry).then(text => {
+        webSearch.preview(entry).then(function (text) {
             if (text.indexOf('Welcome') === 0 ||
                 text.indexOf('<b>') === -1
             ) {

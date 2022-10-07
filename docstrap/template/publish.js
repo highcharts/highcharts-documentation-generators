@@ -22,7 +22,6 @@ var template = require('jsdoc/template'),
   // Highsoft's override to remove .html extensions
   linkto = function () {
     var s = helper.linkto.apply(this, arguments);
-
     s = s.replace(/\.html(#|")/g, '$1');
     return s;
   },
