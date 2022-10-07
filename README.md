@@ -53,11 +53,23 @@ gulp.src(sourceFiles, { read: false })
 ```
 
 
+
+Parser
+======
+
+This new parser creates an AST of source files. The AST containes classes and
+options. Every source file ending on `Options` is treated as part of the option
+tree. Every source file ending on `Defaults` is treated as a complementary to
+options.
+
+
+
 TypeDoc
 =======
 
-The generator is not ready yet. It contains a handlebars template system and
-library scripts to generate future documentation out of TypeScript source code.
+The generator is used for internal documentation of Highcharts. It contains a
+handlebars template system and library scripts to generate documentation out of
+TypeScript source code.
 See the included [readme](https://github.com/highcharts/highcharts-documentation-generators/blob/master/typedoc/README.md)
 for development information.
 

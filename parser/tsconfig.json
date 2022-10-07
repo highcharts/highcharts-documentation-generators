@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "esModuleInterop": true,
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "sourceMap": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "module": "commonjs",
+        "outDir": "build",
+        "target": "es6"
+    },
+    "include": [
+        "sources/**/*.ts"
+    ]
+}

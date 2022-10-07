@@ -56,14 +56,14 @@ namespace MemberUtilities {
         node: (TypeScript.ModifiersArray|TypeScript.Node),
         sourceFile: TypeScript.SourceFile
     ): (Array<string>|undefined) {
-        let modifiers: TypeScript.ModifiersArray;
+        let modifiers: ReadonlyArray<TypeScript.Modifier>;
 
         if (node instanceof Array) {
             modifiers = node
         } else if (
-            node.modifiers
+            TypeScript.canHaveDecorators(node)
         ) {
-            modifiers = node.modifiers
+            modifiers = TypeScript.getModifiers(node) || [];
         } else {
             return void 0;
         }
