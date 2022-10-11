@@ -49,20 +49,26 @@ var NPM;
     function load(path) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const json = JSON_js_1.default.parse(yield fs_1.default.promises.readFile(path).toString());
-            if (!json ||
-                typeof json !== 'object' ||
-                json instanceof Array) {
-                return NPM.defaults;
+            try {
+                const json = JSON_js_1.default.parse(`${yield fs_1.default.promises.readFile(path)}`);
+                if (json &&
+                    typeof json === 'object' &&
+                    !(json instanceof Array)) {
+                    return {
+                        description: (JSON_js_1.default.get('string', json.description, '') ||
+                            undefined),
+                        name: JSON_js_1.default.get('string', json.name, NPM.defaults.name),
+                        repository: (JSON_js_1.default.get('string', (_a = json.repository) === null || _a === void 0 ? void 0 : _a.url, '') ||
+                            JSON_js_1.default.get('string', json.repository, '') ||
+                            undefined),
+                        version: JSON_js_1.default.get('string', json.version, NPM.defaults.version)
+                    };
+                }
             }
-            return {
-                description: JSON_js_1.default.get('string', json.description, '') || undefined,
-                name: JSON_js_1.default.get('string', json.name, NPM.defaults.name),
-                repository: (JSON_js_1.default.get('string', (_a = json.repository) === null || _a === void 0 ? void 0 : _a.url, '') ||
-                    JSON_js_1.default.get('string', json.repository, '') ||
-                    undefined),
-                version: JSON_js_1.default.get('string', json.version, NPM.defaults.version)
-            };
+            catch (e) {
+                console.error(e);
+            }
+            return NPM.defaults;
         });
     }
     NPM.load = load;

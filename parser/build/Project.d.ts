@@ -12,7 +12,6 @@ export declare class Project {
     private constructor();
     readonly branch: string;
     readonly commit: string;
-    readonly cwd: string;
     readonly date: Date;
     readonly npm: NPM.JSON;
     readonly path: string;

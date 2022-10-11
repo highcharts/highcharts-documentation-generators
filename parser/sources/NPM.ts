@@ -48,26 +48,34 @@ export namespace NPM {
     export async function load(
         path: string
     ): Promise<NPM.JSON> {
-        const json = JSON.parse(await FS.promises.readFile(path).toString());
+        try {
+            const json = JSON.parse(`${await FS.promises.readFile(path)}`);
 
-        if (
-            !json ||
-            typeof json !== 'object' ||
-            json instanceof Array
-        ) {
-            return defaults;
+            if (
+                json &&
+                typeof json === 'object' &&
+                !(json instanceof Array)
+            ) {
+                return {
+                    description: (
+                        JSON.get('string', json.description, '') ||
+                        undefined
+                    ),
+                    name: JSON.get('string', json.name, defaults.name),
+                    repository: (
+                        JSON.get('string', json.repository?.url, '') ||
+                        JSON.get('string', json.repository, '') ||
+                        undefined
+                    ),
+                    version: JSON.get('string', json.version, defaults.version)
+                }
+            }
+        }
+        catch (e) {
+            console.error(e);
         }
 
-        return {
-            description: JSON.get('string', json.description, '') || undefined,
-            name: JSON.get('string', json.name, defaults.name),
-            repository: (
-                JSON.get('string', json.repository?.url, '') ||
-                JSON.get('string', json.repository, '') ||
-                undefined
-            ),
-            version: JSON.get('string', json.version, defaults.version)
-        }
+        return defaults;
     }
 
 }

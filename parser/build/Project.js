@@ -34,10 +34,9 @@ class Project {
      *  Constructor
      *
      * */
-    constructor(branch, commit, cwd, npm, path, program, system) {
+    constructor(branch, commit, npm, path, program, system) {
         this.branch = branch;
         this.commit = commit;
-        this.cwd = cwd;
         this.date = new Date();
         this.npm = npm;
         this.path = path;
@@ -52,8 +51,10 @@ class Project {
      * */
     static load(path) {
         return __awaiter(this, void 0, void 0, function* () {
-            const system = typescript_1.default.sys, cwd = process.cwd(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(cwd), resolvedPath = system.resolvePath(path), tsconfig = typescript_1.default.readJsonConfigFile(resolvedPath, system.readFile), config = typescript_1.default.parseJsonConfigFileContent(tsconfig, system, resolvedPath), program = typescript_1.default.createProgram(config.fileNames, config.options);
-            return new Project(branch, commit, cwd, npm, path, program, system);
+            const system = typescript_1.default.sys;
+            path = system.resolvePath(path);
+            const tsconfig = typescript_1.default.readJsonConfigFile(path, system.readFile), config = typescript_1.default.parseJsonConfigFileContent(tsconfig, system, path), program = typescript_1.default.createProgram(config.fileNames, config.options), cwd = program.getCurrentDirectory(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(path_1.default.join(cwd, 'package.json'));
+            return new Project(branch, commit, npm, path, program, system);
         });
     }
     /* *
@@ -62,9 +63,10 @@ class Project {
      *
      * */
     getFiles() {
-        const project = this;
+        const project = this, projectPath = project.path;
         return project.program
             .getSourceFiles()
+            .filter(file => file.fileName.startsWith(projectPath))
             .map(file => ProjectFile_1.default.parse(project, file));
     }
     normalizePath(...paths) {

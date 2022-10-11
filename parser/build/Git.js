@@ -28,15 +28,31 @@ var Git;
 (function (Git) {
     /* *
      *
+     *  Declarations
+     *
+     * */
+    /* *
+     *
      *  Functions
      *
      * */
+    function exec(command, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise(resolve => child_process_1.default.exec(command, options, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
+        });
+    }
     /**
      * Returns the active branch of the given folder.
      */
     function getActiveBranch(cwd) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield child_process_1.default.exec('git rev-parse --abbrev-ref HEAD', { cwd }).toString().trim();
+            return exec('git rev-parse --abbrev-ref HEAD', { cwd })
+                .then(result => {
+                if (result.error) {
+                    throw result.error;
+                }
+                return result.stdout.trim();
+            });
         });
     }
     Git.getActiveBranch = getActiveBranch;
@@ -45,7 +61,13 @@ var Git;
      */
     function getLastCommit(cwd) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield child_process_1.default.exec('git rev-parse --short HEAD', { cwd }).toString().trim();
+            return exec('git rev-parse --short HEAD', { cwd })
+                .then(result => {
+                if (result.error) {
+                    throw result.error;
+                }
+                return result.stdout.trim();
+            });
         });
     }
     Git.getLastCommit = getLastCommit;

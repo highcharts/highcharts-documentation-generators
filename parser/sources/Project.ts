@@ -28,17 +28,26 @@ export class Project {
     public static async load(
         path: string
     ): Promise<Project> {
-        const system = TypeScript.sys,
-            cwd = process.cwd(),
+        const system = TypeScript.sys;
+
+        path = system.resolvePath(path);
+
+        const tsconfig = TypeScript.readJsonConfigFile(path, system.readFile),
+            config = TypeScript.parseJsonConfigFileContent(tsconfig, system, path),
+            program = TypeScript.createProgram(config.fileNames, config.options),
+            cwd = program.getCurrentDirectory(),
             branch = await Git.getActiveBranch(cwd),
             commit = await Git.getLastCommit(cwd),
-            npm = await NPM.load(cwd),
-            resolvedPath = system.resolvePath(path),
-            tsconfig = TypeScript.readJsonConfigFile(resolvedPath, system.readFile),
-            config = TypeScript.parseJsonConfigFileContent(tsconfig, system, resolvedPath),
-            program = TypeScript.createProgram(config.fileNames, config.options);
+            npm = await NPM.load(Path.join(cwd, 'package.json'));
 
-        return new Project(branch, commit, cwd, npm, path, program, system);
+        return new Project(
+            branch,
+            commit,
+            npm,
+            path,
+            program,
+            system
+        );
     }
 
     /* *
@@ -50,7 +59,6 @@ export class Project {
     private constructor(
         branch: string,
         commit: string,
-        cwd: string,
         npm: NPM.JSON,
         path: string,
         program: TypeScript.Program,
@@ -58,7 +66,6 @@ export class Project {
     ) {
         this.branch = branch;
         this.commit = commit;
-        this.cwd = cwd;
         this.date = new Date();
         this.npm = npm;
         this.path = path;
@@ -76,8 +83,6 @@ export class Project {
     public readonly branch: string;
 
     public readonly commit: string;
-
-    public readonly cwd: string;
 
     public readonly date: Date;
 
@@ -98,10 +103,12 @@ export class Project {
      * */
 
     public getFiles(): Array<ProjectFile> {
-        const project = this;
+        const project = this,
+            projectPath = project.path;
 
         return project.program
             .getSourceFiles()
+            .filter(file => file.fileName.startsWith(projectPath))
             .map(file => ProjectFile.parse(project, file));
     }
 
