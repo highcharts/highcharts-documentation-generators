@@ -5,6 +5,7 @@
  * */
 import JSON from './JSON';
 import NPM from './NPM';
+import ProjectFile from './ProjectFile';
 import TypeScript from 'typescript';
 export declare class Project {
     static load(path: string): Promise<Project>;
@@ -18,25 +19,17 @@ export declare class Project {
     readonly program: TypeScript.Program;
     readonly system: TypeScript.System;
     readonly typeChecker: TypeScript.TypeChecker;
-    getFileJSON(): Array<Project.FileJSON>;
+    getFiles(): Array<ProjectFile>;
+    normalizePath(...paths: Array<string>): string;
     toJSON(): Project.JSON;
 }
 export declare namespace Project {
-    interface FileJSON extends MemberJSON {
-        kind: 'file';
-        path: string;
-    }
-    interface MemberJSON extends JSON.Object {
-        kind: string;
-        comment?: string;
-        children?: Array<MemberJSON>;
-    }
     interface JSON extends JSON.Object {
         branch?: string;
         commit?: string;
         date?: string;
         description?: string;
-        files: Array<FileJSON>;
+        files: Array<ProjectFile.JSON>;
         name: string;
         repository?: string;
         version: string;

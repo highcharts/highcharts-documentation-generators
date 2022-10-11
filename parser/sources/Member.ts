@@ -1,5 +1,11 @@
+/*!*
+ *
+ *  Copyright (C) Highsoft AS
+ *
+ * */
 
-import Project from './Project';
+import JSON from './JSON';
+import ProjectFile from './ProjectFile';
 import TypeScript from 'typescript';
 
 /* *
@@ -24,16 +30,40 @@ export abstract class Member {
      *
      * */
 
+    public static parse(
+        _file: ProjectFile,
+        _node: TypeScript.Node
+    ): (Member|undefined) {
+        return;
+    }
+
+    public static parseChildren(
+        file: ProjectFile,
+        node: TypeScript.Node
+    ): Array<Member> {
+        const children: Array<Member> = [],
+            memberTypes = Member.types;
+
+        let childMember: (Member|undefined);
+
+        TypeScript.forEachChild(node, child => {
+            for (const member in memberTypes) {
+                childMember = memberTypes[member].parse(file, child);
+
+                if (childMember) {
+                    children.push(childMember);
+                    break;
+                }
+            }
+        });
+
+        return children;
+    }
+
     public static register(
         MemberClass: typeof Member
     ): void {
         Member.types[MemberClass.name] = MemberClass;
-    }
-
-    public static parse(
-        _node: TypeScript.Node
-    ): (Member|undefined) {
-        return;
     }
 
     /* *
@@ -43,10 +73,10 @@ export abstract class Member {
      * */
 
     protected constructor (
-        project: Project,
+        file: ProjectFile,
         node: TypeScript.Node
     ) {
-        this.project = project;
+        this.file = file;
         this.node = node;
     }
 
@@ -56,9 +86,31 @@ export abstract class Member {
      *
      * */
 
-    public readonly project: Project;
+    public readonly file: ProjectFile;
 
     public readonly node: TypeScript.Node;
+
+    public get nodeText(): string {
+        const member = this;
+
+        if (typeof member._nodeText === 'undefined') {
+            member._nodeText = member.node.getText(member.file.node);
+        }
+
+        return member._nodeText;
+    }
+    private _nodeText?: string;
+
+    public get sourceText(): string {
+        const member = this;
+
+        if (typeof member._sourceText === 'undefined') {
+            member._sourceText = member.node.getFullText(member.file.node);
+        }
+
+        return member._sourceText;
+    }
+    private _sourceText?: string;
 
     /* *
      *
@@ -66,8 +118,62 @@ export abstract class Member {
      *
      * */
 
+    public getComment(): string {
+        const member = this,
+            nodeText = member.nodeText,
+            sourceText = member.sourceText;
+
+        return sourceText.substring(
+            0,
+            sourceText.length - nodeText.length
+        );
+    }
+
     public getTypeReflection(): TypeScript.Type {
-        return this.project.typeChecker.getTypeAtLocation(this.node);
+        return this.file.project.typeChecker.getTypeAtLocation(this.node);
+    }
+
+    public toJSON(
+        skipChildren?: boolean
+    ): Member.JSON {
+        const member = this,
+            node = member.node,
+            file = member.file,
+            children = (
+                skipChildren ?
+                    [] :
+                    Member
+                        .parseChildren(file, node)
+                        .map(child => child.toJSON())
+            );
+
+        return {
+            kind: TypeScript.SyntaxKind[node.kind],
+            comment: (member.getComment() || undefined),
+            children
+        };
+    }
+
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+export namespace Member {
+
+    /* * 
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface JSON extends JSON.Object {
+        kind: string;
+        comment?: string;
+        children?: Array<JSON>;
     }
 
 }

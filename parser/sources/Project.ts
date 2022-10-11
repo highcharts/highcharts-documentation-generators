@@ -7,6 +7,8 @@
 import Git from './Git';
 import JSON from './JSON';
 import NPM from './NPM';
+import Path from 'path';
+import ProjectFile from './ProjectFile';
 import TypeScript from 'typescript';
 
 /* *
@@ -95,25 +97,37 @@ export class Project {
      *
      * */
 
-    public getFileJSON(): Array<Project.FileJSON> {
-        const files = this.program.getSourceFiles();
+    public getFiles(): Array<ProjectFile> {
+        const project = this;
 
-        for (const file of files) {
-            TypeScript.forEachChild(file, child => {
-                console.log(child);
-            });
+        return project.program
+            .getSourceFiles()
+            .map(file => ProjectFile.parse(project, file));
+    }
+
+    public normalizePath(...paths: Array<string>): string {
+        const project = this,
+            projectPath = project.path,
+            system = project.system;
+
+        let path = system.resolvePath(Path.join(...paths));
+        // .replace(/(?:\.d)?\.[jt]sx?$/, '');
+
+        if (Path.isAbsolute(path)) {
+            path = Path.relative(projectPath, path);
         }
 
-        return [];
+        return path;
     }
 
     public toJSON(): Project.JSON {
-        const {
-            branch,
-            commit,
-            date,
-            npm
-        } = this;
+        const project = this,
+            {
+                branch,
+                commit,
+                date,
+                npm
+            } = project;
 
         return {
             branch,
@@ -123,7 +137,9 @@ export class Project {
             name: npm.name,
             repository: npm.repository,
             version: npm.version,
-            files: this.getFileJSON()
+            files: project
+                .getFiles()
+                .map(file => file.toJSON())
         };
     }
 
@@ -143,23 +159,12 @@ export namespace Project {
      *
      * */
 
-    export interface FileJSON extends MemberJSON {
-        kind: 'file';
-        path: string;
-    }
-
-    export interface MemberJSON extends JSON.Object {
-        kind: string;
-        comment?: string;
-        children?: Array<MemberJSON>;
-    }
-
     export interface JSON extends JSON.Object {
         branch?: string;
         commit?: string;
         date?: string;
         description?: string;
-        files: Array<FileJSON>;
+        files: Array<ProjectFile.JSON>;
         name: string;
         repository?: string;
         version: string;

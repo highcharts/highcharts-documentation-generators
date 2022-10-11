@@ -20,6 +20,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Project = void 0;
 const Git_1 = __importDefault(require("./Git"));
 const NPM_1 = __importDefault(require("./NPM"));
+const path_1 = __importDefault(require("path"));
+const ProjectFile_1 = __importDefault(require("./ProjectFile"));
 const typescript_1 = __importDefault(require("typescript"));
 /* *
  *
@@ -59,17 +61,23 @@ class Project {
      *  Functions
      *
      * */
-    getFileJSON() {
-        const files = this.program.getSourceFiles();
-        for (const file of files) {
-            typescript_1.default.forEachChild(file, child => {
-                console.log(child);
-            });
+    getFiles() {
+        const project = this;
+        return project.program
+            .getSourceFiles()
+            .map(file => ProjectFile_1.default.parse(project, file));
+    }
+    normalizePath(...paths) {
+        const project = this, projectPath = project.path, system = project.system;
+        let path = system.resolvePath(path_1.default.join(...paths));
+        // .replace(/(?:\.d)?\.[jt]sx?$/, '');
+        if (path_1.default.isAbsolute(path)) {
+            path = path_1.default.relative(projectPath, path);
         }
-        return [];
+        return path;
     }
     toJSON() {
-        const { branch, commit, date, npm } = this;
+        const project = this, { branch, commit, date, npm } = project;
         return {
             branch,
             commit,
@@ -78,7 +86,9 @@ class Project {
             name: npm.name,
             repository: npm.repository,
             version: npm.version,
-            files: this.getFileJSON()
+            files: project
+                .getFiles()
+                .map(file => file.toJSON())
         };
     }
 }
