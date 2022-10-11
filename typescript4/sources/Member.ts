@@ -334,10 +334,18 @@ namespace Member {
             comment: JSDoc.extractComment(propertyNode, sourceFile),
             modifiers: MemberUtilities.extractModifiers(propertyNode, sourceFile),
             optional: propertyNode.questionToken && true,
-            type: propertyNode.type && parseNodeChildren(
-                propertyNode.type,
-                sourceFile,
-                project
+            type: (
+                propertyNode.type ?
+                    parseNodeChildren(
+                        propertyNode.type,
+                        sourceFile,
+                        project
+                    ) :
+                    parseNodeChildren(
+                        propertyNode.getChildren(),
+                        sourceFile,
+                        project
+                    )
             ),
             meta: Utilities.extractMeta(propertyNode, sourceFile)
         };
@@ -351,6 +359,7 @@ namespace Member {
         const unknownMember: Member.Unknown = {
             kind: SyntaxKind[unknownNode.kind],
             kindID: unknownNode.kind,
+            firstLine: MemberUtilities.extractFirstLine(unknownNode, sourceFile),
             syntax: MemberUtilities.extractSyntax(unknownNode, sourceFile),
             meta: Utilities.extractMeta(unknownNode, sourceFile)
         };

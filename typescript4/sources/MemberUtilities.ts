@@ -23,6 +23,16 @@ import Utilities from './Utilities';
 
 namespace MemberUtilities {
 
+    export function extractFirstLine(
+        node: TypeScript.Node,
+        sourceFile: TypeScript.SourceFile,
+    ): (string|undefined) {
+        return (
+            node.getText(sourceFile).trim().split(/\r?\n/)[0] ||
+            undefined
+        );
+    }
+
     export function extractKeyword(
         node: TypeScript.Node,
         sourceFile: TypeScript.SourceFile,

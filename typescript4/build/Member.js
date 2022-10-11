@@ -173,7 +173,9 @@ var Member;
             comment: JSDoc_1.default.extractComment(propertyNode, sourceFile),
             modifiers: MemberUtilities_1.default.extractModifiers(propertyNode, sourceFile),
             optional: propertyNode.questionToken && true,
-            type: propertyNode.type && parseNodeChildren(propertyNode.type, sourceFile, project),
+            type: (propertyNode.type ?
+                parseNodeChildren(propertyNode.type, sourceFile, project) :
+                parseNodeChildren(propertyNode.getChildren(), sourceFile, project)),
             meta: Utilities_1.default.extractMeta(propertyNode, sourceFile)
         };
     }
@@ -181,6 +183,7 @@ var Member;
         const unknownMember = {
             kind: typescript_1.SyntaxKind[unknownNode.kind],
             kindID: unknownNode.kind,
+            firstLine: MemberUtilities_1.default.extractFirstLine(unknownNode, sourceFile),
             syntax: MemberUtilities_1.default.extractSyntax(unknownNode, sourceFile),
             meta: Utilities_1.default.extractMeta(unknownNode, sourceFile)
         };

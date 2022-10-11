@@ -45,6 +45,11 @@ const Utilities_1 = __importDefault(require("./Utilities"));
  * */
 var MemberUtilities;
 (function (MemberUtilities) {
+    function extractFirstLine(node, sourceFile) {
+        return (node.getText(sourceFile).trim().split(/\r?\n/)[0] ||
+            undefined);
+    }
+    MemberUtilities.extractFirstLine = extractFirstLine;
     function extractKeyword(node, sourceFile, ignoreChildren) {
         switch (node.kind) {
             case typescript_1.SyntaxKind.ClassKeyword:
