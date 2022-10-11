@@ -17,6 +17,7 @@ export declare class Project {
     readonly path: string;
     readonly program: TypeScript.Program;
     readonly system: TypeScript.System;
+    readonly typeChecker: TypeScript.TypeChecker;
     getFileJSON(): Array<Project.FileJSON>;
     toJSON(): Project.JSON;
 }

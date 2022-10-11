@@ -62,6 +62,7 @@ export class Project {
         this.path = path;
         this.program = program;
         this.system = system;
+        this.typeChecker = program.getTypeChecker();
     }
 
     /* *
@@ -85,6 +86,8 @@ export class Project {
     public readonly program: TypeScript.Program;
 
     public readonly system: TypeScript.System;
+
+    public readonly typeChecker: TypeScript.TypeChecker;
 
     /* *
      *

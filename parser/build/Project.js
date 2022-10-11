@@ -41,6 +41,7 @@ class Project {
         this.path = path;
         this.program = program;
         this.system = system;
+        this.typeChecker = program.getTypeChecker();
     }
     /* *
      *
