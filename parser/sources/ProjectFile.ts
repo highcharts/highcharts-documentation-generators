@@ -7,6 +7,7 @@
 import Member from './Member';
 import Project from './Project';
 import TypeScript from 'typescript';
+import U from './Utilities';
 
 /* *
  *
@@ -66,35 +67,58 @@ export class ProjectFile implements Member {
      *
      * */
 
-    public getComment(): string {
-        return '';
+    public getChildren(): Array<Member> {
+        return Member.prototype.getChildren.call(this);
     }
 
-    public getTypeReflection(): TypeScript.Type {
-        const projectFile = this,
-            project = projectFile.project,
-            node = projectFile.node;
+    public getComment(): (string|undefined) {
+        return Member.prototype.getComment.call(this);
+    }
 
-        return project.typeChecker.getTypeAtLocation(node);
+    public getReflectedType(
+        member: Member
+    ): string {
+        const projectFile = this,
+            memberNode = member.node,
+            memberType = projectFile.getTypeReflection(memberNode);
+
+        return (
+            memberType.pattern ?
+                memberType.pattern.getText(projectFile.node) :
+                'unknown'
+        );
+    }
+
+    public getTypeReflection(
+        node?: TypeScript.Node
+    ): TypeScript.Type {
+        const projectFile = this,
+            project = projectFile.project;
+
+        return project.typeChecker.getTypeAtLocation(node || projectFile.node);
     }
 
     public toJSON(
         skipChildren?: boolean
     ): ProjectFile.JSON {
         const projectFile = this,
+            project = projectFile.project,
             node = projectFile.node,
             children = (
                 skipChildren ?
-                    [] :
+                    undefined :
                     Member
                         .parseChildren(projectFile, node)
                         .map(child => child.toJSON())
-            );
+            ),
+            comment = projectFile.getComment(),
+            name = U.relative(project.path, node.fileName);
+                // .replace(/(?:\.d)?\.[jt]sx?$/u, ''),
 
         return {
-            ...Member.prototype.toJSON.call(projectFile, true),
             kind: 'file',
-            path: node.fileName,
+            name,
+            comment,
             children
         };
     }
@@ -117,7 +141,7 @@ export namespace ProjectFile {
 
     export interface JSON extends Member.JSON {
         kind: 'file';
-        path: string;
+        name: string;
     }
 
 }

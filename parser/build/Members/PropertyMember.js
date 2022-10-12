@@ -32,8 +32,7 @@ class PropertyMember extends Member_1.default {
      *
      * */
     static parse(file, node) {
-        if (!typescript_1.default.isPropertyAssignment(node) &&
-            !typescript_1.default.isPropertyDeclaration(node) &&
+        if (!typescript_1.default.isPropertyDeclaration(node) &&
             !typescript_1.default.isPropertySignature(node)) {
             return;
         }
@@ -44,9 +43,23 @@ class PropertyMember extends Member_1.default {
      *  Functions
      *
      * */
+    getChildren() {
+        return [];
+    }
+    getType() {
+        const propertyMember = this, fileNode = propertyMember.file.node, propertyNode = propertyMember.node, type = propertyNode.type;
+        return (type ?
+            type.getText(fileNode) :
+            '*');
+    }
     toJSON(_skipChildren) {
-        const functionMember = this, name = functionMember.name;
-        return Object.assign(Object.assign({}, super.toJSON(true)), { kind: 'property', name });
+        const propertyMember = this, comment = propertyMember.getComment(), name = propertyMember.name, type = propertyMember.getType();
+        return {
+            kind: 'property',
+            name,
+            type,
+            comment
+        };
     }
 }
 exports.PropertyMember = PropertyMember;

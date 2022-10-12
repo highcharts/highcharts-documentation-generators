@@ -18,7 +18,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Git = void 0;
-const child_process_1 = __importDefault(require("child_process"));
+const Utilities_1 = __importDefault(require("./Utilities"));
 /* *
  *
  *  Namespace
@@ -28,31 +28,19 @@ var Git;
 (function (Git) {
     /* *
      *
-     *  Declarations
-     *
-     * */
-    /* *
-     *
      *  Functions
      *
      * */
-    function exec(command, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise(resolve => child_process_1.default.exec(command, options, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
-        });
-    }
     /**
      * Returns the active branch of the given folder.
      */
     function getActiveBranch(cwd) {
         return __awaiter(this, void 0, void 0, function* () {
-            return exec('git rev-parse --abbrev-ref HEAD', { cwd })
-                .then(result => {
-                if (result.error) {
-                    throw result.error;
-                }
-                return result.stdout.trim();
-            });
+            const result = yield Utilities_1.default.exec('git rev-parse --abbrev-ref HEAD', { cwd });
+            if (result.error) {
+                throw result.error;
+            }
+            return result.stdout.trim();
         });
     }
     Git.getActiveBranch = getActiveBranch;
@@ -61,13 +49,11 @@ var Git;
      */
     function getLastCommit(cwd) {
         return __awaiter(this, void 0, void 0, function* () {
-            return exec('git rev-parse --short HEAD', { cwd })
-                .then(result => {
-                if (result.error) {
-                    throw result.error;
-                }
-                return result.stdout.trim();
-            });
+            const result = yield Utilities_1.default.exec('git rev-parse --short HEAD', { cwd });
+            if (result.error) {
+                throw result.error;
+            }
+            return result.stdout.trim();
         });
     }
     Git.getLastCommit = getLastCommit;

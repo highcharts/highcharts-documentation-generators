@@ -5,6 +5,7 @@
  * */
 
 import Member from '../Member';
+import * as Members from '.';
 import ProjectFile from '../ProjectFile';
 import TypeScript from 'typescript';
 
@@ -63,16 +64,52 @@ export class InterfaceMember extends Member {
      *
      * */
 
+    public getChildren(): InterfaceMember.Children {
+        const interfaceMember = this,
+            projectFile = interfaceMember.file,
+            interfaceNode = interfaceMember.node;
+
+        return Member
+            .parseChildren(projectFile, interfaceNode)
+            .filter(member => (
+                member instanceof Members.FunctionMember ||
+                member instanceof Members.PropertyMember
+            )) as InterfaceMember.Children;
+    }
+
+    public getGeneric(): (Array<string>|undefined) {
+        const interfaceMember = this,
+            fileNode = interfaceMember.file.node,
+            typeParameters = interfaceMember.node.typeParameters;
+
+        if (!typeParameters) {
+            return;
+        }
+
+        return typeParameters.map(parameter => parameter.getText(fileNode));
+    }
+
     public toJSON(
-        _skipChildren?: boolean
+        skipChildren?: boolean
     ): InterfaceMember.JSON {
-        const functionMember = this,
-            name = functionMember.name;
+        const interfaceMember = this,
+            name = interfaceMember.name,
+            children = (
+                skipChildren ?
+                    void 0 :
+                    interfaceMember
+                        .getChildren()
+                        .map(child => child.toJSON())
+            ),
+            comment = interfaceMember.getComment(),
+            generics = interfaceMember.getGeneric();
 
         return {
-            ...super.toJSON(true),
             kind: 'interface',
-            name
+            name,
+            generics,
+            comment,
+            children
         };
     }
 
@@ -102,7 +139,13 @@ export namespace InterfaceMember {
      *
      * */
 
+    export type Children = Array<(
+        Members.FunctionMember |
+        Members.PropertyMember
+    )>;
+
     export interface JSON extends Member.JSON {
+        generics?: Array<string>;
         kind: 'interface';
         name: string;
     }

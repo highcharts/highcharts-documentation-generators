@@ -14,14 +14,16 @@ export declare class ProjectFile implements Member {
     readonly node: TypeScript.SourceFile;
     readonly nodeText = "";
     readonly sourceText = "";
-    getComment(): string;
-    getTypeReflection(): TypeScript.Type;
+    getChildren(): Array<Member>;
+    getComment(): (string | undefined);
+    getReflectedType(member: Member): string;
+    getTypeReflection(node?: TypeScript.Node): TypeScript.Type;
     toJSON(skipChildren?: boolean): ProjectFile.JSON;
 }
 export declare namespace ProjectFile {
     interface JSON extends Member.JSON {
         kind: 'file';
-        path: string;
+        name: string;
     }
 }
 export default ProjectFile;

@@ -33,7 +33,7 @@ class Member {
     static parse(_file, _node) {
         return;
     }
-    static parseChildren(file, node) {
+    static parseChildren(file, node, debug) {
         const children = [], memberTypes = Member.types;
         let childMember;
         typescript_1.default.forEachChild(node, child => {
@@ -69,16 +69,20 @@ class Member {
      *  Functions
      *
      * */
+    getChildren() {
+        const member = this, memberFile = member.file;
+        return Member.parseChildren(memberFile, member.node, memberFile.project.debug);
+    }
     getComment() {
         const member = this, nodeText = member.nodeText, sourceText = member.sourceText;
-        return sourceText.substring(0, sourceText.length - nodeText.length);
-    }
-    getTypeReflection() {
-        return this.file.project.typeChecker.getTypeAtLocation(this.node);
+        return (sourceText
+            .substring(0, sourceText.length - nodeText.length)
+            .match(/[ \t]*\/\*.*\*\/[ \t]*/gmsu) ||
+            [])[0];
     }
     toJSON(skipChildren) {
         const member = this, node = member.node, file = member.file, children = (skipChildren ?
-            [] :
+            undefined :
             Member
                 .parseChildren(file, node)
                 .map(child => child.toJSON()));

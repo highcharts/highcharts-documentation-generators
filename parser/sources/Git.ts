@@ -4,7 +4,7 @@
  *
  * */
 
-import ChildProcess from 'child_process';
+import U from './Utilities';
 
 /* *
  *
@@ -16,34 +16,9 @@ export namespace Git {
 
     /* *
      *
-     *  Declarations
-     *
-     * */
-
-    interface ExecResult {
-        error: (ChildProcess.ExecException|null);
-        stdout: string;
-        stderr: string;
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    async function exec(
-        command: string,
-        options: ChildProcess.ExecOptions
-    ): Promise<ExecResult> {
-        return new Promise(resolve =>
-            ChildProcess.exec(
-                command,
-                options,
-                (error, stdout, stderr) => resolve({ error, stdout, stderr})
-            )
-        );
-    }
 
     /**
      * Returns the active branch of the given folder.
@@ -51,14 +26,13 @@ export namespace Git {
     export async function getActiveBranch(
         cwd: string
     ): Promise<string> {
-        return exec('git rev-parse --abbrev-ref HEAD', { cwd })
-            .then(result => {
-                if (result.error) {
-                    throw result.error;
-                }
+        const result = await U.exec('git rev-parse --abbrev-ref HEAD', { cwd });
 
-                return result.stdout.trim();
-            });
+        if (result.error) {
+            throw result.error;
+        }
+
+        return result.stdout.trim();
     }
 
     /**
@@ -67,14 +41,13 @@ export namespace Git {
     export async function getLastCommit(
         cwd: string
     ): Promise<string> {
-        return exec('git rev-parse --short HEAD', { cwd })
-            .then(result => {
-                if (result.error) {
-                    throw result.error;
-                }
+        const result = await U.exec('git rev-parse --short HEAD', { cwd });
 
-                return result.stdout.trim();
-            });
+        if (result.error) {
+            throw result.error;
+        }
+
+        return result.stdout.trim();
     }
 
 }

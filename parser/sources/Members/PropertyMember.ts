@@ -28,7 +28,6 @@ export class PropertyMember extends Member {
     ): (PropertyMember|undefined) {
 
         if (
-            !TypeScript.isPropertyAssignment(node) &&
             !TypeScript.isPropertyDeclaration(node) &&
             !TypeScript.isPropertySignature(node)
         ) {
@@ -66,16 +65,36 @@ export class PropertyMember extends Member {
      *
      * */
 
+    public getChildren(): Array<Member> {
+        return [];
+    }
+
+    public getType(): string {
+        const propertyMember = this,
+            fileNode = propertyMember.file.node,
+            propertyNode = propertyMember.node,
+            type = propertyNode.type;
+
+        return (
+            type ?
+                type.getText(fileNode) :
+                '*'
+        );
+    }
+
     public toJSON(
         _skipChildren?: boolean
     ): PropertyMember.JSON {
-        const functionMember = this,
-            name = functionMember.name;
+        const propertyMember = this,
+            comment = propertyMember.getComment(),
+            name = propertyMember.name,
+            type = propertyMember.getType();
 
         return {
-            ...super.toJSON(true),
             kind: 'property',
-            name
+            name,
+            type,
+            comment
         };
     }
 
@@ -108,10 +127,10 @@ export namespace PropertyMember {
     export interface JSON extends Member.JSON {
         kind: 'property';
         name: string;
+        type: string;
     }
 
     export type NodeType = (
-        TypeScript.PropertyAssignment |
         TypeScript.PropertyDeclaration |
         TypeScript.PropertySignature
     );

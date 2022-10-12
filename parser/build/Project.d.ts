@@ -8,18 +8,18 @@ import NPM from './NPM';
 import ProjectFile from './ProjectFile';
 import TypeScript from 'typescript';
 export declare class Project {
-    static load(path: string): Promise<Project>;
+    static readonly System: TypeScript.System;
+    static load(path: string, debug?: boolean): Promise<Project>;
     private constructor();
     readonly branch: string;
     readonly commit: string;
     readonly date: Date;
+    readonly debug?: boolean;
     readonly npm: NPM.JSON;
     readonly path: string;
     readonly program: TypeScript.Program;
-    readonly system: TypeScript.System;
     readonly typeChecker: TypeScript.TypeChecker;
     getFiles(): Array<ProjectFile>;
-    normalizePath(...paths: Array<string>): string;
     toJSON(): Project.JSON;
 }
 export declare namespace Project {

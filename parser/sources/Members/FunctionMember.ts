@@ -29,7 +29,10 @@ export class FunctionMember extends Member {
 
         if (
             !TypeScript.isFunctionDeclaration(node) &&
-            !TypeScript.isFunctionExpression(node)
+            !TypeScript.isFunctionExpression(node) &&
+            !TypeScript.isConstructorDeclaration(node) &&
+            !TypeScript.isConstructSignatureDeclaration(node) ||
+            !node.name
         ) {
             return;
         }
@@ -68,16 +71,80 @@ export class FunctionMember extends Member {
      *
      * */
 
+    public getGeneric(): (Array<string>|undefined) {
+        const functionMember = this,
+            fileNode = functionMember.file.node,
+            typeParameters = functionMember.node.typeParameters;
+
+        if (!typeParameters) {
+            return;
+        }
+
+        return typeParameters.map(parameter => parameter.getText(fileNode));
+    }
+
+    public getParameters(): (FunctionMember.Parameters|undefined) {
+        const functionMember = this,
+            fileNode = functionMember.file.node,
+            functionNode = functionMember.node,
+            functionParameters = functionNode.parameters;
+
+        if (!functionParameters.length) {
+            return;
+        }
+
+        let name: string,
+            parameters: FunctionMember.Parameters = {};
+
+        for (const parameter of functionParameters) {
+            name = (
+                parameter.name.getText(fileNode) +
+                (parameter.questionToken && '?')
+            );
+
+            parameters[name] = (
+                parameter.type ?
+                    parameter.type.getText(fileNode) :
+                    '*'
+            );
+        }
+
+        return parameters;
+    }
+
+    public getResult(): (string|undefined) {
+        const functionMember = this,
+            fileNode = functionMember.file.node,
+            functionNode = functionMember.node,
+            functionType = functionNode.type;
+
+        if (!functionType) {
+            return;
+        }
+
+        const result = functionType.getText(fileNode);
+
+        if (result === 'void') {
+            return;
+        }
+
+        return result;
+    }
+
     public toJSON(
         _skipChildren?: boolean
     ): FunctionMember.JSON {
         const functionMember = this,
-            name = functionMember.name;
+            name = functionMember.name || 'function',
+            parameters = functionMember.getParameters(),
+            result = functionMember.getResult();
 
         return {
             ...super.toJSON(true),
             kind: 'function',
-            name
+            name,
+            parameters,
+            result
         };
     }
 
@@ -109,13 +176,19 @@ export namespace FunctionMember {
 
     export interface JSON extends Member.JSON {
         kind: 'function';
-        name?: string;
+        name: string;
+        parameters?: Parameters;
+        result?: string;
     }
 
     export type NodeType = (
+        TypeScript.ConstructorDeclaration |
+        TypeScript.ConstructSignatureDeclaration |
         TypeScript.FunctionDeclaration |
         TypeScript.FunctionExpression
     );
+
+    export type Parameters = Record<string, string>;
 
 }
 

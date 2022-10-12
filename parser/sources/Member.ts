@@ -7,6 +7,7 @@
 import JSON from './JSON';
 import ProjectFile from './ProjectFile';
 import TypeScript from 'typescript';
+import U from './Utilities';
 
 /* *
  *
@@ -39,7 +40,8 @@ export abstract class Member {
 
     public static parseChildren(
         file: ProjectFile,
-        node: TypeScript.Node
+        node: TypeScript.Node,
+        debug?: boolean
     ): Array<Member> {
         const children: Array<Member> = [],
             memberTypes = Member.types;
@@ -118,19 +120,27 @@ export abstract class Member {
      *
      * */
 
-    public getComment(): string {
+    public getChildren(): Array<Member> {
+        const member = this,
+            memberFile = member.file;
+
+        return Member.parseChildren(
+            memberFile,
+            member.node,
+            memberFile.project.debug
+        )
+    }
+
+    public getComment(): (string|undefined) {
         const member = this,
             nodeText = member.nodeText,
             sourceText = member.sourceText;
-
-        return sourceText.substring(
-            0,
-            sourceText.length - nodeText.length
-        );
-    }
-
-    public getTypeReflection(): TypeScript.Type {
-        return this.file.project.typeChecker.getTypeAtLocation(this.node);
+        return (
+            sourceText
+                .substring(0, sourceText.length - nodeText.length)
+                .match(/[ \t]*\/\*.*\*\/[ \t]*/gmsu) ||
+                []
+        )[0];
     }
 
     public toJSON(
@@ -141,7 +151,7 @@ export abstract class Member {
             file = member.file,
             children = (
                 skipChildren ?
-                    [] :
+                    undefined :
                     Member
                         .parseChildren(file, node)
                         .map(child => child.toJSON())

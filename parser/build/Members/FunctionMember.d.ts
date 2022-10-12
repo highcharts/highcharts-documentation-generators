@@ -10,6 +10,9 @@ export declare class FunctionMember extends Member {
     static parse(file: ProjectFile, node: TypeScript.Node): (FunctionMember | undefined);
     protected constructor(file: ProjectFile, node: FunctionMember.NodeType);
     readonly name?: string;
+    getGeneric(): (Array<string> | undefined);
+    getParameters(): (FunctionMember.Parameters | undefined);
+    getResult(): (string | undefined);
     toJSON(_skipChildren?: boolean): FunctionMember.JSON;
 }
 export interface FunctionMember {
@@ -18,8 +21,11 @@ export interface FunctionMember {
 export declare namespace FunctionMember {
     interface JSON extends Member.JSON {
         kind: 'function';
-        name?: string;
+        name: string;
+        parameters?: Parameters;
+        result?: string;
     }
-    type NodeType = (TypeScript.FunctionDeclaration | TypeScript.FunctionExpression);
+    type NodeType = (TypeScript.ConstructorDeclaration | TypeScript.ConstructSignatureDeclaration | TypeScript.FunctionDeclaration | TypeScript.FunctionExpression);
+    type Parameters = Record<string, string>;
 }
 export default FunctionMember;

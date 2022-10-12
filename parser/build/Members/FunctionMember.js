@@ -35,7 +35,10 @@ class FunctionMember extends Member_1.default {
      * */
     static parse(file, node) {
         if (!typescript_1.default.isFunctionDeclaration(node) &&
-            !typescript_1.default.isFunctionExpression(node)) {
+            !typescript_1.default.isFunctionExpression(node) &&
+            !typescript_1.default.isConstructorDeclaration(node) &&
+            !typescript_1.default.isConstructSignatureDeclaration(node) ||
+            !node.name) {
             return;
         }
         return new FunctionMember(file, node);
@@ -45,9 +48,44 @@ class FunctionMember extends Member_1.default {
      *  Functions
      *
      * */
+    getGeneric() {
+        const functionMember = this, fileNode = functionMember.file.node, typeParameters = functionMember.node.typeParameters;
+        if (!typeParameters) {
+            return;
+        }
+        return typeParameters.map(parameter => parameter.getText(fileNode));
+    }
+    getParameters() {
+        const functionMember = this, fileNode = functionMember.file.node, functionNode = functionMember.node, functionParameters = functionNode.parameters;
+        if (!functionParameters.length) {
+            return;
+        }
+        let name, parameters = {};
+        for (const parameter of functionParameters) {
+            name = (parameter.name.getText(fileNode) +
+                (parameter.questionToken && '?'));
+            parameters[name] = (parameter.type ?
+                parameter.type.getText(fileNode) :
+                '*');
+        }
+        return parameters;
+    }
+    getResult() {
+        const functionMember = this, fileNode = functionMember.file.node, functionNode = functionMember.node, functionType = functionNode.type;
+        if (!functionType) {
+            return;
+        }
+        const result = functionType.getText(fileNode);
+        if (result === 'void') {
+            return;
+        }
+        return result;
+    }
     toJSON(_skipChildren) {
-        const functionMember = this, name = functionMember.name;
-        return Object.assign(Object.assign({}, super.toJSON(true)), { kind: 'function', name });
+        const functionMember = this, name = functionMember.name || 'function', parameters = functionMember.getParameters(), result = functionMember.getResult();
+        return Object.assign(Object.assign({}, super.toJSON(true)), { kind: 'function', name,
+            parameters,
+            result });
     }
 }
 exports.FunctionMember = FunctionMember;

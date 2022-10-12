@@ -79,10 +79,18 @@ export namespace JSON {
         return globalThis.JSON.stringify(
             obj,
             (_key: string, item: unknown): unknown => {
-                if (typeof item === 'object' && item) {
-                    if (references.includes(item)) {
+                if (
+                    typeof item === 'object' &&
+                    item
+                ) {
+                    if (
+                        references.includes(item) ||
+                        item instanceof Array &&
+                        !item.length
+                    ) {
                         return void 0;
-                    } else {
+                    }
+                    else {
                         references.push(item);
                     }
                 }

@@ -9,7 +9,7 @@ import TypeScript from 'typescript';
 export declare abstract class Member {
     static readonly types: Record<string, typeof Member>;
     static parse(_file: ProjectFile, _node: TypeScript.Node): (Member | undefined);
-    static parseChildren(file: ProjectFile, node: TypeScript.Node): Array<Member>;
+    static parseChildren(file: ProjectFile, node: TypeScript.Node, debug?: boolean): Array<Member>;
     static register(MemberClass: typeof Member): void;
     protected constructor(file: ProjectFile, node: TypeScript.Node);
     readonly file: ProjectFile;
@@ -18,8 +18,8 @@ export declare abstract class Member {
     private _nodeText?;
     get sourceText(): string;
     private _sourceText?;
-    getComment(): string;
-    getTypeReflection(): TypeScript.Type;
+    getChildren(): Array<Member>;
+    getComment(): (string | undefined);
     toJSON(skipChildren?: boolean): Member.JSON;
 }
 export declare namespace Member {

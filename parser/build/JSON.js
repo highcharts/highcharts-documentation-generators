@@ -49,8 +49,11 @@ var JSON;
     function stringify(obj) {
         const references = [];
         return globalThis.JSON.stringify(obj, (_key, item) => {
-            if (typeof item === 'object' && item) {
-                if (references.includes(item)) {
+            if (typeof item === 'object' &&
+                item) {
+                if (references.includes(item) ||
+                    item instanceof Array &&
+                        !item.length) {
                     return void 0;
                 }
                 else {

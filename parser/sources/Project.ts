@@ -21,19 +21,34 @@ export class Project {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+
+    public static readonly System = TypeScript.sys;
+
+    /* *
+     *
      *  Static Functions
      *
      * */
 
     public static async load(
-        path: string
+        path: string,
+        debug?: boolean
     ): Promise<Project> {
-        const system = TypeScript.sys;
+ 
+        path = Project.System.resolvePath(path);
 
-        path = system.resolvePath(path);
-
-        const tsconfig = TypeScript.readJsonConfigFile(path, system.readFile),
-            config = TypeScript.parseJsonConfigFileContent(tsconfig, system, path),
+        const tsconfig = TypeScript.readJsonConfigFile(
+                path,
+                Project.System.readFile
+            ),
+            config = TypeScript.parseJsonConfigFileContent(
+                tsconfig,
+                Project.System,
+                path
+            ),
             program = TypeScript.createProgram(config.fileNames, config.options),
             cwd = program.getCurrentDirectory(),
             branch = await Git.getActiveBranch(cwd),
@@ -46,7 +61,7 @@ export class Project {
             npm,
             path,
             program,
-            system
+            debug
         );
     }
 
@@ -62,15 +77,15 @@ export class Project {
         npm: NPM.JSON,
         path: string,
         program: TypeScript.Program,
-        system: TypeScript.System
+        debug?: boolean
     ) {
         this.branch = branch;
         this.commit = commit;
         this.date = new Date();
+        this.debug = debug;
         this.npm = npm;
         this.path = path;
         this.program = program;
-        this.system = system;
         this.typeChecker = program.getTypeChecker();
     }
 
@@ -86,13 +101,13 @@ export class Project {
 
     public readonly date: Date;
 
+    public readonly debug?: boolean;
+
     public readonly npm: NPM.JSON;
 
     public readonly path: string;
 
     public readonly program: TypeScript.Program;
-
-    public readonly system: TypeScript.System;
 
     public readonly typeChecker: TypeScript.TypeChecker;
 
@@ -110,21 +125,6 @@ export class Project {
             .getSourceFiles()
             .filter(file => file.fileName.startsWith(projectPath))
             .map(file => ProjectFile.parse(project, file));
-    }
-
-    public normalizePath(...paths: Array<string>): string {
-        const project = this,
-            projectPath = project.path,
-            system = project.system;
-
-        let path = system.resolvePath(Path.join(...paths));
-        // .replace(/(?:\.d)?\.[jt]sx?$/, '');
-
-        if (Path.isAbsolute(path)) {
-            path = Path.relative(projectPath, path);
-        }
-
-        return path;
     }
 
     public toJSON(): Project.JSON {

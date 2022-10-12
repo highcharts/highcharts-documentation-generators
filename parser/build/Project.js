@@ -34,14 +34,14 @@ class Project {
      *  Constructor
      *
      * */
-    constructor(branch, commit, npm, path, program, system) {
+    constructor(branch, commit, npm, path, program, debug) {
         this.branch = branch;
         this.commit = commit;
         this.date = new Date();
+        this.debug = debug;
         this.npm = npm;
         this.path = path;
         this.program = program;
-        this.system = system;
         this.typeChecker = program.getTypeChecker();
     }
     /* *
@@ -49,12 +49,11 @@ class Project {
      *  Static Functions
      *
      * */
-    static load(path) {
+    static load(path, debug) {
         return __awaiter(this, void 0, void 0, function* () {
-            const system = typescript_1.default.sys;
-            path = system.resolvePath(path);
-            const tsconfig = typescript_1.default.readJsonConfigFile(path, system.readFile), config = typescript_1.default.parseJsonConfigFileContent(tsconfig, system, path), program = typescript_1.default.createProgram(config.fileNames, config.options), cwd = program.getCurrentDirectory(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(path_1.default.join(cwd, 'package.json'));
-            return new Project(branch, commit, npm, path, program, system);
+            path = Project.System.resolvePath(path);
+            const tsconfig = typescript_1.default.readJsonConfigFile(path, Project.System.readFile), config = typescript_1.default.parseJsonConfigFileContent(tsconfig, Project.System, path), program = typescript_1.default.createProgram(config.fileNames, config.options), cwd = program.getCurrentDirectory(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(path_1.default.join(cwd, 'package.json'));
+            return new Project(branch, commit, npm, path, program, debug);
         });
     }
     /* *
@@ -68,15 +67,6 @@ class Project {
             .getSourceFiles()
             .filter(file => file.fileName.startsWith(projectPath))
             .map(file => ProjectFile_1.default.parse(project, file));
-    }
-    normalizePath(...paths) {
-        const project = this, projectPath = project.path, system = project.system;
-        let path = system.resolvePath(path_1.default.join(...paths));
-        // .replace(/(?:\.d)?\.[jt]sx?$/, '');
-        if (path_1.default.isAbsolute(path)) {
-            path = path_1.default.relative(projectPath, path);
-        }
-        return path;
     }
     toJSON() {
         const project = this, { branch, commit, date, npm } = project;
@@ -95,6 +85,12 @@ class Project {
     }
 }
 exports.Project = Project;
+/* *
+ *
+ *  Static Properties
+ *
+ * */
+Project.System = typescript_1.default.sys;
 /* *
  *
  *  Default Export
