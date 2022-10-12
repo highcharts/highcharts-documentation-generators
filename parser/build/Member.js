@@ -10,6 +10,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Member = void 0;
 const typescript_1 = __importDefault(require("typescript"));
+const Utilities_1 = __importDefault(require("./Utilities"));
+/* *
+ *
+ *  Constants
+ *
+ * */
+const DEBUG_SKIP = [
+    'end',
+    'parent',
+    'pos'
+];
 /* *
  *
  *  Class
@@ -30,19 +41,24 @@ class Member {
      *  Static Functions
      *
      * */
-    static parse(_file, _node) {
+    static parse(file, node) {
+        const memberTypes = Member.types;
+        let member;
+        for (const type in memberTypes) {
+            member = memberTypes[type].parse(file, node);
+            if (member) {
+                return member;
+            }
+        }
         return;
     }
     static parseChildren(file, node, debug) {
-        const children = [], memberTypes = Member.types;
-        let childMember;
+        const memberTypes = Member.types, children = [];
+        let member;
         typescript_1.default.forEachChild(node, child => {
-            for (const member in memberTypes) {
-                childMember = memberTypes[member].parse(file, child);
-                if (childMember) {
-                    children.push(childMember);
-                    break;
-                }
+            member = Member.parse(file, child);
+            if (member) {
+                children.push(member);
             }
         });
         return children;
@@ -50,19 +66,19 @@ class Member {
     static register(MemberClass) {
         Member.types[MemberClass.name] = MemberClass;
     }
-    get nodeText() {
+    get codeText() {
         const member = this;
-        if (typeof member._nodeText === 'undefined') {
-            member._nodeText = member.node.getText(member.file.node);
+        if (typeof member._codeText === 'undefined') {
+            member._codeText = member.node.getText(member.file.node);
         }
-        return member._nodeText;
+        return member._codeText;
     }
-    get sourceText() {
+    get rangeText() {
         const member = this;
-        if (typeof member._sourceText === 'undefined') {
-            member._sourceText = member.node.getFullText(member.file.node);
+        if (typeof member._rangeText === 'undefined') {
+            member._rangeText = member.node.getFullText(member.file.node);
         }
-        return member._sourceText;
+        return member._rangeText;
     }
     /* *
      *
@@ -70,26 +86,69 @@ class Member {
      *
      * */
     getChildren() {
-        const member = this, memberFile = member.file;
-        return Member.parseChildren(memberFile, member.node, memberFile.project.debug);
+        const member = this;
+        if (!member._children) {
+            const memberFile = member.file;
+            member._children = Member.parseChildren(memberFile, member.node, memberFile.project.debug);
+        }
+        return member._children;
     }
     getComment() {
-        const member = this, nodeText = member.nodeText, sourceText = member.sourceText;
-        return (sourceText
-            .substring(0, sourceText.length - nodeText.length)
-            .match(/[ \t]*\/\*.*\*\/[ \t]*/gmsu) ||
+        const member = this, fileNode = member.file.node, memberNode = member.node, triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+        if (!triviaWidth) {
+            return;
+        }
+        return (memberNode
+            .getFullText(fileNode)
+            .substring(0, triviaWidth)
+            .match(/[ \t]*\/\*\*.*\*\/[ \t]*/gsu) ||
             [])[0];
     }
-    toJSON(skipChildren) {
-        const member = this, node = member.node, file = member.file, children = (skipChildren ?
-            undefined :
-            Member
-                .parseChildren(file, node)
-                .map(child => child.toJSON()));
+    getComments() {
+        const member = this, fileNode = member.file.node, memberNode = member.node, triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+        if (!triviaWidth) {
+            return;
+        }
+        return memberNode.getFullText(fileNode).substring(0, triviaWidth);
+    }
+    getDebug() {
+        const member = this, debug = { kind: typescript_1.default.SyntaxKind.Unknown }, fileNode = member.file.node, memberNode = member.node;
+        let property;
+        for (const key in memberNode) {
+            property = memberNode[key];
+            if (key[0] === '_' ||
+                DEBUG_SKIP.includes(key)) {
+                continue;
+            }
+            switch (typeof property) {
+                case 'boolean':
+                case 'number':
+                    debug[key] = property;
+                    continue;
+                case 'function':
+                    if (key === 'getText') {
+                        debug[key] = Utilities_1.default.firstLine(memberNode.getText(fileNode), 120);
+                    }
+                    continue;
+                case 'undefined':
+                    continue;
+            }
+            if (property &&
+                typeof property === 'object' &&
+                typeof property.getText === 'function') {
+                debug[key] = Utilities_1.default.firstLine(property.getText(fileNode), 120);
+            }
+            else {
+                debug[key] = Utilities_1.default.firstLine(`${property}`, 120);
+            }
+        }
+        return debug;
+    }
+    getMeta() {
+        const member = this, node = member.node;
         return {
-            kind: typescript_1.default.SyntaxKind[node.kind],
-            comment: (member.getComment() || undefined),
-            children
+            start: node.pos,
+            end: node.end
         };
     }
 }

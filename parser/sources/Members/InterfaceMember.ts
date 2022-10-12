@@ -5,7 +5,6 @@
  * */
 
 import Member from '../Member';
-import * as Members from '.';
 import ProjectFile from '../ProjectFile';
 import TypeScript from 'typescript';
 
@@ -64,19 +63,6 @@ export class InterfaceMember extends Member {
      *
      * */
 
-    public getChildren(): InterfaceMember.Children {
-        const interfaceMember = this,
-            projectFile = interfaceMember.file,
-            interfaceNode = interfaceMember.node;
-
-        return Member
-            .parseChildren(projectFile, interfaceNode)
-            .filter(member => (
-                member instanceof Members.FunctionMember ||
-                member instanceof Members.PropertyMember
-            )) as InterfaceMember.Children;
-    }
-
     public getGeneric(): (Array<string>|undefined) {
         const interfaceMember = this,
             fileNode = interfaceMember.file.node,
@@ -89,26 +75,22 @@ export class InterfaceMember extends Member {
         return typeParameters.map(parameter => parameter.getText(fileNode));
     }
 
-    public toJSON(
-        skipChildren?: boolean
-    ): InterfaceMember.JSON {
+    public toJSON(): InterfaceMember.JSON {
         const interfaceMember = this,
-            name = interfaceMember.name,
-            children = (
-                skipChildren ?
-                    void 0 :
-                    interfaceMember
-                        .getChildren()
-                        .map(child => child.toJSON())
-            ),
+            children = interfaceMember
+                .getChildren()
+                .map(child => child.toJSON()),
             comment = interfaceMember.getComment(),
-            generics = interfaceMember.getGeneric();
+            generics = interfaceMember.getGeneric(),
+            meta = interfaceMember.getMeta(),
+            name = interfaceMember.name;
 
         return {
             kind: 'interface',
             name,
             generics,
             comment,
+            meta,
             children
         };
     }
@@ -138,11 +120,6 @@ export namespace InterfaceMember {
      *  Declarations
      *
      * */
-
-    export type Children = Array<(
-        Members.FunctionMember |
-        Members.PropertyMember
-    )>;
 
     export interface JSON extends Member.JSON {
         generics?: Array<string>;

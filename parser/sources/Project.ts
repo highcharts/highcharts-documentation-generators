@@ -119,12 +119,23 @@ export class Project {
 
     public getFiles(): Array<ProjectFile> {
         const project = this,
-            projectPath = project.path;
+            projectPath = project.path,
+            projectProgram = project.program,
+            sourceFiles = projectProgram.getSourceFiles(),
+            files: Array<ProjectFile> = [];
 
-        return project.program
-            .getSourceFiles()
-            .filter(file => file.fileName.startsWith(projectPath))
-            .map(file => ProjectFile.parse(project, file));
+        for (const file of sourceFiles) {
+            if (
+                !file.fileName.startsWith(projectPath) ||
+                file.getChildCount(file) < 2
+            ) {
+                continue;
+            }
+
+            files.push(ProjectFile.parse(project, file));
+        }
+
+        return files;
     }
 
     public toJSON(): Project.JSON {

@@ -51,10 +51,7 @@ export class FunctionMember extends Member {
         node: FunctionMember.NodeType
     ) {
         super(file, node);
-
-        if (node.name) {
-            this.name = node.name.getText(file.node);
-        }
+        this.name = node.name && node.name.getText(file.node) || '';
     }
 
     /* *
@@ -63,7 +60,7 @@ export class FunctionMember extends Member {
      *
      * */
 
-    public readonly name?: string;
+    public readonly name: string;
 
     /* *
      *
@@ -131,20 +128,19 @@ export class FunctionMember extends Member {
         return result;
     }
 
-    public toJSON(
-        _skipChildren?: boolean
-    ): FunctionMember.JSON {
+    public toJSON(): FunctionMember.JSON {
         const functionMember = this,
-            name = functionMember.name || 'function',
+            meta = functionMember.getMeta(),
+            name = functionMember.name,
             parameters = functionMember.getParameters(),
             result = functionMember.getResult();
 
         return {
-            ...super.toJSON(true),
             kind: 'function',
             name,
             parameters,
-            result
+            result,
+            meta
         };
     }
 

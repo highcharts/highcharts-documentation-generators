@@ -45,13 +45,21 @@ export function exec(
     );
 }
 
+export function firstLine(
+    text: string,
+    limit?: number
+): string {
+    text = text.split(lineBreakOf(text))[0];
+    return (limit ? text.substring(0, limit) : text);
+}
+
 export function lineBreakOf(
     text: string
 ): ('\n'|'\r'|'\r\n') {
-    if (text.indexOf('\r\n')) {
+    if (text.includes('\r\n')) {
         return '\r\n';
     }
-    if (text.indexOf('\r')) {
+    if (text.includes('\r')) {
         return '\r';
     }
     return '\n';
@@ -76,6 +84,7 @@ export function relative(
 export default {
     absolute,
     exec,
+    firstLine,
     lineBreakOf,
     relative
 };

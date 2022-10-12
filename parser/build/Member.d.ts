@@ -8,25 +8,37 @@ import ProjectFile from './ProjectFile';
 import TypeScript from 'typescript';
 export declare abstract class Member {
     static readonly types: Record<string, typeof Member>;
-    static parse(_file: ProjectFile, _node: TypeScript.Node): (Member | undefined);
+    static parse(file: ProjectFile, node: TypeScript.Node): (Member | undefined);
     static parseChildren(file: ProjectFile, node: TypeScript.Node, debug?: boolean): Array<Member>;
     static register(MemberClass: typeof Member): void;
     protected constructor(file: ProjectFile, node: TypeScript.Node);
+    private _children?;
     readonly file: ProjectFile;
     readonly node: TypeScript.Node;
-    get nodeText(): string;
-    private _nodeText?;
-    get sourceText(): string;
-    private _sourceText?;
+    get codeText(): string;
+    private _codeText?;
+    get rangeText(): string;
+    private _rangeText?;
     getChildren(): Array<Member>;
     getComment(): (string | undefined);
-    toJSON(skipChildren?: boolean): Member.JSON;
+    getComments(): (string | undefined);
+    getDebug(): Member.Debug;
+    getMeta(): Member.Meta;
+    abstract toJSON(): Member.JSON;
 }
 export declare namespace Member {
+    interface Debug extends Record<string, (JSON.Collection | JSON.Primitive)> {
+        kind: number;
+    }
     interface JSON extends JSON.Object {
-        kind: string;
-        comment?: string;
         children?: Array<JSON>;
+        comment?: string;
+        kind: string;
+        meta: Meta;
+    }
+    interface Meta extends JSON.Object {
+        start: number;
+        end: number;
     }
 }
 export default Member;

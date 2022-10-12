@@ -11,6 +11,18 @@ import U from './Utilities';
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const DEBUG_SKIP: Array<string> = [
+    'end',
+    'parent',
+    'pos'
+];
+
+/* *
+ *
  *  Class
  *
  * */
@@ -32,9 +44,21 @@ export abstract class Member {
      * */
 
     public static parse(
-        _file: ProjectFile,
-        _node: TypeScript.Node
+        file: ProjectFile,
+        node: TypeScript.Node
     ): (Member|undefined) {
+        const memberTypes = Member.types;
+
+        let member: (Member|undefined);
+
+        for (const type in memberTypes) {
+            member = memberTypes[type].parse(file, node);
+
+            if (member) {
+                return member;
+            }
+        }
+
         return;
     }
 
@@ -43,19 +67,16 @@ export abstract class Member {
         node: TypeScript.Node,
         debug?: boolean
     ): Array<Member> {
-        const children: Array<Member> = [],
-            memberTypes = Member.types;
+        const memberTypes = Member.types,
+            children: Array<Member> = [];
 
-        let childMember: (Member|undefined);
+        let member: (Member|undefined);
 
         TypeScript.forEachChild(node, child => {
-            for (const member in memberTypes) {
-                childMember = memberTypes[member].parse(file, child);
+            member = Member.parse(file, child);
 
-                if (childMember) {
-                    children.push(childMember);
-                    break;
-                }
+            if (member) {
+                children.push(member);
             }
         });
 
@@ -88,31 +109,33 @@ export abstract class Member {
      *
      * */
 
+    private _children?: Array<Member>;
+
     public readonly file: ProjectFile;
 
     public readonly node: TypeScript.Node;
 
-    public get nodeText(): string {
+    public get codeText(): string {
         const member = this;
 
-        if (typeof member._nodeText === 'undefined') {
-            member._nodeText = member.node.getText(member.file.node);
+        if (typeof member._codeText === 'undefined') {
+            member._codeText = member.node.getText(member.file.node);
         }
 
-        return member._nodeText;
+        return member._codeText;
     }
-    private _nodeText?: string;
+    private _codeText?: string;
 
-    public get sourceText(): string {
+    public get rangeText(): string {
         const member = this;
 
-        if (typeof member._sourceText === 'undefined') {
-            member._sourceText = member.node.getFullText(member.file.node);
+        if (typeof member._rangeText === 'undefined') {
+            member._rangeText = member.node.getFullText(member.file.node);
         }
 
-        return member._sourceText;
+        return member._rangeText;
     }
-    private _sourceText?: string;
+    private _rangeText?: string;
 
     /* *
      *
@@ -121,48 +144,114 @@ export abstract class Member {
      * */
 
     public getChildren(): Array<Member> {
-        const member = this,
-            memberFile = member.file;
+        const member = this;
 
-        return Member.parseChildren(
-            memberFile,
-            member.node,
-            memberFile.project.debug
-        )
+        if (!member._children) {
+            const memberFile = member.file;
+
+            member._children = Member.parseChildren(
+                memberFile,
+                member.node,
+                memberFile.project.debug
+            );
+        }
+
+        return member._children
     }
 
     public getComment(): (string|undefined) {
         const member = this,
-            nodeText = member.nodeText,
-            sourceText = member.sourceText;
+            fileNode = member.file.node,
+            memberNode = member.node,
+            triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+
+        if (!triviaWidth) {
+            return;
+        }
+
         return (
-            sourceText
-                .substring(0, sourceText.length - nodeText.length)
-                .match(/[ \t]*\/\*.*\*\/[ \t]*/gmsu) ||
+            memberNode
+                .getFullText(fileNode)
+                .substring(0, triviaWidth)
+                .match(/[ \t]*\/\*\*.*\*\/[ \t]*/gsu) ||
                 []
         )[0];
     }
 
-    public toJSON(
-        skipChildren?: boolean
-    ): Member.JSON {
+    public getComments(): (string|undefined) {
         const member = this,
-            node = member.node,
-            file = member.file,
-            children = (
-                skipChildren ?
-                    undefined :
-                    Member
-                        .parseChildren(file, node)
-                        .map(child => child.toJSON())
-            );
+            fileNode = member.file.node,
+            memberNode = member.node,
+            triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+
+        if (!triviaWidth) {
+            return;
+        }
+
+        return memberNode.getFullText(fileNode).substring(0, triviaWidth);
+    }
+
+    public getDebug(): Member.Debug {
+        const member = this,
+            debug: Member.Debug = { kind: TypeScript.SyntaxKind.Unknown },
+            fileNode = member.file.node,
+            memberNode: Record<string, any> = member.node;
+
+        let property: any;
+
+        for (const key in memberNode) {
+            property = memberNode[key];
+
+            if (
+                key[0] === '_' ||
+                DEBUG_SKIP.includes(key)
+            ) {
+                continue;
+            }
+
+            switch (typeof property) {
+                case 'boolean':
+                case 'number':
+                    debug[key] = property;
+                    continue;
+                case 'function':
+                    if (key === 'getText') {
+                        debug[key] = U.firstLine(
+                            memberNode.getText(fileNode),
+                            120
+                        );
+                    }
+                    continue;
+                case 'undefined':
+                    continue;
+            }
+
+            if (
+                property &&
+                typeof property === 'object' &&
+                typeof property.getText === 'function'
+            ) {
+                debug[key] = U.firstLine(property.getText(fileNode), 120);
+            }
+            else {
+                debug[key] = U.firstLine(`${property}`, 120);
+            }
+        }
+
+        return debug;
+    }
+
+    public getMeta(): Member.Meta {
+        const member = this,
+            node = member.node;
 
         return {
-            kind: TypeScript.SyntaxKind[node.kind],
-            comment: (member.getComment() || undefined),
-            children
+            start: node.pos,
+            end: node.end
         };
     }
+
+    public abstract toJSON(): Member.JSON;
 
 }
 
@@ -180,10 +269,20 @@ export namespace Member {
      *
      * */
 
+    export interface Debug extends Record<string, (JSON.Collection|JSON.Primitive)> {
+        kind: number;
+    }
+
     export interface JSON extends JSON.Object {
-        kind: string;
-        comment?: string;
         children?: Array<JSON>;
+        comment?: string;
+        kind: string;
+        meta: Meta;
+    }
+
+    export interface Meta extends JSON.Object {
+        start: number,
+        end: number
     }
 
 }

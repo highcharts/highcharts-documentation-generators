@@ -11,14 +11,18 @@ export declare class ProjectFile implements Member {
     protected constructor(project: Project, node: TypeScript.SourceFile);
     readonly file: ProjectFile;
     readonly project: Project;
+    readonly name: string;
     readonly node: TypeScript.SourceFile;
-    readonly nodeText = "";
-    readonly sourceText = "";
-    getChildren(): Array<Member>;
+    readonly codeText = "";
+    readonly rangeText = "";
+    getChildren: () => Member[];
     getComment(): (string | undefined);
+    getComments: () => string | undefined;
+    getDebug: () => Member.Debug;
+    getMeta: () => Member.Meta;
     getReflectedType(member: Member): string;
     getTypeReflection(node?: TypeScript.Node): TypeScript.Type;
-    toJSON(skipChildren?: boolean): ProjectFile.JSON;
+    toJSON(): ProjectFile.JSON;
 }
 export declare namespace ProjectFile {
     interface JSON extends Member.JSON {

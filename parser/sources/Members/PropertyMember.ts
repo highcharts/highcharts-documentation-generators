@@ -65,10 +65,6 @@ export class PropertyMember extends Member {
      *
      * */
 
-    public getChildren(): Array<Member> {
-        return [];
-    }
-
     public getType(): string {
         const propertyMember = this,
             fileNode = propertyMember.file.node,
@@ -82,11 +78,10 @@ export class PropertyMember extends Member {
         );
     }
 
-    public toJSON(
-        _skipChildren?: boolean
-    ): PropertyMember.JSON {
+    public toJSON(): PropertyMember.JSON {
         const propertyMember = this,
             comment = propertyMember.getComment(),
+            meta = propertyMember.getMeta(),
             name = propertyMember.name,
             type = propertyMember.getType();
 
@@ -94,7 +89,8 @@ export class PropertyMember extends Member {
             kind: 'property',
             name,
             type,
-            comment
+            comment,
+            meta
         };
     }
 

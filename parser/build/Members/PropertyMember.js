@@ -43,22 +43,20 @@ class PropertyMember extends Member_1.default {
      *  Functions
      *
      * */
-    getChildren() {
-        return [];
-    }
     getType() {
         const propertyMember = this, fileNode = propertyMember.file.node, propertyNode = propertyMember.node, type = propertyNode.type;
         return (type ?
             type.getText(fileNode) :
             '*');
     }
-    toJSON(_skipChildren) {
-        const propertyMember = this, comment = propertyMember.getComment(), name = propertyMember.name, type = propertyMember.getType();
+    toJSON() {
+        const propertyMember = this, comment = propertyMember.getComment(), meta = propertyMember.getMeta(), name = propertyMember.name, type = propertyMember.getType();
         return {
             kind: 'property',
             name,
             type,
-            comment
+            comment,
+            meta
         };
     }
 }

@@ -62,11 +62,15 @@ class Project {
      *
      * */
     getFiles() {
-        const project = this, projectPath = project.path;
-        return project.program
-            .getSourceFiles()
-            .filter(file => file.fileName.startsWith(projectPath))
-            .map(file => ProjectFile_1.default.parse(project, file));
+        const project = this, projectPath = project.path, projectProgram = project.program, sourceFiles = projectProgram.getSourceFiles(), files = [];
+        for (const file of sourceFiles) {
+            if (!file.fileName.startsWith(projectPath) ||
+                file.getChildCount(file) < 2) {
+                continue;
+            }
+            files.push(ProjectFile_1.default.parse(project, file));
+        }
+        return files;
     }
     toJSON() {
         const project = this, { branch, commit, date, npm } = project;

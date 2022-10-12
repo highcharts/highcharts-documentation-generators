@@ -41,6 +41,7 @@ export class ProjectFile implements Member {
         node: TypeScript.SourceFile
     ) {
         this.file = this;
+        this.name = U.relative(project.path, node.fileName);
         this.node = node;
         this.project = project;
     }
@@ -55,11 +56,13 @@ export class ProjectFile implements Member {
 
     public readonly project: Project;
 
+    public readonly name: string;
+
     public readonly node: TypeScript.SourceFile;
 
-    public readonly nodeText = '';
+    public readonly codeText = '';
 
-    public readonly sourceText = '';
+    public readonly rangeText = '';
 
     /* * 
      *
@@ -67,13 +70,40 @@ export class ProjectFile implements Member {
      *
      * */
 
-    public getChildren(): Array<Member> {
-        return Member.prototype.getChildren.call(this);
-    }
+    public getChildren = Member.prototype.getChildren;
 
     public getComment(): (string|undefined) {
-        return Member.prototype.getComment.call(this);
+        const projectFile = this,
+            fileNode = projectFile.node,
+            firstNode = fileNode.getFirstToken(fileNode);
+
+        if (!firstNode) {
+            return;
+        }
+
+        const firstMember = Member.parse(projectFile, firstNode);
+
+        if (!firstMember) {
+            return;
+        }
+
+        const comment = firstMember.getComments();
+
+        if (
+            !comment ||
+            !comment.includes('*/')
+        ) {
+            return;
+        }
+
+        return comment.substring(0, comment.indexOf('*/') + 2);
     }
+
+    public getComments = Member.prototype.getComments;
+
+    public getDebug = Member.prototype.getDebug;
+
+    public getMeta = Member.prototype.getMeta;
 
     public getReflectedType(
         member: Member
@@ -98,27 +128,21 @@ export class ProjectFile implements Member {
         return project.typeChecker.getTypeAtLocation(node || projectFile.node);
     }
 
-    public toJSON(
-        skipChildren?: boolean
-    ): ProjectFile.JSON {
+    public toJSON(): ProjectFile.JSON {
         const projectFile = this,
-            project = projectFile.project,
-            node = projectFile.node,
-            children = (
-                skipChildren ?
-                    undefined :
-                    Member
-                        .parseChildren(projectFile, node)
-                        .map(child => child.toJSON())
-            ),
+            fileNode = projectFile.node,
+            children = Member
+                .parseChildren(projectFile, fileNode)
+                .map(child => child.toJSON()),
             comment = projectFile.getComment(),
-            name = U.relative(project.path, node.fileName);
-                // .replace(/(?:\.d)?\.[jt]sx?$/u, ''),
+            meta = projectFile.getMeta(),
+            name = projectFile.name;
 
         return {
             kind: 'file',
             name,
             comment,
+            meta,
             children
         };
     }

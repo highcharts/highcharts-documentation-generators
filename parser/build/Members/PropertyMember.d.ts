@@ -10,9 +10,8 @@ export declare class PropertyMember extends Member {
     static parse(file: ProjectFile, node: TypeScript.Node): (PropertyMember | undefined);
     protected constructor(file: ProjectFile, node: PropertyMember.NodeType);
     readonly name: string;
-    getChildren(): Array<Member>;
     getType(): string;
-    toJSON(_skipChildren?: boolean): PropertyMember.JSON;
+    toJSON(): PropertyMember.JSON;
 }
 export interface PropertyMember {
     readonly node: PropertyMember.NodeType;

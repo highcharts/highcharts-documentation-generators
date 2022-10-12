@@ -24,9 +24,7 @@ class FunctionMember extends Member_1.default {
      * */
     constructor(file, node) {
         super(file, node);
-        if (node.name) {
-            this.name = node.name.getText(file.node);
-        }
+        this.name = node.name && node.name.getText(file.node) || '';
     }
     /* *
      *
@@ -81,11 +79,15 @@ class FunctionMember extends Member_1.default {
         }
         return result;
     }
-    toJSON(_skipChildren) {
-        const functionMember = this, name = functionMember.name || 'function', parameters = functionMember.getParameters(), result = functionMember.getResult();
-        return Object.assign(Object.assign({}, super.toJSON(true)), { kind: 'function', name,
+    toJSON() {
+        const functionMember = this, meta = functionMember.getMeta(), name = functionMember.name, parameters = functionMember.getParameters(), result = functionMember.getResult();
+        return {
+            kind: 'function',
+            name,
             parameters,
-            result });
+            result,
+            meta
+        };
     }
 }
 exports.FunctionMember = FunctionMember;

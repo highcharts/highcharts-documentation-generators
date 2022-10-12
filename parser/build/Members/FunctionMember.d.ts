@@ -9,11 +9,11 @@ import TypeScript from 'typescript';
 export declare class FunctionMember extends Member {
     static parse(file: ProjectFile, node: TypeScript.Node): (FunctionMember | undefined);
     protected constructor(file: ProjectFile, node: FunctionMember.NodeType);
-    readonly name?: string;
+    readonly name: string;
     getGeneric(): (Array<string> | undefined);
     getParameters(): (FunctionMember.Parameters | undefined);
     getResult(): (string | undefined);
-    toJSON(_skipChildren?: boolean): FunctionMember.JSON;
+    toJSON(): FunctionMember.JSON;
 }
 export interface FunctionMember {
     readonly node: FunctionMember.NodeType;

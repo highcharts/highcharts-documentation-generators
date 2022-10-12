@@ -12,11 +12,13 @@ export interface ExecResult {
 }
 export declare function absolute(...paths: Array<string>): string;
 export declare function exec(command: string, options: ChildProcess.ExecOptions): Promise<ExecResult>;
+export declare function firstLine(text: string, limit?: number): string;
 export declare function lineBreakOf(text: string): ('\n' | '\r' | '\r\n');
 export declare function relative(referencePath: string, ...paths: Array<string>): string;
 declare const _default: {
     absolute: typeof absolute;
     exec: typeof exec;
+    firstLine: typeof firstLine;
     lineBreakOf: typeof lineBreakOf;
     relative: typeof relative;
 };

@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./FunctionMember"), exports);
 __exportStar(require("./InterfaceMember"), exports);
 __exportStar(require("./PropertyMember"), exports);
+__exportStar(require("./UnknownMember"), exports);
 //# sourceMappingURL=index.js.map
