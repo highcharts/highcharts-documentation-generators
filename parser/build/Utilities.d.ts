@@ -4,7 +4,7 @@
  *
  * */
 /// <reference types="node" />
-import ChildProcess from 'child_process';
+import * as ChildProcess from 'child_process';
 export interface ExecResult {
     error: (ChildProcess.ExecException | null);
     stdout: string;

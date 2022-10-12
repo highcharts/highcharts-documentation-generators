@@ -4,7 +4,8 @@
  *
  * */
 
-import FS from 'fs';
+import * as FS from 'fs';
+
 import JSON from './JSON.js';
 
 /* *

@@ -3,10 +3,10 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+import * as TypeScript from 'typescript';
 import JSON from './JSON';
 import NPM from './NPM';
 import ProjectFile from './ProjectFile';
-import TypeScript from 'typescript';
 export declare class Project {
     static readonly System: TypeScript.System;
     static load(path: string, debug?: boolean): Promise<Project>;

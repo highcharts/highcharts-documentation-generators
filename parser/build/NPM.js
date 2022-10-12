@@ -13,13 +13,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NPM = void 0;
-const fs_1 = __importDefault(require("fs"));
-const JSON_js_1 = __importDefault(require("./JSON.js"));
+const FS = require("fs");
+const JSON_js_1 = require("./JSON.js");
 /* *
  *
  *  Namespace
@@ -50,7 +47,7 @@ var NPM;
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const json = JSON_js_1.default.parse(`${yield fs_1.default.promises.readFile(path)}`);
+                const json = JSON_js_1.default.parse(`${yield FS.promises.readFile(path)}`);
                 if (json &&
                     typeof json === 'object' &&
                     !(json instanceof Array)) {

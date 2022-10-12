@@ -16,5 +16,10 @@
     },
     "include": [
         "sources/**/*.ts"
+    ],
+    "references": [
+        {
+            "path": "../parser/"
+        }
     ]
 }

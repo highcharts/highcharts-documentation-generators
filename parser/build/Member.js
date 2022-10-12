@@ -4,13 +4,10 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Member = void 0;
-const typescript_1 = __importDefault(require("typescript"));
-const Utilities_1 = __importDefault(require("./Utilities"));
+const TypeScript = require("typescript");
+const Utilities_1 = require("./Utilities");
 /* *
  *
  *  Constants
@@ -55,7 +52,7 @@ class Member {
     static parseChildren(file, node, debug) {
         const memberTypes = Member.types, children = [];
         let member;
-        typescript_1.default.forEachChild(node, child => {
+        TypeScript.forEachChild(node, child => {
             member = Member.parse(file, child);
             if (member) {
                 children.push(member);
@@ -65,20 +62,6 @@ class Member {
     }
     static register(MemberClass) {
         Member.types[MemberClass.name] = MemberClass;
-    }
-    get codeText() {
-        const member = this;
-        if (typeof member._codeText === 'undefined') {
-            member._codeText = member.node.getText(member.file.node);
-        }
-        return member._codeText;
-    }
-    get rangeText() {
-        const member = this;
-        if (typeof member._rangeText === 'undefined') {
-            member._rangeText = member.node.getFullText(member.file.node);
-        }
-        return member._rangeText;
     }
     /* *
      *
@@ -112,7 +95,7 @@ class Member {
         return memberNode.getFullText(fileNode).substring(0, triviaWidth);
     }
     getDebug() {
-        const member = this, debug = { kind: typescript_1.default.SyntaxKind.Unknown }, fileNode = member.file.node, memberNode = member.node;
+        const member = this, debug = { kind: TypeScript.SyntaxKind.Unknown }, fileNode = member.file.node, memberNode = member.node;
         let property;
         for (const key in memberNode) {
             property = memberNode[key];

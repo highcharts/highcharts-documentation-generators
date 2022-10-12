@@ -6,7 +6,7 @@
 
 import Member from './Member';
 import Project from './Project';
-import TypeScript from 'typescript';
+import * as TypeScript from 'typescript';
 import U from './Utilities';
 
 /* *

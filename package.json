@@ -50,7 +50,7 @@
     "main": "index.js",
     "scripts": {
         "build": "npm run build-1",
-        "build-1": "tsc --build parser typedoc typescript typescript4",
+        "build-1": "tsc --build generator parser typedoc typescript typescript4",
         "test": "npm run build",
         "watch": "npm run build-1 -- --watch"
     }

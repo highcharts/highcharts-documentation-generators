@@ -3,9 +3,9 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+import * as TypeScript from 'typescript';
 import JSON from './JSON';
 import ProjectFile from './ProjectFile';
-import TypeScript from 'typescript';
 export declare abstract class Member {
     static readonly types: Record<string, typeof Member>;
     static parse(file: ProjectFile, node: TypeScript.Node): (Member | undefined);
@@ -15,10 +15,6 @@ export declare abstract class Member {
     private _children?;
     readonly file: ProjectFile;
     readonly node: TypeScript.Node;
-    get codeText(): string;
-    private _codeText?;
-    get rangeText(): string;
-    private _rangeText?;
     getChildren(): Array<Member>;
     getComment(): (string | undefined);
     getComments(): (string | undefined);

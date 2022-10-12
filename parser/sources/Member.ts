@@ -4,9 +4,10 @@
  *
  * */
 
+import * as TypeScript from 'typescript';
+
 import JSON from './JSON';
 import ProjectFile from './ProjectFile';
-import TypeScript from 'typescript';
 import U from './Utilities';
 
 /* *
@@ -114,28 +115,6 @@ export abstract class Member {
     public readonly file: ProjectFile;
 
     public readonly node: TypeScript.Node;
-
-    public get codeText(): string {
-        const member = this;
-
-        if (typeof member._codeText === 'undefined') {
-            member._codeText = member.node.getText(member.file.node);
-        }
-
-        return member._codeText;
-    }
-    private _codeText?: string;
-
-    public get rangeText(): string {
-        const member = this;
-
-        if (typeof member._rangeText === 'undefined') {
-            member._rangeText = member.node.getFullText(member.file.node);
-        }
-
-        return member._rangeText;
-    }
-    private _rangeText?: string;
 
     /* *
      *

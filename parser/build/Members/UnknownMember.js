@@ -4,13 +4,10 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UnknownMember = void 0;
-const Member_1 = __importDefault(require("../Member"));
-const typescript_1 = __importDefault(require("typescript"));
+const TypeScript = require("typescript");
+const Member_1 = require("../Member");
 /* *
  *
  *  Class
@@ -36,7 +33,7 @@ class UnknownMember extends Member_1.default {
     toJSON() {
         const unknownMember = this, comment = unknownMember.getComment(), debug = unknownMember.getDebug(), meta = unknownMember.getMeta();
         return {
-            kind: `unknown:${typescript_1.default.SyntaxKind[debug.kind]}`,
+            kind: `unknown:${TypeScript.SyntaxKind[debug.kind]}`,
             comment,
             meta,
             debug

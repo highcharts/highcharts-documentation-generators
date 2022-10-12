@@ -4,9 +4,9 @@
  *
  * */
 
-import ChildProcess from 'child_process';
-import Path from 'path';
-import TypeScript from 'typescript';
+import * as ChildProcess from 'child_process';
+import * as Path from 'path';
+import * as TypeScript from 'typescript';
 
 /* *
  *

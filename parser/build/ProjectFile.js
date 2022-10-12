@@ -4,13 +4,10 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectFile = void 0;
-const Member_1 = __importDefault(require("./Member"));
-const Utilities_1 = __importDefault(require("./Utilities"));
+const Member_1 = require("./Member");
+const Utilities_1 = require("./Utilities");
 /* *
  *
  *  Class

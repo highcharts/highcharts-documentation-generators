@@ -4,12 +4,13 @@
  *
  * */
 
+import * as Path from 'path';
+import * as TypeScript from 'typescript';
+
 import Git from './Git';
 import JSON from './JSON';
 import NPM from './NPM';
-import Path from 'path';
 import ProjectFile from './ProjectFile';
-import TypeScript from 'typescript';
 
 /* *
  *

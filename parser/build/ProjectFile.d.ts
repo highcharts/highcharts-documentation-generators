@@ -5,7 +5,7 @@
  * */
 import Member from './Member';
 import Project from './Project';
-import TypeScript from 'typescript';
+import * as TypeScript from 'typescript';
 export declare class ProjectFile implements Member {
     static parse(project: Project, node: TypeScript.SourceFile): ProjectFile;
     protected constructor(project: Project, node: TypeScript.SourceFile);

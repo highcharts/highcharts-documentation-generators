@@ -3,9 +3,9 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+import * as TypeScript from 'typescript';
 import Member from '../Member';
 import ProjectFile from '../ProjectFile';
-import TypeScript from 'typescript';
 export declare class InterfaceMember extends Member {
     static parse(file: ProjectFile, node: TypeScript.Node): (InterfaceMember | undefined);
     protected constructor(file: ProjectFile, node: InterfaceMember.NodeType);

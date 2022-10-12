@@ -3,9 +3,9 @@
  *  Copyright (C) Highsoft AS
  *
  * */
+import * as TypeScript from 'typescript';
 import Member from '../Member';
 import ProjectFile from '../ProjectFile';
-import TypeScript from 'typescript';
 export declare class FunctionMember extends Member {
     static parse(file: ProjectFile, node: TypeScript.Node): (FunctionMember | undefined);
     protected constructor(file: ProjectFile, node: FunctionMember.NodeType);

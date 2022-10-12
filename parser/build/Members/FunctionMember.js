@@ -4,13 +4,10 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FunctionMember = void 0;
-const Member_1 = __importDefault(require("../Member"));
-const typescript_1 = __importDefault(require("typescript"));
+const TypeScript = require("typescript");
+const Member_1 = require("../Member");
 /* *
  *
  *  Class
@@ -32,10 +29,10 @@ class FunctionMember extends Member_1.default {
      *
      * */
     static parse(file, node) {
-        if (!typescript_1.default.isFunctionDeclaration(node) &&
-            !typescript_1.default.isFunctionExpression(node) &&
-            !typescript_1.default.isConstructorDeclaration(node) &&
-            !typescript_1.default.isConstructSignatureDeclaration(node) ||
+        if (!TypeScript.isFunctionDeclaration(node) &&
+            !TypeScript.isFunctionExpression(node) &&
+            !TypeScript.isConstructorDeclaration(node) &&
+            !TypeScript.isConstructSignatureDeclaration(node) ||
             !node.name) {
             return;
         }

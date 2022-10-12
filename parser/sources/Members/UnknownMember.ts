@@ -4,10 +4,10 @@
  *
  * */
 
+import * as TypeScript from 'typescript';
+
 import Member from '../Member';
 import ProjectFile from '../ProjectFile';
-import TypeScript from 'typescript';
-import U from '../Utilities';
 
 /* *
  *
