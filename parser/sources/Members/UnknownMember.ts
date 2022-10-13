@@ -43,13 +43,13 @@ export class UnknownMember extends Member {
 
     public toJSON(): UnknownMember.JSON {
         const unknownMember = this,
-            comment = unknownMember.getComment(),
+            commentTags = unknownMember.getCommentTags(),
             debug = unknownMember.getDebug(),
             meta = unknownMember.getMeta();
 
         return {
-            kind: `unknown:${TypeScript.SyntaxKind[debug.kind]}`,
-            comment,
+            kind: `[unknown ${TypeScript.SyntaxKind[debug.kind]}]`,
+            commentTags,
             meta,
             debug
         };

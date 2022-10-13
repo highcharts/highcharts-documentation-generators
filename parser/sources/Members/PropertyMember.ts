@@ -81,7 +81,7 @@ export class PropertyMember extends Member {
 
     public toJSON(): PropertyMember.JSON {
         const propertyMember = this,
-            comment = propertyMember.getComment(),
+            commentTags = propertyMember.getCommentTags(),
             meta = propertyMember.getMeta(),
             name = propertyMember.name,
             type = propertyMember.getType();
@@ -90,7 +90,7 @@ export class PropertyMember extends Member {
             kind: 'property',
             name,
             type,
-            comment,
+            commentTags,
             meta
         };
     }

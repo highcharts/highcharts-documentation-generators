@@ -31,10 +31,10 @@ class UnknownMember extends Member_1.default {
      *
      * */
     toJSON() {
-        const unknownMember = this, comment = unknownMember.getComment(), debug = unknownMember.getDebug(), meta = unknownMember.getMeta();
+        const unknownMember = this, commentTags = unknownMember.getCommentTags(), debug = unknownMember.getDebug(), meta = unknownMember.getMeta();
         return {
-            kind: `unknown:${TypeScript.SyntaxKind[debug.kind]}`,
-            comment,
+            kind: `[unknown ${TypeScript.SyntaxKind[debug.kind]}]`,
+            commentTags,
             meta,
             debug
         };

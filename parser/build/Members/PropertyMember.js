@@ -47,12 +47,12 @@ class PropertyMember extends Member_1.default {
             '*');
     }
     toJSON() {
-        const propertyMember = this, comment = propertyMember.getComment(), meta = propertyMember.getMeta(), name = propertyMember.name, type = propertyMember.getType();
+        const propertyMember = this, commentTags = propertyMember.getCommentTags(), meta = propertyMember.getMeta(), name = propertyMember.name, type = propertyMember.getType();
         return {
             kind: 'property',
             name,
             type,
-            comment,
+            commentTags,
             meta
         };
     }

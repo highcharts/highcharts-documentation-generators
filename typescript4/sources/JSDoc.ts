@@ -123,7 +123,7 @@ export namespace JSDoc {
                 (include.length && !include.includes(tagName)) ||
                 (exclude.length && exclude.includes(tagName))
             ) {
-                continue
+                continue;
             }
             extractedTags.push(tag);
         }

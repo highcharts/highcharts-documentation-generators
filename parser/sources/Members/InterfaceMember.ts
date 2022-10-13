@@ -81,7 +81,7 @@ export class InterfaceMember extends Member {
             children = interfaceMember
                 .getChildren()
                 .map(child => child.toJSON()),
-            comment = interfaceMember.getComment(),
+            commentTags = interfaceMember.getCommentTags(),
             generics = interfaceMember.getGeneric(),
             meta = interfaceMember.getMeta(),
             name = interfaceMember.name;
@@ -90,7 +90,7 @@ export class InterfaceMember extends Member {
             kind: 'interface',
             name,
             generics,
-            comment,
+            commentTags,
             meta,
             children
         };

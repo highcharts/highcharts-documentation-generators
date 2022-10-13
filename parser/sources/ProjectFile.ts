@@ -72,7 +72,15 @@ export class ProjectFile implements Member {
 
     public getChildren = Member.prototype.getChildren;
 
-    public getComment(): (string|undefined) {
+    public getComment = Member.prototype.getComment;
+
+    public getComments = Member.prototype.getComments;
+
+    public getCommentTags = Member.prototype.getCommentTags;
+
+    public getDebug = Member.prototype.getDebug;
+
+    public getFirstComment(): (string|undefined) {
         const projectFile = this,
             fileNode = projectFile.node,
             firstNode = fileNode.getFirstToken(fileNode);
@@ -98,10 +106,6 @@ export class ProjectFile implements Member {
 
         return comment.substring(0, comment.indexOf('*/') + 2);
     }
-
-    public getComments = Member.prototype.getComments;
-
-    public getDebug = Member.prototype.getDebug;
 
     public getMeta = Member.prototype.getMeta;
 
@@ -134,7 +138,7 @@ export class ProjectFile implements Member {
             children = Member
                 .parseChildren(projectFile, fileNode)
                 .map(child => child.toJSON()),
-            comment = projectFile.getComment(),
+            comment = projectFile.getFirstComment(),
             meta = projectFile.getMeta(),
             name = projectFile.name;
 

@@ -49,12 +49,12 @@ class InterfaceMember extends Member_1.default {
     toJSON() {
         const interfaceMember = this, children = interfaceMember
             .getChildren()
-            .map(child => child.toJSON()), comment = interfaceMember.getComment(), generics = interfaceMember.getGeneric(), meta = interfaceMember.getMeta(), name = interfaceMember.name;
+            .map(child => child.toJSON()), commentTags = interfaceMember.getCommentTags(), generics = interfaceMember.getGeneric(), meta = interfaceMember.getMeta(), name = interfaceMember.name;
         return {
             kind: 'interface',
             name,
             generics,
-            comment,
+            commentTags,
             meta,
             children
         };

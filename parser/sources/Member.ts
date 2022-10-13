@@ -6,6 +6,7 @@
 
 import * as TypeScript from 'typescript';
 
+import JSDoc from './JSDoc';
 import JSON from './JSON';
 import ProjectFile from './ProjectFile';
 import U from './Utilities';
@@ -157,6 +158,38 @@ export abstract class Member {
         )[0];
     }
 
+    public getCommentTags(): Array<Member.CommentTag> {
+        const member = this,
+            fileNode = member.file.node,
+            memberNode = member.node,
+            nodeChildren = memberNode.getChildren(),
+            commentTags: Array<Member.CommentTag> = [];
+
+        for (const child of nodeChildren) {
+            if (!TypeScript.isJSDoc(child)) {
+                break;
+            }
+            if (child.tags) {
+                for (const tag of child.tags) {
+                    commentTags.push({
+                        tag: tag.tagName.getText(fileNode),
+                        type: JSDoc.getTypeExpression(tag, fileNode),
+                        name: JSDoc.getName(tag, fileNode),
+                        text: JSDoc.getComment(tag, fileNode)
+                    });
+                }
+            }
+            else if (child.comment) {
+                commentTags.push({
+                    tag: 'description',
+                    text: JSDoc.getComment(child, fileNode)
+                });
+            }
+        }
+
+        return commentTags;
+    }
+
     public getComments(): (string|undefined) {
         const member = this,
             fileNode = member.file.node,
@@ -248,6 +281,13 @@ export namespace Member {
      *
      * */
 
+    export interface CommentTag extends JSON.Object {
+        tag: string;
+        text?: string
+        type?: string;
+        value?: string;
+    }
+
     export interface Debug extends Record<string, (JSON.Collection|JSON.Primitive)> {
         kind: number;
     }
@@ -255,6 +295,7 @@ export namespace Member {
     export interface JSON extends JSON.Object {
         children?: Array<JSON>;
         comment?: string;
+        commentTags?: Array<CommentTag>;
         kind: string;
         meta: Meta;
     }

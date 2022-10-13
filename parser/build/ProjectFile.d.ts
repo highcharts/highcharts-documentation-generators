@@ -16,9 +16,11 @@ export declare class ProjectFile implements Member {
     readonly codeText = "";
     readonly rangeText = "";
     getChildren: () => Member[];
-    getComment(): (string | undefined);
+    getComment: () => string | undefined;
     getComments: () => string | undefined;
+    getCommentTags: () => Member.CommentTag[];
     getDebug: () => Member.Debug;
+    getFirstComment(): (string | undefined);
     getMeta: () => Member.Meta;
     getReflectedType(member: Member): string;
     getTypeReflection(node?: TypeScript.Node): TypeScript.Type;

@@ -28,7 +28,9 @@ class ProjectFile {
          *
          * */
         this.getChildren = Member_1.default.prototype.getChildren;
+        this.getComment = Member_1.default.prototype.getComment;
         this.getComments = Member_1.default.prototype.getComments;
+        this.getCommentTags = Member_1.default.prototype.getCommentTags;
         this.getDebug = Member_1.default.prototype.getDebug;
         this.getMeta = Member_1.default.prototype.getMeta;
         this.file = this;
@@ -44,7 +46,7 @@ class ProjectFile {
     static parse(project, node) {
         return new ProjectFile(project, node);
     }
-    getComment() {
+    getFirstComment() {
         const projectFile = this, fileNode = projectFile.node, firstNode = fileNode.getFirstToken(fileNode);
         if (!firstNode) {
             return;
@@ -73,7 +75,7 @@ class ProjectFile {
     toJSON() {
         const projectFile = this, fileNode = projectFile.node, children = Member_1.default
             .parseChildren(projectFile, fileNode)
-            .map(child => child.toJSON()), comment = projectFile.getComment(), meta = projectFile.getMeta(), name = projectFile.name;
+            .map(child => child.toJSON()), comment = projectFile.getFirstComment(), meta = projectFile.getMeta(), name = projectFile.name;
         return {
             kind: 'file',
             name,

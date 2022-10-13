@@ -17,18 +17,26 @@ export declare abstract class Member {
     readonly node: TypeScript.Node;
     getChildren(): Array<Member>;
     getComment(): (string | undefined);
+    getCommentTags(): Array<Member.CommentTag>;
     getComments(): (string | undefined);
     getDebug(): Member.Debug;
     getMeta(): Member.Meta;
     abstract toJSON(): Member.JSON;
 }
 export declare namespace Member {
+    interface CommentTag extends JSON.Object {
+        tag: string;
+        text?: string;
+        type?: string;
+        value?: string;
+    }
     interface Debug extends Record<string, (JSON.Collection | JSON.Primitive)> {
         kind: number;
     }
     interface JSON extends JSON.Object {
         children?: Array<JSON>;
         comment?: string;
+        commentTags?: Array<CommentTag>;
         kind: string;
         meta: Meta;
     }
