@@ -3,7 +3,6 @@
  *  Copyright (C) Highsoft AS
  *
  * */
-import * as Handlebars from 'handlebars';
 import JSON from './JSON';
 export declare class Template {
     static readonly types: Record<string, Template>;
@@ -11,6 +10,7 @@ export declare class Template {
     private constructor();
     readonly name: string;
     readonly path: string;
-    readonly compile: Handlebars.TemplateDelegate<JSON.Object>;
+    private readonly compile;
+    write(path: string, data: JSON.Object): Promise<void>;
 }
 export default Template;

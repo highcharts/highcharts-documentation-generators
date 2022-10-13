@@ -41,10 +41,16 @@ class Template {
      * */
     static load(path) {
         return __awaiter(this, void 0, void 0, function* () {
-            const file = yield FS.promises.readFile(path), name = Path.basename(path, Path.extname(path)), compile = Handlebars.compile(file), template = new Template(name, path, compile);
+            const file = yield FS.promises.readFile(path), name = Path.basename(path, Path.extname(path)), compile = Handlebars.compile(file.toString()), template = new Template(name, path, compile);
             Template.types[name] = template;
             Handlebars.registerPartial(name, compile);
             return template;
+        });
+    }
+    write(path, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const template = this, file = template.compile(data, {});
+            yield FS.promises.writeFile(path, file);
         });
     }
 }

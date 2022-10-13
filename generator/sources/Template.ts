@@ -37,7 +37,7 @@ export class Template {
     ): Promise<Template> {
         const file = await FS.promises.readFile(path),
             name = Path.basename(path, Path.extname(path)),
-            compile = Handlebars.compile(file),
+            compile = Handlebars.compile(file.toString()),
             template = new Template(name, path, compile);
 
         Template.types[name] = template;
@@ -78,7 +78,17 @@ export class Template {
      *
      * */
 
-    public readonly compile: Handlebars.TemplateDelegate<JSON.Object>;
+    private readonly compile: Handlebars.TemplateDelegate<JSON.Object>;
+
+    public async write(
+        path: string,
+        data: JSON.Object
+    ): Promise<void> {
+        const template = this,
+            file = template.compile(data, {});
+
+        await FS.promises.writeFile(path, file);
+    }
 
 }
 

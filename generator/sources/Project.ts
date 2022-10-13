@@ -68,6 +68,12 @@ export class Project {
 
     public readonly template: Template;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
 }
 
 /* *
