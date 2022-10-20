@@ -24,7 +24,6 @@
         "sanitize-html": "^2.7.1",
         "semver": "^7.3.7",
         "taffydb": "^2.7.3",
-        "typedoc": "~0.21.10",
         "underscore": "^1.13.4",
         "yargs": "^17.5.1"
     },
@@ -37,7 +36,6 @@
         "api-docs",
         "docstrap",
         "jsdoc",
-        "typedoc",
         "typescript",
         "index.js",
         "LICENSE.md",
