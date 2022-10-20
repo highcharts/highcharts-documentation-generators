@@ -42,13 +42,12 @@
         "README.md"
     ],
     "bin": {
-        "highcharts-api-docs": "api-docs/bin/generator.js",
-        "highcharts-typedoc": "typedoc/bin/highcharts-typedoc"
+        "highcharts-api-docs": "api-docs/bin/generator.js"
     },
     "main": "index.js",
     "scripts": {
         "build": "npm run build-1",
-        "build-1": "tsc --build generator parser typedoc typescript typescript4",
+        "build-1": "tsc --build generator parser typescript typescript4",
         "test": "npm run build",
         "watch": "npm run build-1 -- --watch"
     }
