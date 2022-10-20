@@ -6,7 +6,11 @@
  * */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -30,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PropertyMember = void 0;
 const M = __importStar(require("./"));
 const ModifiersUtilities_1 = __importDefault(require("../ModifiersUtilities"));
+const typescript_1 = __importDefault(require("typescript"));
 const TypesUtilities_1 = __importDefault(require("../TypesUtilities"));
 class PropertyMember extends M.Member {
     /* *
@@ -50,7 +55,9 @@ class PropertyMember extends M.Member {
                 true,
             kind: 'property',
             kindID: superJSON.kindID,
-            modifiers: ModifiersUtilities_1.default.getModifierArray(node.modifiers),
+            modifiers: ModifiersUtilities_1.default.getModifierArray(typescript_1.default.canHaveModifiers(node) ?
+                typescript_1.default.getModifiers(node) :
+                []),
             name: node.name.getText(sourceFile),
             type: TypesUtilities_1.default
                 .loadFromTypeNode(sourceFile, node.type)
