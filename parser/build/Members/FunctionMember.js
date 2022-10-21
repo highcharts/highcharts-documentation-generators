@@ -20,8 +20,9 @@ class FunctionMember extends Member_1.default {
      *
      * */
     constructor(file, node) {
+        var _a;
         super(file, node);
-        this.name = node.name && node.name.getText(file.node) || '';
+        this.name = ((_a = node.name) === null || _a === void 0 ? void 0 : _a.getText(file.node)) || '';
     }
     /* *
      *
@@ -29,10 +30,12 @@ class FunctionMember extends Member_1.default {
      *
      * */
     static parse(file, node) {
-        if (!TypeScript.isFunctionDeclaration(node) &&
+        if (!TypeScript.isConstructorDeclaration(node) &&
+            !TypeScript.isConstructSignatureDeclaration(node) &&
+            !TypeScript.isFunctionDeclaration(node) &&
             !TypeScript.isFunctionExpression(node) &&
-            !TypeScript.isConstructorDeclaration(node) &&
-            !TypeScript.isConstructSignatureDeclaration(node) ||
+            !TypeScript.isMethodDeclaration(node) &&
+            !TypeScript.isMethodSignature(node) ||
             !node.name) {
             return;
         }
@@ -44,21 +47,27 @@ class FunctionMember extends Member_1.default {
      *
      * */
     getGeneric() {
-        const functionMember = this, fileNode = functionMember.file.node, typeParameters = functionMember.node.typeParameters;
+        const functionMember = this;
+        const fileNode = functionMember.file.node;
+        const typeParameters = functionMember.node.typeParameters;
         if (!typeParameters) {
             return;
         }
         return typeParameters.map(parameter => parameter.getText(fileNode));
     }
     getParameters() {
-        const functionMember = this, fileNode = functionMember.file.node, functionNode = functionMember.node, functionParameters = functionNode.parameters;
+        const functionMember = this;
+        const fileNode = functionMember.file.node;
+        const functionNode = functionMember.node;
+        const functionParameters = functionNode.parameters;
         if (!functionParameters.length) {
             return;
         }
-        let name, parameters = {};
+        let name;
+        let parameters = {};
         for (const parameter of functionParameters) {
             name = (parameter.name.getText(fileNode) +
-                (parameter.questionToken && '?'));
+                (parameter.questionToken ? '?' : ''));
             parameters[name] = (parameter.type ?
                 parameter.type.getText(fileNode) :
                 '*');
@@ -66,7 +75,10 @@ class FunctionMember extends Member_1.default {
         return parameters;
     }
     getResult() {
-        const functionMember = this, fileNode = functionMember.file.node, functionNode = functionMember.node, functionType = functionNode.type;
+        const functionMember = this;
+        const fileNode = functionMember.file.node;
+        const functionNode = functionMember.node;
+        const functionType = functionNode.type;
         if (!functionType) {
             return;
         }
@@ -77,7 +89,11 @@ class FunctionMember extends Member_1.default {
         return result;
     }
     toJSON() {
-        const functionMember = this, meta = functionMember.getMeta(), name = functionMember.name, parameters = functionMember.getParameters(), result = functionMember.getResult();
+        const functionMember = this;
+        const meta = functionMember.getMeta();
+        const name = functionMember.name;
+        const parameters = functionMember.getParameters();
+        const result = functionMember.getResult();
         return {
             kind: 'function',
             name,

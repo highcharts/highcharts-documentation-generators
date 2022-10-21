@@ -28,6 +28,10 @@ export class Project {
 
     public static readonly System = TypeScript.sys;
 
+    public static readonly defaultOptions: Project.Options = {
+        includePublic: true
+    };
+
     /* *
      *
      *  Static Functions
@@ -36,7 +40,7 @@ export class Project {
 
     public static async load(
         path: string,
-        debug?: boolean
+        options?: Project.Options
     ): Promise<Project> {
  
         path = Project.System.resolvePath(path);
@@ -62,7 +66,7 @@ export class Project {
             npm,
             path,
             program,
-            debug
+            options
         );
     }
 
@@ -78,13 +82,16 @@ export class Project {
         npm: NPM.JSON,
         path: string,
         program: TypeScript.Program,
-        debug?: boolean
+        options?: Project.Options
     ) {
         this.branch = branch;
         this.commit = commit;
         this.date = new Date();
-        this.debug = debug;
         this.npm = npm;
+        this.options = {
+            ...Project.defaultOptions,
+            ...options
+        };
         this.path = path;
         this.program = program;
         this.typeChecker = program.getTypeChecker();
@@ -102,9 +109,9 @@ export class Project {
 
     public readonly date: Date;
 
-    public readonly debug?: boolean;
-
     public readonly npm: NPM.JSON;
+
+    public readonly options: Project.Options;
 
     public readonly path: string;
 
@@ -136,7 +143,13 @@ export class Project {
             files.push(ProjectFile.parse(project, file));
         }
 
-        return files;
+        return files.sort((a, b) => {
+            return (
+                a.name < b.name ? -1 :
+                a.name > b.name ? 1 :
+                0
+            );
+        });
     }
 
     public toJSON(): Project.JSON {
@@ -145,7 +158,8 @@ export class Project {
                 branch,
                 commit,
                 date,
-                npm
+                npm,
+                options
             } = project;
 
         return {
@@ -154,6 +168,7 @@ export class Project {
             date: date.toISOString(),
             description: npm.description,
             name: npm.name,
+            options,
             repository: npm.repository,
             version: npm.version,
             files: project
@@ -185,8 +200,15 @@ export namespace Project {
         description?: string;
         files: Array<ProjectFile.JSON>;
         name: string;
+        options?: Options;
         repository?: string;
         version: string;
+    }
+
+    export interface Options extends JSON.Object {
+        debug?: boolean;
+        includePrivate?: boolean;
+        includePublic?: boolean;
     }
 
 }

@@ -4,12 +4,10 @@
  *
  * */
 import * as Parser from '../../parser/build/';
-import Template from './Template';
 export declare class Project {
-    static load(path: string, template: Template): Promise<Project>;
+    static load(path: string): Promise<Project>;
     private constructor();
     readonly ast: Parser.Project.JSON;
     readonly path: string;
-    readonly template: Template;
 }
 export default Project;

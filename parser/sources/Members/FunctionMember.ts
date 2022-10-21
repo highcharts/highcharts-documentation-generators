@@ -29,10 +29,12 @@ export class FunctionMember extends Member {
     ): (FunctionMember|undefined) {
 
         if (
+            !TypeScript.isConstructorDeclaration(node) &&
+            !TypeScript.isConstructSignatureDeclaration(node) &&
             !TypeScript.isFunctionDeclaration(node) &&
             !TypeScript.isFunctionExpression(node) &&
-            !TypeScript.isConstructorDeclaration(node) &&
-            !TypeScript.isConstructSignatureDeclaration(node) ||
+            !TypeScript.isMethodDeclaration(node) &&
+            !TypeScript.isMethodSignature(node) ||
             !node.name
         ) {
             return;
@@ -52,7 +54,7 @@ export class FunctionMember extends Member {
         node: FunctionMember.NodeType
     ) {
         super(file, node);
-        this.name = node.name && node.name.getText(file.node) || '';
+        this.name = node.name?.getText(file.node) || '';
     }
 
     /* *
@@ -70,9 +72,9 @@ export class FunctionMember extends Member {
      * */
 
     public getGeneric(): (Array<string>|undefined) {
-        const functionMember = this,
-            fileNode = functionMember.file.node,
-            typeParameters = functionMember.node.typeParameters;
+        const functionMember = this;
+        const fileNode = functionMember.file.node;
+        const typeParameters = functionMember.node.typeParameters;
 
         if (!typeParameters) {
             return;
@@ -82,22 +84,22 @@ export class FunctionMember extends Member {
     }
 
     public getParameters(): (FunctionMember.Parameters|undefined) {
-        const functionMember = this,
-            fileNode = functionMember.file.node,
-            functionNode = functionMember.node,
-            functionParameters = functionNode.parameters;
+        const functionMember = this;
+        const fileNode = functionMember.file.node;
+        const functionNode = functionMember.node;
+        const functionParameters = functionNode.parameters;
 
         if (!functionParameters.length) {
             return;
         }
 
-        let name: string,
-            parameters: FunctionMember.Parameters = {};
+        let name: string;
+        let parameters: FunctionMember.Parameters = {};
 
         for (const parameter of functionParameters) {
             name = (
                 parameter.name.getText(fileNode) +
-                (parameter.questionToken && '?')
+                (parameter.questionToken ? '?' : '')
             );
 
             parameters[name] = (
@@ -111,10 +113,10 @@ export class FunctionMember extends Member {
     }
 
     public getResult(): (string|undefined) {
-        const functionMember = this,
-            fileNode = functionMember.file.node,
-            functionNode = functionMember.node,
-            functionType = functionNode.type;
+        const functionMember = this;
+        const fileNode = functionMember.file.node;
+        const functionNode = functionMember.node;
+        const functionType = functionNode.type;
 
         if (!functionType) {
             return;
@@ -130,11 +132,11 @@ export class FunctionMember extends Member {
     }
 
     public toJSON(): FunctionMember.JSON {
-        const functionMember = this,
-            meta = functionMember.getMeta(),
-            name = functionMember.name,
-            parameters = functionMember.getParameters(),
-            result = functionMember.getResult();
+        const functionMember = this;
+        const meta = functionMember.getMeta();
+        const name = functionMember.name;
+        const parameters = functionMember.getParameters();
+        const result = functionMember.getResult();
 
         return {
             kind: 'function',
@@ -182,7 +184,9 @@ export namespace FunctionMember {
         TypeScript.ConstructorDeclaration |
         TypeScript.ConstructSignatureDeclaration |
         TypeScript.FunctionDeclaration |
-        TypeScript.FunctionExpression
+        TypeScript.FunctionExpression |
+        TypeScript.MethodDeclaration |
+        TypeScript.MethodSignature
     );
 
     export type Parameters = Record<string, string>;

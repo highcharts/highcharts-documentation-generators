@@ -15,7 +15,7 @@ import ProjectFile from '../ProjectFile';
  *
  * */
 
-export class InterfaceMember extends Member {
+export class ClassMember extends Member {
 
     /* *
      *
@@ -26,13 +26,13 @@ export class InterfaceMember extends Member {
     public static parse(
         file: ProjectFile,
         node: TypeScript.Node
-    ): (InterfaceMember|undefined) {
+    ): (ClassMember|undefined) {
 
-        if (!TypeScript.isInterfaceDeclaration(node)) {
+        if (!TypeScript.isClassLike(node)) {
             return;
         }
 
-        return new InterfaceMember(file, node);
+        return new ClassMember(file, node);
     }
 
     /* *
@@ -43,10 +43,10 @@ export class InterfaceMember extends Member {
 
     protected constructor(
         file: ProjectFile,
-        node: InterfaceMember.NodeType
+        node: ClassMember.NodeType
     ) {
         super(file, node);
-        this.name = node.name.getText(file.node);
+        this.name = node.name?.getText(file.node) || '';
     }
 
     /* *
@@ -64,13 +64,13 @@ export class InterfaceMember extends Member {
      * */
 
     public getChildren(): Array<Member> {
-        const interfaceMember = this;
-        const file = interfaceMember.file;
+        const classMember = this;
+        const file = classMember.file;
         const children: Array<Member> = [];
 
         let child: (Member|undefined);
 
-        for (const member of interfaceMember.node.members) {
+        for (const member of classMember.node.members) {
             child = Member.parse(file, member);
 
             if (child) {
@@ -82,9 +82,9 @@ export class InterfaceMember extends Member {
     }
 
     public getGeneric(): (Array<string>|undefined) {
-        const interfaceMember = this;
-        const fileNode = interfaceMember.file.node;
-        const typeParameters = interfaceMember.node.typeParameters;
+        const classMember = this;
+        const fileNode = classMember.file.node;
+        const typeParameters = classMember.node.typeParameters;
 
         if (!typeParameters) {
             return;
@@ -93,18 +93,18 @@ export class InterfaceMember extends Member {
         return typeParameters.map(parameter => parameter.getText(fileNode));
     }
 
-    public toJSON(): InterfaceMember.JSON {
-        const interfaceMember = this;
-        const children = interfaceMember
+    public toJSON(): ClassMember.JSON {
+        const classMember = this;
+        const children = classMember
             .getChildren()
             .map(child => child.toJSON());
-        const commentTags = interfaceMember.getCommentTags();
-        const generics = interfaceMember.getGeneric();
-        const meta = interfaceMember.getMeta();
-        const name = interfaceMember.name;
+        const commentTags = classMember.getCommentTags();
+        const generics = classMember.getGeneric();
+        const meta = classMember.getMeta();
+        const name = classMember.name;
 
         return {
-            kind: 'interface',
+            kind: 'class',
             name,
             generics,
             commentTags,
@@ -121,8 +121,8 @@ export class InterfaceMember extends Member {
  *
  * */
 
-export interface InterfaceMember {
-    readonly node: InterfaceMember.NodeType;
+export interface ClassMember {
+    readonly node: ClassMember.NodeType;
 }
 
 /* *
@@ -131,7 +131,7 @@ export interface InterfaceMember {
  *
  * */
 
-export namespace InterfaceMember {
+export namespace ClassMember {
 
     /* *
      *
@@ -141,13 +141,11 @@ export namespace InterfaceMember {
 
     export interface JSON extends Member.JSON {
         generics?: Array<string>;
-        kind: 'interface';
+        kind: 'class';
         name: string;
     }
 
-    export type NodeType = (
-        TypeScript.InterfaceDeclaration
-    );
+    export type NodeType = TypeScript.ClassLikeDeclaration;
 
 }
 
@@ -157,7 +155,7 @@ export namespace InterfaceMember {
  *
  * */
 
-Member.register(InterfaceMember);
+Member.register(ClassMember);
 
 /* *
  *
@@ -165,4 +163,4 @@ Member.register(InterfaceMember);
  *
  * */
 
-export default InterfaceMember;
+export default ClassMember;

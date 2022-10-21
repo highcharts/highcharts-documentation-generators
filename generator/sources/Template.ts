@@ -9,6 +9,7 @@ import * as Handlebars from 'handlebars';
 import * as Path from 'path';
 
 import JSON from './JSON';
+import U from './Utilities';
 
 /* *
  *
@@ -33,17 +34,35 @@ export class Template {
      * */
 
     public static async load(
-        path: string
+        path: string,
+        relativeTo?: string
     ): Promise<Template> {
-        const file = await FS.promises.readFile(path),
-            name = Path.basename(path, Path.extname(path)),
-            compile = Handlebars.compile(file.toString()),
-            template = new Template(name, path, compile);
+        const buffer = await FS.promises.readFile(path);
+        const name = Path.relative(
+            relativeTo || Path.dirname(path),
+            path.substring(0, path.length - Path.extname(path).length)
+        );
+        const compile = Handlebars.compile(buffer.toString());
+        const template = new Template(name, path, compile);
 
         Template.types[name] = template;
         Handlebars.registerPartial(name, compile);
 
         return template;
+    }
+
+    public static async loadFolder(
+        path: string,
+        recursive?: boolean
+    ): Promise<Array<Template>> {
+        const files = U.getFilePaths(path, recursive);
+        const promises: Array<Promise<Template>> = [];
+
+        for (const file of files) {
+            promises.push(Template.load(file, path));
+        }
+
+        return Promise.all(promises);
     }
 
     /* *

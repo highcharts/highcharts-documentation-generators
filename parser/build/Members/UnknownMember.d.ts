@@ -12,7 +12,6 @@ export declare class UnknownMember extends Member {
 }
 export declare namespace UnknownMember {
     interface JSON extends Member.JSON {
-        kind: string;
         debug?: Member.Debug;
     }
 }

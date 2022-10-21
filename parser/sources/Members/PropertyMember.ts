@@ -67,10 +67,10 @@ export class PropertyMember extends Member {
      * */
 
     public getType(): string {
-        const propertyMember = this,
-            fileNode = propertyMember.file.node,
-            propertyNode = propertyMember.node,
-            type = propertyNode.type;
+        const propertyMember = this;
+        const fileNode = propertyMember.file.node;
+        const propertyNode = propertyMember.node;
+        const type = propertyNode.type;
 
         return (
             type ?
@@ -80,11 +80,11 @@ export class PropertyMember extends Member {
     }
 
     public toJSON(): PropertyMember.JSON {
-        const propertyMember = this,
-            commentTags = propertyMember.getCommentTags(),
-            meta = propertyMember.getMeta(),
-            name = propertyMember.name,
-            type = propertyMember.getType();
+        const propertyMember = this;
+        const commentTags = propertyMember.getCommentTags();
+        const meta = propertyMember.getMeta();
+        const name = propertyMember.name;
+        const type = propertyMember.getType();
 
         return {
             kind: 'property',

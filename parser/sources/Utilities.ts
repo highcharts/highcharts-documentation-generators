@@ -53,6 +53,24 @@ export function firstLine(
     return (limit ? text.substring(0, limit) : text);
 }
 
+export function isModuleDeclaration(
+    node: TypeScript.Node
+): node is TypeScript.ModuleDeclaration {
+    return (
+        TypeScript.isModuleDeclaration(node) &&
+        !isNamespaceDeclaration(node)
+    );
+}
+
+export function isNamespaceDeclaration(
+    node: TypeScript.Node
+): node is TypeScript.NamespaceDeclaration {
+    return (
+        TypeScript.isModuleDeclaration(node) &&
+        !!(node.name as TypeScript.Identifier).escapedText
+    );
+}
+
 export function lineBreakOf(
     text: string
 ): ('\n'|'\r'|'\r\n') {
@@ -86,5 +104,7 @@ export default {
     exec,
     firstLine,
     lineBreakOf,
+    isModuleDeclaration,
+    isNamespaceDeclaration,
     relative
 };

@@ -14,8 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(require("./ClassMember"), exports);
 __exportStar(require("./FunctionMember"), exports);
 __exportStar(require("./InterfaceMember"), exports);
+__exportStar(require("./ModuleMember"), exports);
+__exportStar(require("./NamespaceMember"), exports);
 __exportStar(require("./PropertyMember"), exports);
 __exportStar(require("./UnknownMember"), exports);
 //# sourceMappingURL=index.js.map

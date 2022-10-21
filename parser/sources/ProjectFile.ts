@@ -70,20 +70,55 @@ export class ProjectFile implements Member {
      *
      * */
 
-    public getChildren = Member.prototype.getChildren;
+    public getChildren(): Array<Member> {
+        const projectFile = this;
+        const fileNode = projectFile.node;
+        const children: Array<Member> = [];
+        const {
+            debug,
+            includePublic,
+            includePrivate
+        } = projectFile.project.options;
 
-    public getComment = Member.prototype.getComment;
+        let member: (Member|undefined);
 
-    public getComments = Member.prototype.getComments;
+        TypeScript.forEachChild(fileNode, child => {
 
-    public getCommentTags = Member.prototype.getCommentTags;
+            if (Member.skip.includes(child.kind)) {
+                return;
+            }
 
-    public getDebug = Member.prototype.getDebug;
+            if (
+                includePublic &&
+                (
+                    TypeScript.isExportAssignment(child) ||
+                    TypeScript.isExportDeclaration(child)
+                )
+            ) {
+                children.push(...Member.parseChildren(projectFile, child));
+                return;
+            }
 
-    public getFirstComment(): (string|undefined) {
-        const projectFile = this,
-            fileNode = projectFile.node,
-            firstNode = fileNode.getFirstToken(fileNode);
+            if (
+                debug ||
+                includePrivate
+            ) {
+                member = Member.parse(projectFile, child);
+
+                if (member) {
+                    children.push(member);
+                    return;
+                }
+            }
+        });
+
+        return children;
+    }
+
+    public getComment(): (string|undefined) {
+        const projectFile = this;
+        const fileNode = projectFile.node;
+        const firstNode = fileNode.getFirstToken(fileNode);
 
         if (!firstNode) {
             return;
@@ -107,14 +142,28 @@ export class ProjectFile implements Member {
         return comment.substring(0, comment.indexOf('*/') + 2);
     }
 
+    public getComments = Member.prototype.getComments;
+
+    public getCommentTags = Member.prototype.getCommentTags;
+
+    public getDebug = Member.prototype.getDebug;
+
+    public getDecorators(): undefined {
+        return;
+    }
+
     public getMeta = Member.prototype.getMeta;
+
+    public getModifiers(): undefined {
+        return;
+    }
 
     public getReflectedType(
         member: Member
     ): string {
-        const projectFile = this,
-            memberNode = member.node,
-            memberType = projectFile.getTypeReflection(memberNode);
+        const projectFile = this;
+        const memberNode = member.node;
+        const memberType = projectFile.getTypeReflection(memberNode);
 
         return (
             memberType.pattern ?
@@ -126,21 +175,20 @@ export class ProjectFile implements Member {
     public getTypeReflection(
         node?: TypeScript.Node
     ): TypeScript.Type {
-        const projectFile = this,
-            project = projectFile.project;
+        const projectFile = this;
+        const project = projectFile.project;
 
         return project.typeChecker.getTypeAtLocation(node || projectFile.node);
     }
 
     public toJSON(): ProjectFile.JSON {
-        const projectFile = this,
-            fileNode = projectFile.node,
-            children = Member
-                .parseChildren(projectFile, fileNode)
-                .map(child => child.toJSON()),
-            comment = projectFile.getFirstComment(),
-            meta = projectFile.getMeta(),
-            name = projectFile.name;
+        const projectFile = this;
+        const children = projectFile
+            .getChildren()
+            .map(child => child.toJSON());
+        const comment = projectFile.getComment();
+        const meta = projectFile.getMeta();
+        const name = projectFile.name;
 
         return {
             kind: 'file',

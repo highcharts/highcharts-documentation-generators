@@ -27,22 +27,22 @@ class Project {
      *  Constructor
      *
      * */
-    constructor(ast, path, template) {
+    constructor(ast, path) {
         this.ast = ast;
         this.path = path;
-        this.template = template;
     }
     /* *
      *
      *  Static Functions
      *
      * */
-    static load(path, template) {
+    static load(path) {
         return __awaiter(this, void 0, void 0, function* () {
-            const file = yield FS.promises.readFile(path), ast = JSON.parse(file.toString());
+            const buffer = yield FS.promises.readFile(path);
+            const ast = JSON.parse(buffer.toString());
             if (ast.files instanceof Array &&
                 typeof ast.name === 'string') {
-                return new Project(ast, path, template);
+                return new Project(ast, path);
             }
             throw new Error('Project tree invalid.');
         });

@@ -33,6 +33,7 @@ class Member {
     constructor(file, node) {
         this.file = file;
         this.node = node;
+        node.modifiers;
     }
     /* *
      *
@@ -50,16 +51,27 @@ class Member {
         }
         return;
     }
-    static parseChildren(file, node, debug) {
-        const memberTypes = Member.types, children = [];
+    static parseChildren(file, node) {
+        const children = (TypeScript.isClassLike(node) ||
+            TypeScript.isEnumDeclaration(node) ||
+            TypeScript.isInterfaceDeclaration(node) ? node.members :
+            TypeScript.isBlock(node) ? node.statements :
+                node.getChildren(file.node));
+        const members = [];
         let member;
-        TypeScript.forEachChild(node, child => {
+        for (const child of children) {
+            if (Member.skip.includes(child.kind)) {
+                continue;
+            }
             member = Member.parse(file, child);
             if (member) {
-                children.push(member);
+                members.push(member);
             }
-        });
-        return children;
+            // else if (TypeScript.isBlock(child)) {
+            //     children.push(...Member.parseChildren(file, child));
+            // }
+        }
+        return members;
     }
     static register(MemberClass) {
         Member.types[MemberClass.name] = MemberClass;
@@ -72,13 +84,15 @@ class Member {
     getChildren() {
         const member = this;
         if (!member._children) {
-            const memberFile = member.file;
-            member._children = Member.parseChildren(memberFile, member.node, memberFile.project.debug);
+            member._children = Member.parseChildren(member.file, member.node);
         }
         return member._children;
     }
     getComment() {
-        const member = this, fileNode = member.file.node, memberNode = member.node, triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+        const member = this;
+        const fileNode = member.file.node;
+        const memberNode = member.node;
+        const triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
         if (!triviaWidth) {
             return;
         }
@@ -89,7 +103,11 @@ class Member {
             [])[0];
     }
     getCommentTags() {
-        const member = this, fileNode = member.file.node, memberNode = member.node, nodeChildren = memberNode.getChildren(), commentTags = [];
+        const member = this;
+        const fileNode = member.file.node;
+        const memberNode = member.node;
+        const nodeChildren = memberNode.getChildren();
+        const commentTags = [];
         for (const child of nodeChildren) {
             if (!TypeScript.isJSDoc(child)) {
                 break;
@@ -114,14 +132,20 @@ class Member {
         return commentTags;
     }
     getComments() {
-        const member = this, fileNode = member.file.node, memberNode = member.node, triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+        const member = this;
+        const fileNode = member.file.node;
+        const memberNode = member.node;
+        const triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
         if (!triviaWidth) {
             return;
         }
         return memberNode.getFullText(fileNode).substring(0, triviaWidth);
     }
     getDebug() {
-        const member = this, debug = { kind: TypeScript.SyntaxKind.Unknown }, fileNode = member.file.node, memberNode = member.node;
+        const member = this;
+        const debug = { kind: TypeScript.SyntaxKind.Unknown };
+        const fileNode = member.file.node;
+        const memberNode = member.node;
         let property;
         for (const key in memberNode) {
             property = memberNode[key];
@@ -153,12 +177,29 @@ class Member {
         }
         return debug;
     }
+    getDecorators() {
+        const member = this;
+        const node = member.node;
+        member._decorators = member._decorators || (TypeScript.canHaveDecorators(node) &&
+            TypeScript.getDecorators(node) ||
+            undefined);
+        return member._decorators;
+    }
     getMeta() {
-        const member = this, node = member.node;
+        const member = this;
+        const node = member.node;
         return {
             start: node.pos,
             end: node.end
         };
+    }
+    getModifiers() {
+        const member = this;
+        const node = member.node;
+        member._modifiers = member._modifiers || (TypeScript.canHaveModifiers(node) &&
+            TypeScript.getModifiers(node) ||
+            undefined);
+        return member._modifiers;
     }
 }
 exports.Member = Member;
@@ -167,6 +208,9 @@ exports.Member = Member;
  *  Static Properties
  *
  * */
+Member.skip = [
+    TypeScript.SyntaxKind.EndOfFileToken
+];
 Member.types = {};
 /* *
  *

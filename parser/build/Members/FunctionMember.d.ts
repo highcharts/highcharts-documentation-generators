@@ -25,7 +25,7 @@ export declare namespace FunctionMember {
         parameters?: Parameters;
         result?: string;
     }
-    type NodeType = (TypeScript.ConstructorDeclaration | TypeScript.ConstructSignatureDeclaration | TypeScript.FunctionDeclaration | TypeScript.FunctionExpression);
+    type NodeType = (TypeScript.ConstructorDeclaration | TypeScript.ConstructSignatureDeclaration | TypeScript.FunctionDeclaration | TypeScript.FunctionExpression | TypeScript.MethodDeclaration | TypeScript.MethodSignature);
     type Parameters = Record<string, string>;
 }
 export default FunctionMember;

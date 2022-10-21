@@ -28,7 +28,7 @@ export class UnknownMember extends Member {
         node: TypeScript.Node
     ): (UnknownMember|undefined) {
 
-        if (!file.project.debug) {
+        if (!file.project.options.debug) {
             return;
         }
 
@@ -42,10 +42,10 @@ export class UnknownMember extends Member {
      * */
 
     public toJSON(): UnknownMember.JSON {
-        const unknownMember = this,
-            commentTags = unknownMember.getCommentTags(),
-            debug = unknownMember.getDebug(),
-            meta = unknownMember.getMeta();
+        const unknownMember = this;
+        const commentTags = unknownMember.getCommentTags();
+        const debug = unknownMember.getDebug();
+        const meta = unknownMember.getMeta();
 
         return {
             kind: `[unknown ${TypeScript.SyntaxKind[debug.kind]}]`,
@@ -72,7 +72,6 @@ export namespace UnknownMember {
      * */
 
     export interface JSON extends Member.JSON {
-        kind: string;
         debug?: Member.Debug;
     }
 

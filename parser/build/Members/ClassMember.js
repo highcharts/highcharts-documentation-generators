@@ -5,7 +5,7 @@
  *
  * */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InterfaceMember = void 0;
+exports.ClassMember = void 0;
 const TypeScript = require("typescript");
 const Member_1 = require("../Member");
 /* *
@@ -13,15 +13,16 @@ const Member_1 = require("../Member");
  *  Class
  *
  * */
-class InterfaceMember extends Member_1.default {
+class ClassMember extends Member_1.default {
     /* *
      *
      *  Constructor
      *
      * */
     constructor(file, node) {
+        var _a;
         super(file, node);
-        this.name = node.name.getText(file.node);
+        this.name = ((_a = node.name) === null || _a === void 0 ? void 0 : _a.getText(file.node)) || '';
     }
     /* *
      *
@@ -29,10 +30,10 @@ class InterfaceMember extends Member_1.default {
      *
      * */
     static parse(file, node) {
-        if (!TypeScript.isInterfaceDeclaration(node)) {
+        if (!TypeScript.isClassLike(node)) {
             return;
         }
-        return new InterfaceMember(file, node);
+        return new ClassMember(file, node);
     }
     /* *
      *
@@ -40,11 +41,11 @@ class InterfaceMember extends Member_1.default {
      *
      * */
     getChildren() {
-        const interfaceMember = this;
-        const file = interfaceMember.file;
+        const classMember = this;
+        const file = classMember.file;
         const children = [];
         let child;
-        for (const member of interfaceMember.node.members) {
+        for (const member of classMember.node.members) {
             child = Member_1.default.parse(file, member);
             if (child) {
                 children.push(child);
@@ -53,25 +54,25 @@ class InterfaceMember extends Member_1.default {
         return children;
     }
     getGeneric() {
-        const interfaceMember = this;
-        const fileNode = interfaceMember.file.node;
-        const typeParameters = interfaceMember.node.typeParameters;
+        const classMember = this;
+        const fileNode = classMember.file.node;
+        const typeParameters = classMember.node.typeParameters;
         if (!typeParameters) {
             return;
         }
         return typeParameters.map(parameter => parameter.getText(fileNode));
     }
     toJSON() {
-        const interfaceMember = this;
-        const children = interfaceMember
+        const classMember = this;
+        const children = classMember
             .getChildren()
             .map(child => child.toJSON());
-        const commentTags = interfaceMember.getCommentTags();
-        const generics = interfaceMember.getGeneric();
-        const meta = interfaceMember.getMeta();
-        const name = interfaceMember.name;
+        const commentTags = classMember.getCommentTags();
+        const generics = classMember.getGeneric();
+        const meta = classMember.getMeta();
+        const name = classMember.name;
         return {
-            kind: 'interface',
+            kind: 'class',
             name,
             generics,
             commentTags,
@@ -80,17 +81,17 @@ class InterfaceMember extends Member_1.default {
         };
     }
 }
-exports.InterfaceMember = InterfaceMember;
+exports.ClassMember = ClassMember;
 /* *
  *
  *  Registry
  *
  * */
-Member_1.default.register(InterfaceMember);
+Member_1.default.register(ClassMember);
 /* *
  *
  *  Default Export
  *
  * */
-exports.default = InterfaceMember;
-//# sourceMappingURL=InterfaceMember.js.map
+exports.default = ClassMember;
+//# sourceMappingURL=ClassMember.js.map

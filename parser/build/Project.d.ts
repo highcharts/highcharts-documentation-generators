@@ -9,13 +9,14 @@ import NPM from './NPM';
 import ProjectFile from './ProjectFile';
 export declare class Project {
     static readonly System: TypeScript.System;
-    static load(path: string, debug?: boolean): Promise<Project>;
+    static readonly defaultOptions: Project.Options;
+    static load(path: string, options?: Project.Options): Promise<Project>;
     private constructor();
     readonly branch: string;
     readonly commit: string;
     readonly date: Date;
-    readonly debug?: boolean;
     readonly npm: NPM.JSON;
+    readonly options: Project.Options;
     readonly path: string;
     readonly program: TypeScript.Program;
     readonly typeChecker: TypeScript.TypeChecker;
@@ -30,8 +31,14 @@ export declare namespace Project {
         description?: string;
         files: Array<ProjectFile.JSON>;
         name: string;
+        options?: Options;
         repository?: string;
         version: string;
+    }
+    interface Options extends JSON.Object {
+        debug?: boolean;
+        includePrivate?: boolean;
+        includePublic?: boolean;
     }
 }
 export default Project;

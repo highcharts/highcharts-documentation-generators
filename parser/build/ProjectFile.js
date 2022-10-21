@@ -7,6 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectFile = void 0;
 const Member_1 = require("./Member");
+const TypeScript = require("typescript");
 const Utilities_1 = require("./Utilities");
 /* *
  *
@@ -22,13 +23,6 @@ class ProjectFile {
     constructor(project, node) {
         this.codeText = '';
         this.rangeText = '';
-        /* *
-         *
-         *  Functions
-         *
-         * */
-        this.getChildren = Member_1.default.prototype.getChildren;
-        this.getComment = Member_1.default.prototype.getComment;
         this.getComments = Member_1.default.prototype.getComments;
         this.getCommentTags = Member_1.default.prototype.getCommentTags;
         this.getDebug = Member_1.default.prototype.getDebug;
@@ -46,8 +40,42 @@ class ProjectFile {
     static parse(project, node) {
         return new ProjectFile(project, node);
     }
-    getFirstComment() {
-        const projectFile = this, fileNode = projectFile.node, firstNode = fileNode.getFirstToken(fileNode);
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    getChildren() {
+        const projectFile = this;
+        const fileNode = projectFile.node;
+        const children = [];
+        const { debug, includePublic, includePrivate } = projectFile.project.options;
+        let member;
+        TypeScript.forEachChild(fileNode, child => {
+            if (Member_1.default.skip.includes(child.kind)) {
+                return;
+            }
+            if (includePublic &&
+                (TypeScript.isExportAssignment(child) ||
+                    TypeScript.isExportDeclaration(child))) {
+                children.push(...Member_1.default.parseChildren(projectFile, child));
+                return;
+            }
+            if (debug ||
+                includePrivate) {
+                member = Member_1.default.parse(projectFile, child);
+                if (member) {
+                    children.push(member);
+                    return;
+                }
+            }
+        });
+        return children;
+    }
+    getComment() {
+        const projectFile = this;
+        const fileNode = projectFile.node;
+        const firstNode = fileNode.getFirstToken(fileNode);
         if (!firstNode) {
             return;
         }
@@ -62,20 +90,33 @@ class ProjectFile {
         }
         return comment.substring(0, comment.indexOf('*/') + 2);
     }
+    getDecorators() {
+        return;
+    }
+    getModifiers() {
+        return;
+    }
     getReflectedType(member) {
-        const projectFile = this, memberNode = member.node, memberType = projectFile.getTypeReflection(memberNode);
+        const projectFile = this;
+        const memberNode = member.node;
+        const memberType = projectFile.getTypeReflection(memberNode);
         return (memberType.pattern ?
             memberType.pattern.getText(projectFile.node) :
             'unknown');
     }
     getTypeReflection(node) {
-        const projectFile = this, project = projectFile.project;
+        const projectFile = this;
+        const project = projectFile.project;
         return project.typeChecker.getTypeAtLocation(node || projectFile.node);
     }
     toJSON() {
-        const projectFile = this, fileNode = projectFile.node, children = Member_1.default
-            .parseChildren(projectFile, fileNode)
-            .map(child => child.toJSON()), comment = projectFile.getFirstComment(), meta = projectFile.getMeta(), name = projectFile.name;
+        const projectFile = this;
+        const children = projectFile
+            .getChildren()
+            .map(child => child.toJSON());
+        const comment = projectFile.getComment();
+        const meta = projectFile.getMeta();
+        const name = projectFile.name;
         return {
             kind: 'file',
             name,

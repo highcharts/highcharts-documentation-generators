@@ -7,12 +7,15 @@ import * as TypeScript from 'typescript';
 import JSON from './JSON';
 import ProjectFile from './ProjectFile';
 export declare abstract class Member {
+    static readonly skip: Array<TypeScript.SyntaxKind>;
     static readonly types: Record<string, typeof Member>;
     static parse(file: ProjectFile, node: TypeScript.Node): (Member | undefined);
-    static parseChildren(file: ProjectFile, node: TypeScript.Node, debug?: boolean): Array<Member>;
+    static parseChildren(file: ProjectFile, node: TypeScript.Node): Array<Member>;
     static register(MemberClass: typeof Member): void;
     protected constructor(file: ProjectFile, node: TypeScript.Node);
-    private _children?;
+    protected _children?: Array<Member>;
+    protected _decorators?: ReadonlyArray<TypeScript.Decorator>;
+    protected _modifiers?: ReadonlyArray<TypeScript.Modifier>;
     readonly file: ProjectFile;
     readonly node: TypeScript.Node;
     getChildren(): Array<Member>;
@@ -20,7 +23,9 @@ export declare abstract class Member {
     getCommentTags(): Array<Member.CommentTag>;
     getComments(): (string | undefined);
     getDebug(): Member.Debug;
+    getDecorators(): (ReadonlyArray<TypeScript.Decorator> | undefined);
     getMeta(): Member.Meta;
+    getModifiers(): (ReadonlyArray<TypeScript.Modifier> | undefined);
     abstract toJSON(): Member.JSON;
 }
 export declare namespace Member {

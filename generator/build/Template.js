@@ -18,6 +18,7 @@ exports.Template = void 0;
 const FS = require("fs");
 const Handlebars = require("handlebars");
 const Path = require("path");
+const Utilities_1 = require("./Utilities");
 /* *
  *
  *  Class
@@ -39,12 +40,25 @@ class Template {
      *  Static Functions
      *
      * */
-    static load(path) {
+    static load(path, relativeTo) {
         return __awaiter(this, void 0, void 0, function* () {
-            const file = yield FS.promises.readFile(path), name = Path.basename(path, Path.extname(path)), compile = Handlebars.compile(file.toString()), template = new Template(name, path, compile);
+            const buffer = yield FS.promises.readFile(path);
+            const name = Path.relative(relativeTo || Path.dirname(path), path.substring(0, path.length - Path.extname(path).length));
+            const compile = Handlebars.compile(buffer.toString());
+            const template = new Template(name, path, compile);
             Template.types[name] = template;
             Handlebars.registerPartial(name, compile);
             return template;
+        });
+    }
+    static loadFolder(path, recursive) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const files = Utilities_1.default.getFilePaths(path, recursive);
+            const promises = [];
+            for (const file of files) {
+                promises.push(Template.load(file, path));
+            }
+            return Promise.all(promises);
         });
     }
     write(path, data) {

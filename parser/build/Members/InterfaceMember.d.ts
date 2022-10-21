@@ -10,6 +10,7 @@ export declare class InterfaceMember extends Member {
     static parse(file: ProjectFile, node: TypeScript.Node): (InterfaceMember | undefined);
     protected constructor(file: ProjectFile, node: InterfaceMember.NodeType);
     readonly name: string;
+    getChildren(): Array<Member>;
     getGeneric(): (Array<string> | undefined);
     toJSON(): InterfaceMember.JSON;
 }

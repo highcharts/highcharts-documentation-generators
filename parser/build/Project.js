@@ -31,12 +31,12 @@ class Project {
      *  Constructor
      *
      * */
-    constructor(branch, commit, npm, path, program, debug) {
+    constructor(branch, commit, npm, path, program, options) {
         this.branch = branch;
         this.commit = commit;
         this.date = new Date();
-        this.debug = debug;
         this.npm = npm;
+        this.options = Object.assign(Object.assign({}, Project.defaultOptions), options);
         this.path = path;
         this.program = program;
         this.typeChecker = program.getTypeChecker();
@@ -46,11 +46,11 @@ class Project {
      *  Static Functions
      *
      * */
-    static load(path, debug) {
+    static load(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
             path = Project.System.resolvePath(path);
             const tsconfig = TypeScript.readJsonConfigFile(path, Project.System.readFile), config = TypeScript.parseJsonConfigFileContent(tsconfig, Project.System, path), program = TypeScript.createProgram(config.fileNames, config.options), cwd = program.getCurrentDirectory(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(Path.join(cwd, 'package.json'));
-            return new Project(branch, commit, npm, path, program, debug);
+            return new Project(branch, commit, npm, path, program, options);
         });
     }
     /* *
@@ -67,16 +67,21 @@ class Project {
             }
             files.push(ProjectFile_1.default.parse(project, file));
         }
-        return files;
+        return files.sort((a, b) => {
+            return (a.name < b.name ? -1 :
+                a.name > b.name ? 1 :
+                    0);
+        });
     }
     toJSON() {
-        const project = this, { branch, commit, date, npm } = project;
+        const project = this, { branch, commit, date, npm, options } = project;
         return {
             branch,
             commit,
             date: date.toISOString(),
             description: npm.description,
             name: npm.name,
+            options,
             repository: npm.repository,
             version: npm.version,
             files: project
@@ -92,6 +97,9 @@ exports.Project = Project;
  *
  * */
 Project.System = TypeScript.sys;
+Project.defaultOptions = {
+    includePublic: true
+};
 /* *
  *
  *  Default Export

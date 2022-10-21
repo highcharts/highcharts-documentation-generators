@@ -37,6 +37,10 @@ export abstract class Member {
      *
      * */
 
+    public static readonly skip: Array<TypeScript.SyntaxKind> = [
+        TypeScript.SyntaxKind.EndOfFileToken
+    ];
+
     public static readonly types: Record<string, typeof Member> = {};
 
     /* *
@@ -66,23 +70,36 @@ export abstract class Member {
 
     public static parseChildren(
         file: ProjectFile,
-        node: TypeScript.Node,
-        debug?: boolean
+        node: TypeScript.Node
     ): Array<Member> {
-        const memberTypes = Member.types,
-            children: Array<Member> = [];
+        const children = (
+            TypeScript.isClassLike(node) ||
+            TypeScript.isEnumDeclaration(node) ||
+            TypeScript.isInterfaceDeclaration(node) ? node.members :
+            TypeScript.isBlock(node) ? node.statements :
+            node.getChildren(file.node)
+        );
+        const members: Array<Member> = [];
 
         let member: (Member|undefined);
 
-        TypeScript.forEachChild(node, child => {
+        for (const child of children) {
+
+            if (Member.skip.includes(child.kind)) {
+                continue;
+            }
+
             member = Member.parse(file, child);
 
             if (member) {
-                children.push(member);
+                members.push(member);
             }
-        });
+            // else if (TypeScript.isBlock(child)) {
+            //     children.push(...Member.parseChildren(file, child));
+            // }
+        }
 
-        return children;
+        return members;
     }
 
     public static register(
@@ -103,6 +120,7 @@ export abstract class Member {
     ) {
         this.file = file;
         this.node = node;
+        node.modifiers
     }
 
     /* *
@@ -111,7 +129,11 @@ export abstract class Member {
      *
      * */
 
-    private _children?: Array<Member>;
+    protected _children?: Array<Member>;
+
+    protected _decorators?: ReadonlyArray<TypeScript.Decorator>;
+
+    protected _modifiers?: ReadonlyArray<TypeScript.Modifier>;
 
     public readonly file: ProjectFile;
 
@@ -127,23 +149,20 @@ export abstract class Member {
         const member = this;
 
         if (!member._children) {
-            const memberFile = member.file;
-
             member._children = Member.parseChildren(
-                memberFile,
-                member.node,
-                memberFile.project.debug
+                member.file,
+                member.node
             );
         }
 
-        return member._children
+        return member._children;
     }
 
     public getComment(): (string|undefined) {
-        const member = this,
-            fileNode = member.file.node,
-            memberNode = member.node,
-            triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+        const member = this;
+        const fileNode = member.file.node;
+        const memberNode = member.node;
+        const triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
 
         if (!triviaWidth) {
             return;
@@ -159,11 +178,11 @@ export abstract class Member {
     }
 
     public getCommentTags(): Array<Member.CommentTag> {
-        const member = this,
-            fileNode = member.file.node,
-            memberNode = member.node,
-            nodeChildren = memberNode.getChildren(),
-            commentTags: Array<Member.CommentTag> = [];
+        const member = this;
+        const fileNode = member.file.node;
+        const memberNode = member.node;
+        const nodeChildren = memberNode.getChildren();
+        const commentTags: Array<Member.CommentTag> = [];
 
         for (const child of nodeChildren) {
             if (!TypeScript.isJSDoc(child)) {
@@ -191,10 +210,10 @@ export abstract class Member {
     }
 
     public getComments(): (string|undefined) {
-        const member = this,
-            fileNode = member.file.node,
-            memberNode = member.node,
-            triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
+        const member = this;
+        const fileNode = member.file.node;
+        const memberNode = member.node;
+        const triviaWidth = memberNode.getLeadingTriviaWidth(fileNode);
 
         if (!triviaWidth) {
             return;
@@ -204,10 +223,10 @@ export abstract class Member {
     }
 
     public getDebug(): Member.Debug {
-        const member = this,
-            debug: Member.Debug = { kind: TypeScript.SyntaxKind.Unknown },
-            fileNode = member.file.node,
-            memberNode: Record<string, any> = member.node;
+        const member = this;
+        const debug: Member.Debug = { kind: TypeScript.SyntaxKind.Unknown };
+        const fileNode = member.file.node;
+        const memberNode: Record<string, any> = member.node;
 
         let property: any;
 
@@ -253,14 +272,40 @@ export abstract class Member {
         return debug;
     }
 
+    public getDecorators(): (ReadonlyArray<TypeScript.Decorator>|undefined) {
+        const member = this;
+        const node = member.node;
+
+        member._decorators = member._decorators || (
+            TypeScript.canHaveDecorators(node) &&
+            TypeScript.getDecorators(node) ||
+            undefined
+        );
+
+        return member._decorators;
+    }
+
     public getMeta(): Member.Meta {
-        const member = this,
-            node = member.node;
+        const member = this;
+        const node = member.node;
 
         return {
             start: node.pos,
             end: node.end
         };
+    }
+
+    public getModifiers(): (ReadonlyArray<TypeScript.Modifier>|undefined) {
+        const member = this;
+        const node = member.node;
+
+        member._modifiers = member._modifiers || (
+            TypeScript.canHaveModifiers(node) &&
+            TypeScript.getModifiers(node) ||
+            undefined
+        );
+
+        return member._modifiers;
     }
 
     public abstract toJSON(): Member.JSON;

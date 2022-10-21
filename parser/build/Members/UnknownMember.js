@@ -20,7 +20,7 @@ class UnknownMember extends Member_1.default {
      *
      * */
     static parse(file, node) {
-        if (!file.project.debug) {
+        if (!file.project.options.debug) {
             return;
         }
         return new UnknownMember(file, node);
@@ -31,7 +31,10 @@ class UnknownMember extends Member_1.default {
      *
      * */
     toJSON() {
-        const unknownMember = this, commentTags = unknownMember.getCommentTags(), debug = unknownMember.getDebug(), meta = unknownMember.getMeta();
+        const unknownMember = this;
+        const commentTags = unknownMember.getCommentTags();
+        const debug = unknownMember.getDebug();
+        const meta = unknownMember.getMeta();
         return {
             kind: `[unknown ${TypeScript.SyntaxKind[debug.kind]}]`,
             commentTags,

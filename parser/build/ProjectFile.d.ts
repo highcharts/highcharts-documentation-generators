@@ -15,13 +15,14 @@ export declare class ProjectFile implements Member {
     readonly node: TypeScript.SourceFile;
     readonly codeText = "";
     readonly rangeText = "";
-    getChildren: () => Member[];
-    getComment: () => string | undefined;
+    getChildren(): Array<Member>;
+    getComment(): (string | undefined);
     getComments: () => string | undefined;
     getCommentTags: () => Member.CommentTag[];
     getDebug: () => Member.Debug;
-    getFirstComment(): (string | undefined);
+    getDecorators(): undefined;
     getMeta: () => Member.Meta;
+    getModifiers(): undefined;
     getReflectedType(member: Member): string;
     getTypeReflection(node?: TypeScript.Node): TypeScript.Type;
     toJSON(): ProjectFile.JSON;
