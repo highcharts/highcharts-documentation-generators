@@ -14,6 +14,7 @@ export interface ExecResult {
 export declare function absolute(...paths: Array<string>): string;
 export declare function exec(command: string, options: ChildProcess.ExecOptions): Promise<ExecResult>;
 export declare function firstLine(text: string, limit?: number): string;
+export declare function getStringArray(fileNode: TypeScript.SourceFile, children: (Array<TypeScript.Node> | TypeScript.NodeArray<TypeScript.Node>)): Array<string> | undefined;
 export declare function isModuleDeclaration(node: TypeScript.Node): node is TypeScript.ModuleDeclaration;
 export declare function isNamespaceDeclaration(node: TypeScript.Node): node is TypeScript.NamespaceDeclaration;
 export declare function lineBreakOf(text: string): ('\n' | '\r' | '\r\n');
@@ -22,9 +23,10 @@ declare const _default: {
     absolute: typeof absolute;
     exec: typeof exec;
     firstLine: typeof firstLine;
-    lineBreakOf: typeof lineBreakOf;
+    getStringArray: typeof getStringArray;
     isModuleDeclaration: typeof isModuleDeclaration;
     isNamespaceDeclaration: typeof isNamespaceDeclaration;
+    lineBreakOf: typeof lineBreakOf;
     relative: typeof relative;
 };
 export default _default;

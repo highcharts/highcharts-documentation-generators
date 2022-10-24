@@ -5,7 +5,7 @@
  *
  * */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.relative = exports.lineBreakOf = exports.isNamespaceDeclaration = exports.isModuleDeclaration = exports.firstLine = exports.exec = exports.absolute = void 0;
+exports.relative = exports.lineBreakOf = exports.isNamespaceDeclaration = exports.isModuleDeclaration = exports.getStringArray = exports.firstLine = exports.exec = exports.absolute = void 0;
 const ChildProcess = require("child_process");
 const Path = require("path");
 const TypeScript = require("typescript");
@@ -27,6 +27,14 @@ function firstLine(text, limit) {
     return (limit ? text.substring(0, limit) : text);
 }
 exports.firstLine = firstLine;
+function getStringArray(fileNode, children) {
+    const result = [];
+    for (const child of children) {
+        result.push(child.getText(fileNode));
+    }
+    return result;
+}
+exports.getStringArray = getStringArray;
 function isModuleDeclaration(node) {
     return (TypeScript.isModuleDeclaration(node) &&
         !isNamespaceDeclaration(node));
@@ -60,9 +68,10 @@ exports.default = {
     absolute,
     exec,
     firstLine,
-    lineBreakOf,
+    getStringArray,
     isModuleDeclaration,
     isNamespaceDeclaration,
+    lineBreakOf,
     relative
 };
 //# sourceMappingURL=Utilities.js.map

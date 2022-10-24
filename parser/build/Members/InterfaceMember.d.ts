@@ -11,7 +11,8 @@ export declare class InterfaceMember extends Member {
     protected constructor(file: ProjectFile, node: InterfaceMember.NodeType);
     readonly name: string;
     getChildren(): Array<Member>;
-    getGeneric(): (Array<string> | undefined);
+    getGenerics(): (Array<string> | undefined);
+    getInheritances(): (Array<string> | undefined);
     toJSON(): InterfaceMember.JSON;
 }
 export interface InterfaceMember {
@@ -20,6 +21,7 @@ export interface InterfaceMember {
 export declare namespace InterfaceMember {
     interface JSON extends Member.JSON {
         generics?: Array<string>;
+        inheritances?: Array<string>;
         kind: 'interface';
         name: string;
     }

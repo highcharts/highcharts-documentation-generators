@@ -53,6 +53,19 @@ export function firstLine(
     return (limit ? text.substring(0, limit) : text);
 }
 
+export function getStringArray(
+    fileNode: TypeScript.SourceFile,
+    children: (Array<TypeScript.Node>|TypeScript.NodeArray<TypeScript.Node>)
+): Array<string>|undefined {
+    const result: Array<string> = [];
+
+    for (const child of children) {
+        result.push(child.getText(fileNode));
+    }
+
+    return result;
+}
+
 export function isModuleDeclaration(
     node: TypeScript.Node
 ): node is TypeScript.ModuleDeclaration {
@@ -103,8 +116,9 @@ export default {
     absolute,
     exec,
     firstLine,
-    lineBreakOf,
+    getStringArray,
     isModuleDeclaration,
     isNamespaceDeclaration,
+    lineBreakOf,
     relative
 };

@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClassMember = void 0;
 const TypeScript = require("typescript");
 const Member_1 = require("../Member");
+const Utilities_1 = require("../Utilities");
 /* *
  *
  *  Class
@@ -53,14 +54,24 @@ class ClassMember extends Member_1.default {
         }
         return children;
     }
-    getGeneric() {
+    getGenerics() {
         const classMember = this;
         const fileNode = classMember.file.node;
         const typeParameters = classMember.node.typeParameters;
         if (!typeParameters) {
             return;
         }
-        return typeParameters.map(parameter => parameter.getText(fileNode));
+        return Utilities_1.default.getStringArray(fileNode, typeParameters);
+    }
+    getInheritances() {
+        const classMember = this;
+        const classNode = classMember.node;
+        const fileNode = classMember.file.node;
+        const heritageClauses = classNode.heritageClauses;
+        if (!heritageClauses) {
+            return;
+        }
+        return Utilities_1.default.getStringArray(fileNode, heritageClauses);
     }
     toJSON() {
         const classMember = this;
@@ -68,13 +79,15 @@ class ClassMember extends Member_1.default {
             .getChildren()
             .map(child => child.toJSON());
         const commentTags = classMember.getCommentTags();
-        const generics = classMember.getGeneric();
+        const generics = classMember.getGenerics();
+        const inheritances = classMember.getInheritances();
         const meta = classMember.getMeta();
         const name = classMember.name;
         return {
             kind: 'class',
             name,
             generics,
+            inheritances,
             commentTags,
             meta,
             children

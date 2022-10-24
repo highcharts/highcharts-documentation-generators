@@ -8,6 +8,7 @@ import * as TypeScript from 'typescript';
 
 import Member from '../Member';
 import ProjectFile from '../ProjectFile';
+import U from '../Utilities';
 
 /* *
  *
@@ -81,7 +82,7 @@ export class ClassMember extends Member {
         return children;
     }
 
-    public getGeneric(): (Array<string>|undefined) {
+    public getGenerics(): (Array<string>|undefined) {
         const classMember = this;
         const fileNode = classMember.file.node;
         const typeParameters = classMember.node.typeParameters;
@@ -90,7 +91,20 @@ export class ClassMember extends Member {
             return;
         }
 
-        return typeParameters.map(parameter => parameter.getText(fileNode));
+        return U.getStringArray(fileNode, typeParameters);
+    }
+
+    public getInheritances(): (Array<string>|undefined) {
+        const classMember = this;
+        const classNode = classMember.node;
+        const fileNode = classMember.file.node;
+        const heritageClauses = classNode.heritageClauses;
+
+        if (!heritageClauses) {
+            return;
+        }
+
+        return U.getStringArray(fileNode, heritageClauses);
     }
 
     public toJSON(): ClassMember.JSON {
@@ -99,7 +113,8 @@ export class ClassMember extends Member {
             .getChildren()
             .map(child => child.toJSON());
         const commentTags = classMember.getCommentTags();
-        const generics = classMember.getGeneric();
+        const generics = classMember.getGenerics();
+        const inheritances = classMember.getInheritances();
         const meta = classMember.getMeta();
         const name = classMember.name;
 
@@ -107,6 +122,7 @@ export class ClassMember extends Member {
             kind: 'class',
             name,
             generics,
+            inheritances,
             commentTags,
             meta,
             children
@@ -141,6 +157,7 @@ export namespace ClassMember {
 
     export interface JSON extends Member.JSON {
         generics?: Array<string>;
+        inheritances?: Array<string>;
         kind: 'class';
         name: string;
     }

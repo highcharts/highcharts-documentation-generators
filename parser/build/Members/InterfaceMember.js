@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InterfaceMember = void 0;
 const TypeScript = require("typescript");
 const Member_1 = require("../Member");
+const Utilities_1 = require("../Utilities");
 /* *
  *
  *  Class
@@ -52,14 +53,24 @@ class InterfaceMember extends Member_1.default {
         }
         return children;
     }
-    getGeneric() {
+    getGenerics() {
         const interfaceMember = this;
         const fileNode = interfaceMember.file.node;
         const typeParameters = interfaceMember.node.typeParameters;
         if (!typeParameters) {
             return;
         }
-        return typeParameters.map(parameter => parameter.getText(fileNode));
+        return Utilities_1.default.getStringArray(fileNode, typeParameters);
+    }
+    getInheritances() {
+        const classMember = this;
+        const classNode = classMember.node;
+        const fileNode = classMember.file.node;
+        const heritageClauses = classNode.heritageClauses;
+        if (!heritageClauses) {
+            return;
+        }
+        return Utilities_1.default.getStringArray(fileNode, heritageClauses);
     }
     toJSON() {
         const interfaceMember = this;
@@ -67,13 +78,15 @@ class InterfaceMember extends Member_1.default {
             .getChildren()
             .map(child => child.toJSON());
         const commentTags = interfaceMember.getCommentTags();
-        const generics = interfaceMember.getGeneric();
+        const generics = interfaceMember.getGenerics();
+        const inheritances = interfaceMember.getInheritances();
         const meta = interfaceMember.getMeta();
         const name = interfaceMember.name;
         return {
             kind: 'interface',
             name,
             generics,
+            inheritances,
             commentTags,
             meta,
             children
