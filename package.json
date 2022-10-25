@@ -35,8 +35,11 @@
     "files": [
         "api-docs",
         "docstrap",
+        "generator",
         "jsdoc",
+        "parser",
         "typescript",
+        "typescript4",
         "index.js",
         "LICENSE.md",
         "README.md"
