@@ -10,7 +10,7 @@
         "strictNullChecks": true,
         "module": "commonjs",
         "outDir": "build",
-        "target": "es6"
+        "target": "ES2015"
     },
     "include": [
         "sources/**/*.ts"

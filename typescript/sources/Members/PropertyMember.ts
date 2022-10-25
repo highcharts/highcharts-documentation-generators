@@ -33,7 +33,11 @@ export class PropertyMember extends M.Member<TS.PropertyDeclaration> {
                 true,
             kind: 'property',
             kindID: superJSON.kindID,
-            modifiers: ModifiersUtilities.getModifierArray(node.modifiers),
+            modifiers: ModifiersUtilities.getModifierArray(
+                TS.canHaveModifiers(node) ?
+                    TS.getModifiers(node) :
+                    []
+            ),
             name: node.name.getText(sourceFile),
             type: TypesUtilities
                 .loadFromTypeNode(sourceFile, node.type)

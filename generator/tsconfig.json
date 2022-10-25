@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "sourceMap": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "module": "commonjs",
+        "outDir": "build/",
+        "rootDir": "sources/",
+        "target": "es6"
+    },
+    "include": [
+        "sources/**/*.ts"
+    ],
+    "references": [
+        {
+            "path": "../parser/"
+        }
+    ]
+}

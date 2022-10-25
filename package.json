@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "@highcharts/highcharts-documentation-generators",
-    "version": "0.5.41",
+    "version": "0.6.0",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
@@ -24,33 +24,31 @@
         "sanitize-html": "^2.7.1",
         "semver": "^7.3.7",
         "taffydb": "^2.7.3",
-        "typedoc": "~0.21.10",
         "underscore": "^1.13.4",
         "yargs": "^17.5.1"
     },
     "devDependencies": {
         "@types/mkdirp": "^1.0.2",
         "@types/node": "^16.11.1",
-        "typescript": "~4.4.4"
+        "typescript": "~4.8.4"
     },
     "files": [
         "api-docs",
         "docstrap",
         "jsdoc",
-        "typedoc",
         "typescript",
         "index.js",
         "LICENSE.md",
         "README.md"
     ],
     "bin": {
-        "highcharts-api-docs": "api-docs/bin/generator.js",
-        "highcharts-typedoc": "typedoc/bin/highcharts-typedoc"
+        "highcharts-api-docs": "api-docs/bin/generator.js"
     },
     "main": "index.js",
     "scripts": {
         "build": "npm run build-1",
-        "build-1": "tsc --build typedoc typescript",
+        "build-1": "tsc --build generator parser typescript typescript4",
+        "test": "npm run build",
         "watch": "npm run build-1 -- --watch"
     }
 }

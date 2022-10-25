@@ -15,7 +15,7 @@ export class ModifiersUtilities {
      * */
 
     public static getModifierArray(
-        modifiers: (TS.ModifiersArray|undefined)
+        modifiers: (ReadonlyArray<TS.Modifier>|undefined)
     ): Array<string> {
 
         const modifierArray: Array<string> = [];

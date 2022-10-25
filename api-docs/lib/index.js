@@ -128,20 +128,6 @@ function mergeObj(a, b, ignoreEmpty, excludeMap, noOverwrite) {
     return a;
 }
 
-function getExcludeMap(node) {
-  var map = {};
-
-  ((node && node.doclet && node.doclet.tags) || []).forEach(function (tag) {
-    if (tag.title === 'excluding' || tag.title === 'exclude') {
-        tag.value.split(',').forEach(function (p) {
-        map[p.trim()] = true;
-      });
-    }
-  });
-
-  return map;
-}
-
 function getSearchBoost(optionPath) {
 
     if (!optionPath) {
@@ -691,22 +677,6 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
         }
     }
 
-    // Extract array type
-    function extractArrayType(def) {
-        var s = def.indexOf('<'),
-            s2 = def.indexOf('>'),
-            res
-        ;
-
-        if (s >= 0 && s2 >= 0) {
-            res = def.substr(s + 1, s2 - s - 1);
-
-            return res;
-        }
-
-        return 'object';
-    }
-
     // Do some transformations
     function transform(name, node, parentName, parent) {
         var s, v = false;
@@ -799,7 +769,10 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             !node.doclet.type
         ) {
             let defaultvalueForType = node.doclet.defaultvalue;
-            if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {
+            if (
+                typeof node.meta.default !== 'undefined' &&
+                typeof node.doclet.defaultvalue === 'undefined'
+            ) {
                 defaultvalueForType = node.meta.default;
             }
 
@@ -998,42 +971,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
     }
 
-    function templateize(name) {
-      // Enable this to use e.g. series<type> rather than series.type
-      return name;
-
-      name = name || '';
-
-      if (name.indexOf('<') > 0) {
-        return name;
-      }
-
-      if (
-          name.indexOf('series') === 0 &&
-          name.indexOf('.') >= 0
-        ) {
-
-        name = name.replace(/\./, '<');
-
-        if (name.indexOf('.') > 0) {
-          name = name.replace(/\./, '>.');
-        } else {
-          name += '>';
-        }
-      }
-
-      return name;
-    }
-
     function dumpNav(node, opath, product, version) {
         opath += 'nav/';
 
         if ((node.children || []).length === 0) {
             return;
-        }
-
-        if (node.meta && node.meta.fullname) {
-            node.meta.fullname = templateize(node.meta.fullname);
         }
 
         fs.writeFileSync(
@@ -1073,16 +1015,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
     }
 
     function generateDetails(name, node, opath, product, version, toc, constr) {
-        name = templateize(name);
         version = (version === 'current' ? versionProps.version : version);
 
         // work around #8260:
         if (name.indexOf('undefined') > 0) {
             return;
-        }
-
-        if (node.meta && node.meta.fullname) {
-            node.meta.fullname = templateize(node.meta.fullname);
         }
 
         // merge(node, node.meta.fullname);
