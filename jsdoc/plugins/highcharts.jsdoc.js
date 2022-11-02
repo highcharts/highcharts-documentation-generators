@@ -597,7 +597,10 @@ function _inferType(node) {
 
     if (
         typeof node.meta.default !== 'undefined' &&
-        typeof node.doclet.defaultvalue === 'undefined'
+        (
+            typeof node.doclet.defaultvalue === 'undefined' ||
+            node.doclet.defaultvalue === 'undefined'
+        )
     ) {
         defVal = node.meta.default;
     }
