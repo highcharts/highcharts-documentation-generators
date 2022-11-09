@@ -873,18 +873,19 @@ exports.defineTags = function (dictionary) {
         }
     });
 
-    dictionary.defineTag('exclude', {
-        synonyms: ['excluding'],
-        onTagged: function (doclet, tagObj) {
-            var items = tagObj.text.split(',');
+    dictionary
+        .defineTag('exclude', {
+            onTagged: function (doclet, tagObj) {
+                var items = tagObj.text.split(',');
 
-            doclet.exclude = doclet.exclude || [];
+                doclet.exclude = doclet.exclude || [];
 
-            items.forEach(function (entry) {
-                doclet.exclude.push(entry.trim());
-            });
-        }
-    });
+                items.forEach(function (entry) {
+                    doclet.exclude.push(entry.trim());
+                });
+            }
+        })
+        .synonym('excluding');
 
     dictionary.defineTag('extends', {
         onTagged: function (doclet, tagObj) {
@@ -1015,12 +1016,13 @@ exports.defineTags = function (dictionary) {
         }
     });
 
-    dictionary.defineTag('values', {
-        synonyms: ['validvalue'],
-        onTagged: function (doclet, tagObj) {
-            doclet.values = tagObj.value;
-        }
-    });
+    dictionary
+        .defineTag('values', {
+            onTagged: function (doclet, tagObj) {
+                doclet.values = tagObj.value;
+            }
+        })
+        .synonym('validvalue');
 
     dictionary.defineTag('typedesc', {
         onTagged: function (doclet, tagObj) {
