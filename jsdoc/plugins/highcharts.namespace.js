@@ -1391,25 +1391,26 @@ function processingComplete (e) {
  */
 exports.defineTags = function (dictionary) {
 
-    dictionary.defineTag('apioption', {
-        // mustHaveValue: true,
-        onTagged: (doclet, tag) => {
-            if (!doclet.type &&
-                tag.value
-            ) {
-                doclet.type = { names: [
+    dictionary
+        .defineTag('apioption', {
+            // mustHaveValue: true,
+            onTagged: (doclet, tag) => {
+                if (!doclet.type &&
                     tag.value
-                        .split('.')
-                        .filter(name => !!name)
-                        .map(name => name[0].toUpperCase() + name.substr(1))
-                        .join('')
-                        .replace('Options', '') +
-                    'Options'
-                ] };
+                ) {
+                    doclet.type = { names: [
+                        tag.value
+                            .split('.')
+                            .filter(name => !!name)
+                            .map(name => name[0].toUpperCase() + name.substr(1))
+                            .join('')
+                            .replace('Options', '') +
+                        'Options'
+                    ] };
+                }
             }
-        }
-    })
-    .synonym('optionparent');
+        })
+        .synonym('optionparent');
 
     dictionary.defineTag('ignore-declaration', {
         mustNotHaveValue: true,
