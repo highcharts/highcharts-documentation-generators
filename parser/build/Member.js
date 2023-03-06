@@ -188,9 +188,20 @@ class Member {
     getMeta() {
         const member = this;
         const node = member.node;
+        const source = member.file.node;
+        const startMeta = source.getLineAndCharacterOfPosition(node.pos);
+        const endMeta = source.getLineAndCharacterOfPosition(node.end);
         return {
-            start: node.pos,
-            end: node.end
+            first: node.pos,
+            last: node.end,
+            start: [
+                (startMeta.line + 1),
+                (startMeta.character + 1)
+            ],
+            end: [
+                (endMeta.line + 1),
+                (endMeta.character + 1)
+            ]
         };
     }
     getModifiers() {

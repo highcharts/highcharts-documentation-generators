@@ -46,8 +46,10 @@ export declare namespace Member {
         meta: Meta;
     }
     interface Meta extends JSON.Object {
-        start: number;
-        end: number;
+        end: [line: number, column: number];
+        first: number;
+        last: number;
+        start: [line: number, column: number];
     }
 }
 export default Member;
