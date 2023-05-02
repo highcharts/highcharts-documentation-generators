@@ -951,7 +951,11 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
       if (node.doclet) {
 
         if (Object.keys(node.doclet.defaultByProduct || {}).length > 0) {
-          return node.doclet.defaultByProduct[product] || node.doclet.defaultByProduct.highcharts;
+          return (
+            typeof node.doclet.defaultByProduct[product] !== 'undefined' ?
+                node.doclet.defaultByProduct[product] :
+                node.doclet.defaultByProduct.highcharts
+          );
         }
 
         if (node.doclet.defaultvalue) {

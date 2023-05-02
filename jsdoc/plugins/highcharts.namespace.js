@@ -1147,6 +1147,8 @@ function addMember (doclet) {
 
     let node = updateNodeFor(doclet);
 
+    node.doclet.kind = 'member';
+
     if (!node.doclet.types) {
         node.doclet.types = getTypes(doclet);
     }
@@ -1311,6 +1313,12 @@ function newDoclet (e) {
         case 'class':
             addClass(doclet);
             break;
+        case 'constant':
+        case 'member':
+            if (!isApiOption(doclet)) {
+                addMember(doclet);
+            }
+            break;
         case 'constructor':
             addConstructor(doclet);
             break;
@@ -1325,11 +1333,6 @@ function newDoclet (e) {
             break;
         case 'interface':
             addInterface(doclet);
-            break;
-        case 'member':
-            if (!isApiOption(doclet)) {
-                addMember(doclet);
-            }
             break;
         case 'namespace':
             addNamespace(doclet);
