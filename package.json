@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "@highcharts/highcharts-documentation-generators",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
@@ -23,7 +23,6 @@
         "moment": "^2.29.4",
         "sanitize-html": "^2.7.3",
         "semver": "^7.3.8",
-        "taffydb": "^2.7.3",
         "underscore": "^1.13.6",
         "yargs": "^17.6.2"
     },
