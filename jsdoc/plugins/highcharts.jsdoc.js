@@ -1019,6 +1019,21 @@ exports.defineTags = function (dictionary) {
     dictionary
         .defineTag('values', {
             onTagged: function (doclet, tagObj) {
+                try {
+                    if (
+                        doclet.type &&
+                        doclet.type.names.length === 1 &&
+                        doclet.type.names[0] === 'string'
+                    ) {
+                        doclet.type.names = JSON
+                            .parse(tagObj.value)
+                            .map(v => `"${v}"`);
+                        return;
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+                
                 doclet.values = tagObj.value;
             }
         })
