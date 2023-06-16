@@ -222,8 +222,12 @@ img.branding-logo {
     color: #fff;
     line-height: 2em;
 }
+.navbar-default .navbar-nav .open:first-child .dropdown-menu > li:last-child {
+    border-top: 1px solid #000;
+}
 .navbar-default .navbar-nav .open .dropdown-menu > li > a {
     color: #fff;
+    padding: 8px 16px;
 }
 .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
 .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
