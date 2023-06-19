@@ -271,6 +271,9 @@ a:hover {
 .dropdown-menu ul.group-list li a {
   padding-left: 35px;
 }
+.dropdown-menu li:last-child {
+    border-top: 1px solid #000;
+}
 
 .menu[expanded="false"] .dropdown-menu {
   display: none;
