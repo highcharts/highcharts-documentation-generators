@@ -22,7 +22,7 @@
         "mkdirp": "^1.0.4",
         "moment": "^2.29.4",
         "sanitize-html": "^2.7.3",
-        "semver": "^7.3.8",
+        "semver": "^7.5.2",
         "underscore": "^1.13.6",
         "yargs": "^17.6.2"
     },
