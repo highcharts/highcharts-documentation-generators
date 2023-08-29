@@ -534,7 +534,10 @@ function _inferValue(value, types) {
                 }
                 break;
             case 'number':
-                if (!Number.isNaN(new Number(value))) {
+                if (
+                    value !== null &&
+                    !Number.isNaN(new Number(value))
+                ) {
                     return new Number(value);
                 }
                 break;
