@@ -653,7 +653,7 @@ function inferType(obj) {
         // Remove user-identifiable info in filename
         obj.meta.filename = obj.meta.filename
             .replace(/\\/g, '/')
-            .replace(/.*\/(js\/.*)/, '$1');
+            .replace(/.*\/code\/es-modules\/(.*)\.[jt]s/, '$1.ts');
     }
 
     // Infer types
