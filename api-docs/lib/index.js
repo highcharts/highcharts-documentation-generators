@@ -723,7 +723,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
             node.meta.filename = node.meta.filename
                 .replace(/\\/g, '/')
                 .replace(/\/\//g, '/')
-                .replace(/.*\/(js\/.*)/, '$1');
+                .replace(/(?:.*\/)?code\/es-modules\/(.*)\.[jt]s/, 'ts/$1.ts');
         }
 
         // if (typeof node.meta.default !== 'undefined' && typeof node.doclet.defaultvalue === 'undefined') {

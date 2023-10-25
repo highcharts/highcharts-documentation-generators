@@ -694,8 +694,6 @@ hapi.ajax = function(p) {
 
     if (def.filename) {
       var fileName = def.filename;
-      fileName = fileName.substr(3, fileName.length - 6);
-      fileName = 'ts/' + fileName + '.ts';
       editLink = cr('a', 'edit', '<i class="fa fa-edit"></i>', true);
       editLink.setAttribute(
         'title',
