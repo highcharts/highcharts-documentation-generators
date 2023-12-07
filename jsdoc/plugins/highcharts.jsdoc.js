@@ -1143,6 +1143,11 @@ Highcharts.chart('container', {
     }]
 });
 \`\`\`
+
+When using the tooltip options with series, it is important to understand
+how to configure it based on the series type you are dealing with.
+Make sure to check the series-specific documentation
+for more details on how to use the tooltip options.
             `;
             if (options.plotOptions.children[node] &&
                 options.plotOptions.children[node].doclet.description
