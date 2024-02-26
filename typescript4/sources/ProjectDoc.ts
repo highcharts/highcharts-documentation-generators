@@ -74,7 +74,7 @@ export class ProjectDoc {
         ).toString().trim();
         this.date = new Date();
         this.description = npm.description;
-        this.name = (npm.name || '');
+        this.name = (npm.name || '');
         this.options = parsedCommandLine.options;
         this.path = path;
         this.program = TypeScript.createProgram(
