@@ -1059,6 +1059,47 @@ exports.astNodeVisitor = {
 exports.handlers = {
 
     beforeParse: function (e) {
+
+        // START @todo
+        const TS = require('typescript');
+        const Path = require('node:path');
+
+        console.log(e.currentSourceName);
+        const sourceName = Path.basename(e.currentSourceName, '.d.ts');
+
+        const interfaces = [];
+
+        if (e.currentSourceName.endsWith('Options.d.ts')) {
+            const tsSource = TS.createSourceFile(
+                e.currentSourceName,
+                e.source,
+                TS.ScriptTarget.Latest,
+                true
+            );
+            // This needs to go into a recursive function
+            TS.visitEachChild(tsSource, (node) => {
+                if (
+                    TS.isInterfaceDeclaration(node) &&
+                    node.name.getText(tsSource) === sourceName
+                ) {
+                    /** @type {TS.JSDocNode} */
+                    let lastDoclet;
+                    TS.visitEachChild(node, (child) => {
+                        if (TS.isJSDoc(child)) {
+                            lastDoclet = child;
+                            console.log('JSDoc', child.getChildCount());
+                        }
+                        if (TS.isPropertyDeclaration(child)) {
+                            console.log('Prop', child.getText(tsSource));
+                        } else {
+                            lastDoclet = undefined;
+                        }
+                    });
+                }
+            });
+        }
+        // END @todo
+
         var palette = getPalette();
 
         // Resolve palette in doclets
