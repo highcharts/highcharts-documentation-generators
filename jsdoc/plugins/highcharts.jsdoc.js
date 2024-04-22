@@ -1109,7 +1109,8 @@ Move them up before functional code for JSDoc to see them.`.yellow
         improveDescription({children: options});
 
         function addSeriesTypeDescription(type) {
-            var node = type;
+            var node = type,
+                capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
 
             // Make sense of the examples for general series
             if (type === 'series') {
@@ -1117,7 +1118,17 @@ Move them up before functional code for JSDoc to see them.`.yellow
             }
             var s = `
 
-In TypeScript the [type](series.${type}.type) option must always be set.
+**In TypeScript:**
+- the [type](series.${type}.type) option must always be set.
+- when accessing an array of series, the combined set of all series types is
+  represented by [Highcharts.SeriesOptionsType
+  ](/class-reference/Highcharts#.SeriesOptionsType).
+  It's recommended to cast to the specific type for better clarity and
+  correct access to all type-specific options.
+
+\`\`\`
+(chartOptions.series[0] as Highcharts.Series${capitalizedType}Options)._${type}-specific-option
+\`\`\`
 
 Configuration options for the series are given in three levels:
 1. Options for all series in a chart are defined in the
