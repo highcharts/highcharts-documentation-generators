@@ -1118,18 +1118,6 @@ Move them up before functional code for JSDoc to see them.`.yellow
             }
             var s = `
 
-**In TypeScript:**
-- the [type](series.${type}.type) option must always be set.
-- when accessing an array of series, the combined set of all series types is
-  represented by [Highcharts.SeriesOptionsType
-  ](/class-reference/Highcharts#.SeriesOptionsType).
-  It's recommended to cast to the specific type for better clarity and
-  correct access to all type-specific options.
-
-\`\`\`
-(chartOptions.series[0] as Highcharts.Series${capitalizedType}Options)._${type}-specific-option
-\`\`\`
-
 Configuration options for the series are given in three levels:
 1. Options for all series in a chart are defined in the
    [plotOptions.series](plotOptions.series) object.
@@ -1155,10 +1143,17 @@ Highcharts.chart('container', {
 });
 \`\`\`
 
-When using the tooltip options with series, it is important to understand
-how to configure it based on the series type you are dealing with.
-Make sure to check the series-specific documentation
-for more details on how to use the tooltip options.
+**TypeScript:**
+- the [type](series.${type}.type) option must always be set.
+- when accessing an array of series, the combined set of all series types is
+  represented by [Highcharts.SeriesOptionsType
+  ](/class-reference/Highcharts#.SeriesOptionsType).
+  It's recommended to cast to the specific type for better clarity and
+  correct access to all type-specific options.
+
+\`\`\`
+(chartOptions.series[0] as Highcharts.Series${capitalizedType}Options)._${type}-specific-option
+\`\`\`
             `;
             if (options.plotOptions.children[node] &&
                 options.plotOptions.children[node].doclet.description
