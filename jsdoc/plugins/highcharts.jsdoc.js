@@ -1109,8 +1109,7 @@ Move them up before functional code for JSDoc to see them.`.yellow
         improveDescription({children: options});
 
         function addSeriesTypeDescription(type) {
-            var node = type,
-                capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+            var node = type;
 
             // Make sense of the examples for general series
             if (type === 'series') {
@@ -1147,12 +1146,13 @@ Highcharts.chart('container', {
 - the [type](series.${type}.type) option must always be set.
 - when accessing an array of series, the combined set of all series types is
   represented by [Highcharts.SeriesOptionsType
-  ](/class-reference/Highcharts#.SeriesOptionsType).
-  It's recommended to cast to the specific type for better clarity and
-  correct access to all type-specific options.
+  ](/class-reference/Highcharts#.SeriesOptionsType). Narrowing down to the
+  specific type can be done by checking the \`type\` property.
 
 \`\`\`
-(chartOptions.series[0] as Highcharts.Series${capitalizedType}Options)._${type}-specific-option
+if (chart.options.series?.[0]?.type === ${type}) {
+    // code specific to the ${type} series
+}
 \`\`\`
             `;
             if (options.plotOptions.children[node] &&
