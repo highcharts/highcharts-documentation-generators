@@ -1117,8 +1117,6 @@ Move them up before functional code for JSDoc to see them.`.yellow
             }
             var s = `
 
-In TypeScript the [type](series.${type}.type) option must always be set.
-
 Configuration options for the series are given in three levels:
 1. Options for all series in a chart are defined in the
    [plotOptions.series](plotOptions.series) object.
@@ -1142,6 +1140,19 @@ Highcharts.chart('container', {
         type: '${type}'
     }]
 });
+\`\`\`
+
+**TypeScript:**
+- the [type](series.${type}.type) option must always be set.
+- when accessing an array of series, the combined set of all series types is
+  represented by [Highcharts.SeriesOptionsType
+  ](/class-reference/Highcharts#.SeriesOptionsType). Narrowing down to the
+  specific type can be done by checking the \`type\` property.
+
+\`\`\`
+if (chart.options.series?.[0]?.type === ${type}) {
+    // code specific to the ${type} series
+}
 \`\`\`
             `;
             if (options.plotOptions.children[node] &&
