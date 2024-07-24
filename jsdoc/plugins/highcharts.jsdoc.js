@@ -711,9 +711,11 @@ function augmentOption(path, obj) {
 
                 // Free floating doclets marked with @apioption
                 if (!current[thing].meta.filename) {
-                    current[thing].meta.filename = obj.meta.path + '/' + obj.meta.filename;
+                    current[thing].meta.fullname = path;
+                    current[thing].meta.name = thing;
                     current[thing].meta.line = obj.meta.lineno;
                     current[thing].meta.lineEnd = obj.meta.lineno + obj.comment.split(/\n/g).length - 1;
+                    current[thing].meta.filename = obj.meta.path + '/' + obj.meta.filename;
                 }
 
                 Object.keys(obj).forEach(function (property) {
