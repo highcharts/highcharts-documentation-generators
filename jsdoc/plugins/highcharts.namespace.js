@@ -813,8 +813,11 @@ function filterNodes (node) {
 
     node.children = node.children.filter(child => (
         child.doclet &&
-        (child.doclet.name === 'global' ||
-        Object.keys(child.doclet).length > 1)
+        (
+            child.doclet.name === 'global' ||
+            child.doclet.name === 'Highcharts' ||
+            Object.keys(child.doclet).length > 1
+        )
     ));
 
     node.children.forEach(filterNodes);
@@ -1365,7 +1368,7 @@ function fileComplete (e) {
  * @function processingComplete
  *
  * @param {Event} e
- *        JSDoc event.
+ * JSDoc event.
  *
  * @return {void}
  */
