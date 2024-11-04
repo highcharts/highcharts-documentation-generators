@@ -272,7 +272,7 @@ function isUndocumented (doclet) {
  */
 function getClearName (name) {
 
-    if (!name) {
+    if (!name || name.includes('\n')) {
         return '';
     } else {
         return name
@@ -498,7 +498,7 @@ function getName (doclet) {
     }
 
     let memberOf = getClearName(doclet.memberOf),
-        name = getClearName(doclet.longname);
+        name = getClearName(doclet.longname) || doclet.name;
 
     try {
 
@@ -512,6 +512,7 @@ function getName (doclet) {
             name = 'Highcharts';
         } else if (!isGlobal(doclet) &&
             name.indexOf('.') === -1 &&
+            name.indexOf('external:') !== 0 &&
             name.indexOf('global') !== 0 &&
             name.indexOf('Highcharts') !== 0
         ) {
@@ -815,7 +816,6 @@ function filterNodes (node) {
         child.doclet &&
         (
             child.doclet.name === 'global' ||
-            child.doclet.name === 'Highcharts' ||
             Object.keys(child.doclet).length > 1
         )
     ));
@@ -899,9 +899,7 @@ function updateNodeFor (doclet, overload) {
     if (overload) {
         switch (doclet.kind) {
             case 'function':
-                if (doclet.params &&
-                    !isEqual(oldDoclet, newDoclet)
-                ) {
+                if (doclet.params && !isEqual(oldDoclet, newDoclet)) {
                     node = getNodeFor(name, doclet.params.length);
                     oldDoclet = node.doclet;
                     oldMeta = node.meta;
@@ -1009,7 +1007,7 @@ function addConstructor (doclet) {
         description: doclet.description,
         fires: doclet.fires,
         kind: 'constructor',
-        longname: doclet.longname + '#constructor',
+        longname: getName(doclet) + '#constructor',
         name: 'constructor',
         params: doclet.params
     });
@@ -1208,7 +1206,7 @@ function addTypeDef (doclet) {
 
     let name = getName(doclet);
 
-    Object.values(doclet.properties).forEach(propertyDoclet => {
+    for (const propertyDoclet of Object.values(doclet.properties)) {
 
         if (propertyDoclet.name.indexOf(':') > 0) {
             propertyDoclet.longname = (name + '.[' + propertyDoclet.name + ']');
@@ -1223,7 +1221,9 @@ function addTypeDef (doclet) {
         propertyDoclet.scope = 'inner';
 
         addMember(propertyDoclet);
-    })
+
+    }
+
 }
 
 /* *
