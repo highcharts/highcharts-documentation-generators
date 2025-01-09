@@ -743,7 +743,7 @@ hapi.ajax = function(p) {
       globals.innerHTML = '';
       options.innerHTML = '';
       data.children.forEach(function(def) {
-        if (['global', 'lang'].indexOf(def.fullname) >= 0) {
+        if (['global'].indexOf(def.fullname) >= 0) {
           createNode(globals, def, explodeState(state), state, product);
         } else {
           createNode(options, def, explodeState(state), state, product);
