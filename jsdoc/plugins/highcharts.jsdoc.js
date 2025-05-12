@@ -49,16 +49,20 @@ const getPalette = () => {
     const palette3Path = fsPath.join(hcRoot, 'ts', 'Core', 'Color', 'Palettes.ts');
 
     if (fs.existsSync(palette3Path)) {
-        return (new Function(
-            'const ' +
-            fs
-                .readFileSync(palette3Path)
-                .toString()
-                .match(/Palette {[^}]*}/g)[0]
-                .replace(/=/g, ':')
-                .replace('{', '= {') +
-            '; return Palette;'
-        )());
+        const match = fs
+            .readFileSync(palette3Path)
+            .toString()
+            .match(/Palette {[^}]*}/g)
+        if (match) {
+            return (new Function(
+                'const ' +
+                match[0]
+                    .replace(/=/g, ':')
+                    .replace('{', '= {') +
+                '; return Palette;'
+            )());
+        }
+        return '';
     }
 
     if (fs.existsSync(palette2Path)) {
@@ -1038,7 +1042,7 @@ exports.defineTags = function (dictionary) {
                 } catch (e) {
                     console.error(e);
                 }
-                
+
                 doclet.values = tagObj.value;
             }
         })
