@@ -27,16 +27,6 @@ const Utilities_1 = require("./Utilities");
 class Template {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(name, path, compile) {
-        this.name = name;
-        this.path = path;
-        this.compile = compile;
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -60,6 +50,16 @@ class Template {
             }
             return Promise.all(promises);
         });
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(name, path, compile) {
+        this.name = name;
+        this.path = path;
+        this.compile = compile;
     }
     write(path, data) {
         return __awaiter(this, void 0, void 0, function* () {

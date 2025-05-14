@@ -9,15 +9,6 @@ exports.JSONUtilities = void 0;
 class JSONUtilities {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor() {
-        this._memberReferences = [];
-        this.filter = this.filter.bind(this);
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -43,6 +34,15 @@ class JSONUtilities {
             }
         }
         return jsonArray;
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor() {
+        this._memberReferences = [];
+        this.filter = this.filter.bind(this);
     }
     /* *
      *

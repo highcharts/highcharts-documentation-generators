@@ -37,14 +37,6 @@ const typescript_1 = __importDefault(require("typescript"));
 class Project {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(program) {
-        this._program = program;
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -83,6 +75,14 @@ class Project {
         const project = new Project(typescript_1.default.createProgram(parsedCommandLine.fileNames, parsedCommandLine.options));
         project.directoryPath = directoryPath;
         return project;
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(program) {
+        this._program = program;
     }
     get directoryPath() {
         return (this._directoryPath || '');

@@ -17,15 +17,6 @@ const Utilities_1 = require("../Utilities");
 class InterfaceMember extends Member_1.default {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(file, node) {
-        super(file, node);
-        this.name = node.name.getText(file.node);
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -34,6 +25,15 @@ class InterfaceMember extends Member_1.default {
             return;
         }
         return new InterfaceMember(file, node);
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(file, node) {
+        super(file, node);
+        this.name = node.name.getText(file.node);
     }
     /* *
      *

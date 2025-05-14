@@ -16,16 +16,6 @@ const Member_1 = require("../Member");
 class FunctionMember extends Member_1.default {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(file, node) {
-        var _a;
-        super(file, node);
-        this.name = ((_a = node.name) === null || _a === void 0 ? void 0 : _a.getText(file.node)) || '';
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -40,6 +30,16 @@ class FunctionMember extends Member_1.default {
             return;
         }
         return new FunctionMember(file, node);
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(file, node) {
+        var _a;
+        super(file, node);
+        this.name = ((_a = node.name) === null || _a === void 0 ? void 0 : _a.getText(file.node)) || '';
     }
     /* *
      *

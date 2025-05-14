@@ -27,16 +27,6 @@ const DEBUG_SKIP = [
 class Member {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(file, node) {
-        this.file = file;
-        this.node = node;
-        node.modifiers;
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -75,6 +65,16 @@ class Member {
     }
     static register(MemberClass) {
         Member.types[MemberClass.name] = MemberClass;
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(file, node) {
+        this.file = file;
+        this.node = node;
+        node.modifiers;
     }
     /* *
      *
