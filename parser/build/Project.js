@@ -28,6 +28,18 @@ const ProjectFile_1 = require("./ProjectFile");
 class Project {
     /* *
      *
+     *  Static Functions
+     *
+     * */
+    static load(path, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            path = Project.System.resolvePath(path);
+            const tsconfig = TypeScript.readJsonConfigFile(path, Project.System.readFile), config = TypeScript.parseJsonConfigFileContent(tsconfig, Project.System, path), program = TypeScript.createProgram(config.fileNames, config.options), cwd = program.getCurrentDirectory(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(Path.join(cwd, 'package.json'));
+            return new Project(branch, commit, npm, path, program, options);
+        });
+    }
+    /* *
+     *
      *  Constructor
      *
      * */
@@ -40,18 +52,6 @@ class Project {
         this.path = path;
         this.program = program;
         this.typeChecker = program.getTypeChecker();
-    }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    static load(path, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            path = Project.System.resolvePath(path);
-            const tsconfig = TypeScript.readJsonConfigFile(path, Project.System.readFile), config = TypeScript.parseJsonConfigFileContent(tsconfig, Project.System, path), program = TypeScript.createProgram(config.fileNames, config.options), cwd = program.getCurrentDirectory(), branch = yield Git_1.default.getActiveBranch(cwd), commit = yield Git_1.default.getLastCommit(cwd), npm = yield NPM_1.default.load(Path.join(cwd, 'package.json'));
-            return new Project(branch, commit, npm, path, program, options);
-        });
     }
     /* *
      *

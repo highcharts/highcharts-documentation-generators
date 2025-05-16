@@ -24,15 +24,6 @@ const FS = require("fs");
 class Project {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(ast, path) {
-        this.ast = ast;
-        this.path = path;
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -46,6 +37,15 @@ class Project {
             }
             throw new Error('Project tree invalid.');
         });
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(ast, path) {
+        this.ast = ast;
+        this.path = path;
     }
 }
 exports.Project = Project;

@@ -582,7 +582,7 @@ module.exports = function (input, outputPath, selectedProducts, fn) {
 
     function getProductName(product) {
         return {
-            'highcharts': 'Highcharts',
+            'highcharts': 'Highcharts Core',
             'highstock': 'Highcharts Stock',
             'highmaps': 'Highcharts Maps',
             'gantt': 'Highcharts Gantt'

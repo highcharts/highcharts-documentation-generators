@@ -43,12 +43,6 @@ const WRAPPED_SYNTAX_KIND = [
 class MembersUtilities {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor() { }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -151,6 +145,12 @@ class MembersUtilities {
         MembersUtilities.nodeCache.push(node);
         MembersUtilities.memberCache.push(member);
     }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor() { }
     ;
 }
 exports.MembersUtilities = MembersUtilities;

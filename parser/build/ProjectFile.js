@@ -17,6 +17,14 @@ const Utilities_1 = require("./Utilities");
 class ProjectFile {
     /* *
      *
+     *  Static Functions
+     *
+     * */
+    static parse(project, node) {
+        return new ProjectFile(project, node);
+    }
+    /* *
+     *
      *  Constructor
      *
      * */
@@ -31,14 +39,6 @@ class ProjectFile {
         this.name = Utilities_1.default.relative(project.path, node.fileName);
         this.node = node;
         this.project = project;
-    }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    static parse(project, node) {
-        return new ProjectFile(project, node);
     }
     /* *
      *

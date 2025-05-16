@@ -22,6 +22,14 @@ const Utilities_1 = __importDefault(require("./Utilities"));
 class OptionDoc {
     /* *
      *
+     *  Static Functions
+     *
+     * */
+    static load(path, optionTag = 'option', collectionTag = 'option-collection') {
+        return new OptionDoc(ProjectDoc_1.default.load(path), optionTag, collectionTag);
+    }
+    /* *
+     *
      *  Constructor
      *
      * */
@@ -30,14 +38,6 @@ class OptionDoc {
         this.collectionTag = collectionTag;
         this.optionTag = optionTag;
         this.project = project;
-    }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    static load(path, optionTag = 'option', collectionTag = 'option-collection') {
-        return new OptionDoc(ProjectDoc_1.default.load(path), optionTag, collectionTag);
     }
     /* *
      *

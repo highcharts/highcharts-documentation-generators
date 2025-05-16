@@ -49,6 +49,14 @@ const Utilities_1 = __importDefault(require("./Utilities"));
 class ProjectDoc {
     /* *
      *
+     *  Static Functions
+     *
+     * */
+    static load(path) {
+        return new ProjectDoc(path);
+    }
+    /* *
+     *
      *  Constructor
      *
      * */
@@ -68,14 +76,6 @@ class ProjectDoc {
             npm.repository && npm.repository.url);
         this.resolvedPath = resolvedPath;
         this.version = (npm.version || '');
-    }
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    static load(path) {
-        return new ProjectDoc(path);
     }
     /* *
      *

@@ -16,15 +16,6 @@ const Utilities_1 = require("../Utilities");
 class NamespaceMember extends Member_1.default {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(file, node) {
-        super(file, node);
-        this.name = node.name.getText(file.node) || '';
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -33,6 +24,15 @@ class NamespaceMember extends Member_1.default {
             return;
         }
         return new NamespaceMember(file, node);
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(file, node) {
+        super(file, node);
+        this.name = node.name.getText(file.node) || '';
     }
     /* *
      *

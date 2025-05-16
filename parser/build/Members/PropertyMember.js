@@ -16,15 +16,6 @@ const Member_1 = require("../Member");
 class PropertyMember extends Member_1.default {
     /* *
      *
-     *  Constructor
-     *
-     * */
-    constructor(file, node) {
-        super(file, node);
-        this.name = node.name.getText(file.node);
-    }
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -34,6 +25,15 @@ class PropertyMember extends Member_1.default {
             return;
         }
         return new PropertyMember(file, node);
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(file, node) {
+        super(file, node);
+        this.name = node.name.getText(file.node);
     }
     /* *
      *
