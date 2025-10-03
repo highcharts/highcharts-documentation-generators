@@ -903,16 +903,9 @@ exports.defineTags = function (dictionary) {
     });
 
     dictionary.defineTag('ignore-option', {
-        onTagged: function (doclet) {
-            doclet.ignored = true;
-        }
-    });
-
-    dictionary.defineTag('internal', {
-        onTagged: function (doclet) {
-            doclet.internal = true;
-        }
-    });
+        onTagged: (doclet) => doclet.ignore = true
+    })
+    .synonym('internal');
 
     dictionary.defineTag('default', {
         onTagged: function (doclet, tagObj) {
