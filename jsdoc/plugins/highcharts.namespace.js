@@ -1426,7 +1426,8 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag('private', {
         mustNotHaveValue: true,
         onTagged: (doclet) => doclet.ignore = true
-    });
+    })
+    .synonym('internal');
 
     dictionary.defineTag('product', {
         mustHaveValue: true,
