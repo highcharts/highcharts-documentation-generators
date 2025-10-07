@@ -267,11 +267,11 @@ function nodeVisitor(node, e, _, currentSourceName) {
     ;
 
     if (node.highcharts && node.highcharts.isOption) {
-        node.ignored = (
-            node.ignored ||
+        node.ignore = (
+            node.ignore ||
             comment.indexOf('@ignore-option') > 0
         );
-        if (node.ignored) {
+        if (node.ignore) {
             removeOption(node.highcharts.fullname);
         } else if (comment.indexOf('@apioption') < 0) {
             appendComment(e, ['@optionparent ' + node.highcharts.fullname]);
@@ -417,7 +417,7 @@ function removeIgnoredOptions(node) {
         .forEach(childName => {
             const childNode = node.children[childName];
             if (childNode.doclet &&
-                childNode.doclet.ignored
+                childNode.doclet.ignore
             ) {
                 delete node.children[childName];
             } else {
@@ -857,7 +857,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
-            if (doclet.ignored) removeOption(tagObj.value);
+            if (doclet.ignore) removeOption(tagObj.value);
             augmentOption(tagObj.value, doclet);
         }
     });
@@ -938,7 +938,7 @@ exports.defineTags = function (dictionary) {
     });
     dictionary.defineTag('optionparent', {
         onTagged: function (doclet, tagObj) {
-            if (doclet.ignored) return removeOption(tagObj.value);
+            if (doclet.ignore) return removeOption(tagObj.value);
             augmentOption(tagObj.value, doclet);
         }
     });
