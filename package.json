@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "@highcharts/highcharts-documentation-generators",
-    "version": "0.6.18",
+    "version": "0.6.19",
     "author": "Highsoft AS",
     "license": "UNLICENSED",
     "bugs": {
@@ -12,18 +12,18 @@
         "url": "https://github.com/highcharts/highcharts-documentation-generators.git"
     },
     "dependencies": {
-        "async": "^3.2.5",
+        "async": "^3.2.6",
         "colors": "^1.4.0",
         "express": "^4.19.2",
         "fast-deep-equal": "^3.1.3",
         "handlebars": "^4.7.8",
         "highcharts-assembler": "github:highcharts/highcharts-assembler",
-        "marked": "^13.0.2",
+        "marked": "^16.4.0",
         "mkdirp": "^3.0.1",
         "moment": "^2.30.1",
-        "sanitize-html": "^2.13.0",
-        "semver": "^7.6.3",
-        "underscore": "^1.13.6",
+        "sanitize-html": "^2.17.0",
+        "semver": "^7.7.3",
+        "underscore": "^1.13.7",
         "yargs": "^17.7.2"
     },
     "devDependencies": {
@@ -49,7 +49,7 @@
     "main": "index.js",
     "scripts": {
         "build": "npm run build-1",
-        "build-1": "tsc --build generator parser typescript typescript4",
+        "build-1": "tsc --build generator parser typescript4",
         "test": "npm run build",
         "watch": "npm run build-1 -- --watch"
     }
