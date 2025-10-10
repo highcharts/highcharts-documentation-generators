@@ -1142,7 +1142,8 @@ Highcharts.chart('container', {
 \`\`\`
 
 **TypeScript:**
-- the [type](series.${type}.type) option must always be set.
+- [type](series.${type}.type) option should always be set, otherwise a broad set
+  of unsupported options is allowed.
 - when accessing an array of series, the combined set of all series types is
   represented by [Highcharts.SeriesOptionsType
   ](/class-reference/Highcharts#.SeriesOptionsType). Narrowing down to the
