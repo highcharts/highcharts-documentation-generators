@@ -44,13 +44,13 @@ function getLocation(option) {
 }
 
 const getPalette = () => {
-    const palette1Path = fsPath.join(hcRoot, 'js', 'Core', 'Palette.js');
-    const palette2Path = fsPath.join(hcRoot, 'js', 'Core', 'Color', 'Palette.js');
-    const palette3Path = fsPath.join(hcRoot, 'ts', 'Core', 'Color', 'Palettes.ts');
+    let palettePath;
 
-    if (fs.existsSync(palette3Path)) {
+    // Try Core/Color/Palettes.ts
+    palettePath = fsPath.join(hcRoot, 'ts', 'Core', 'Color', 'Palettes.ts');
+    if (fs.existsSync(palettePath)) {
         const match = fs
-            .readFileSync(palette3Path)
+            .readFileSync(palettePath)
             .toString()
             .match(/Palette {[^}]*}/g)
         if (match) {
@@ -65,21 +65,30 @@ const getPalette = () => {
         return '';
     }
 
-    if (fs.existsSync(palette2Path)) {
+    // Try Core/Color/Palette.js
+    palettePath = fsPath.join(hcRoot, 'js', 'Core', 'Color', 'Palette.js');
+    if (fs.existsSync(palettePath)) {
         return (new Function(fs
-            .readFileSync(palette2Path)
+            .readFileSync(palettePath)
             .toString()
             .replace('export default palette;', '') +
             '; return palette;'
         )());
     }
 
-    return (new Function(fs
-        .readFileSync(palette1Path)
-        .toString()
-        .replace('export default palette;', '') +
-        '; return palette;'
-    )());
+    // Try Core/Palette.js
+    palettePath = fsPath.join(hcRoot, 'js', 'Core', 'Palette.js');
+    if (fs.existsSync(palettePath)) {
+        return (new Function(fs
+            .readFileSync(palettePath)
+            .toString()
+            .replace('export default palette;', '') +
+            '; return palette;'
+        )());
+    }
+
+    // No palette found, since Highcharts v13 with CSS-driven theming
+    return {};
 }
 
 function dumpOptions() {
