@@ -1058,6 +1058,14 @@ exports.defineTags = function (dictionary) {
             doclet.type.description = tagObj.value;
         }
     });
+
+    dictionary.defineTag('basic', {
+        mustNotHaveValue: true,
+        mustNotHaveDescription: true,
+        onTagged: function (doclet) {
+            doclet.basic = true;
+        }
+    });
 };
 
 exports.astNodeVisitor = {
