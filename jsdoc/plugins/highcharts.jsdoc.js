@@ -1161,9 +1161,9 @@ Highcharts.chart('container', {
 **TypeScript:**
 - In order to filter out general series options for the series instance options,
   you can specify the [type](series.${type}.type) option for each item.
-- When accessing an array of series in a chart instance, in a chart instance,
-  for example in an event handler, the combined set of all series types is
-  represented by [Highcharts.SeriesOptionsType](/class-reference/Highcharts#.SeriesOptionsType).
+- When accessing an array of series in a chart instance, for example in an event
+  handler, the combined set of all series types is represented by
+  [Highcharts.SeriesOptionsType](/class-reference/Highcharts#.SeriesOptionsType).
   Narrowing down to the specific type can be done by checking the \`type\` property.
 
 \`\`\`
