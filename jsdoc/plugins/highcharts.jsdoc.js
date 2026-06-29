@@ -1159,12 +1159,12 @@ Highcharts.chart('container', {
 \`\`\`
 
 **TypeScript:**
-- [type](series.${type}.type) option should always be set, otherwise a broad set
-  of unsupported options is allowed.
-- when accessing an array of series, the combined set of all series types is
-  represented by [Highcharts.SeriesOptionsType
-  ](/class-reference/Highcharts#.SeriesOptionsType). Narrowing down to the
-  specific type can be done by checking the \`type\` property.
+- In order to filter out general series options for the series instance options,
+  you can specify the [type](series.${type}.type) option for each item.
+- When accessing an array of series in a chart instance, for example in an event
+  handler, the combined set of all series types is represented by
+  [Highcharts.SeriesOptionsType](/class-reference/Highcharts#.SeriesOptionsType).
+  Narrowing down to the specific type can be done by checking the \`type\` property.
 
 \`\`\`
 if (chart.options.series?.[0]?.type === ${type}) {
